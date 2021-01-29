@@ -13,9 +13,11 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
     :return: ResultData object.
     """
 
-    if settings.offer_type != "simple":
+    if settings.offer_type == "block":
         ValueError("not implemented yet")
-    else:
+    elif settings.offer_type == "energyBudget":
+        ValueError("not implemented yet")
+    elif settings.offer_type == "simple":
         # collect named constraints in cb
         cb = ConstraintBuilder()
 
