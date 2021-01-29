@@ -3,7 +3,7 @@ import numpy as np
 from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
-rand
+
 
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings):
     """
