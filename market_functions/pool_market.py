@@ -3,7 +3,7 @@ import numpy as np
 from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
-
+rand
 
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings):
     """
@@ -19,7 +19,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
         ValueError("not implemented yet")
     elif settings.offer_type == "simple":
         # collect named constraints in cb
-        cb = ConstraintBuilder()
+        cb = ConstraintBuilder() 
 
         # prepare parameters
         Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
