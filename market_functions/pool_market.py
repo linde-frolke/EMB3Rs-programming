@@ -8,19 +8,19 @@ from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
+    :param name: str
     :param agent_data:
     :param settings:
     :return: ResultData object.
     """
+    # collect named constraints in cb
+    cb = ConstraintBuilder()
 
+    # to implement - block offers
     if settings.offer_type == "block":
         ValueError("not implemented yet")
-    elif settings.offer_type == "energyBudget":
-        ValueError("not implemented yet")
-    elif settings.offer_type == "simple":
-        # collect named constraints in cb
-        cb = ConstraintBuilder()
-
+    # the budget balance is an add on to simple offer formulation
+    else:
         # prepare parameters
         Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
         Gmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
@@ -54,18 +54,28 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
         total_util = cp.sum(cp.multiply(util, Ln))
         objective = cp.Minimize(total_cost - total_util)
 
-        # define the problem and solve it.
-        prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        result_ = prob.solve(solver=cp.ECOS)
-        print("problem status: %s" % prob.status)
+        # add extra constraint if offer type is energy Budget.
+        if settings.offer_type == "energyBudget":
+            # add_energybudget(cb, Ln, P_tot) TODO could add it as a function, because will be reused in p2p
+            P_tot = cp.Parameter(agent_data.nr_of_agents,
+                                 value=np.sum(0.5*(agent_data.gmin + agent_data.gmax).to_numpy(), axis=0))
+            cb.add_constraint(cp.sum(Ln, axis=0) == P_tot, str_="energyBudget")
 
-        if prob.status not in ["infeasible", "unbounded"]:
-            # Otherwise, problem.value is inf or -inf, respectively.
-            print("Optimal value: %s" % prob.value)
-        else:
-            print("Problem is %s" % prob.status)
+    # common for all offer types ------------------------------------------------
+    # define the problem and solve it.
+    prob = cp.Problem(objective, constraints=cb.get_constraint_list())
+    result_ = prob.solve(solver=cp.ECOS)
+    print("problem status: %s" % prob.status)
 
-        # store result in result object
-        result = ResultData(name, prob, cb, agent_data, settings)
+    # throw an error if the problem is not solved.
+    if prob.status not in ["infeasible", "unbounded"]:
+        # Otherwise, problem.value is inf or -inf, respectively.
+        print("Optimal value: %s" % prob.value)
+    else:
+        # print("Problem is %s" % prob.status)
+        raise ValueError("Given your inputs, the problem is %s" % prob.status)
+
+    # store result in result object
+    result = ResultData(name, prob, cb, agent_data, settings)
 
     return result
