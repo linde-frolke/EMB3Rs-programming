@@ -19,7 +19,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
         ValueError("not implemented yet")
     elif settings.offer_type == "simple":
         # collect named constraints in cb
-        cb = ConstraintBuilder() 
+        cb = ConstraintBuilder()
 
         # prepare parameters
         Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
@@ -35,13 +35,14 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
         Gn = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="Gn")
         Ln = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="Ln")
 
-        # variable limits
+        # variable limits ----------------------------------
         #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
         cb.add_constraint(Gmin <= Gn, str_="G_lb")
         cb.add_constraint(Gn <= Gmax, str_="G_ub")
         cb.add_constraint(Lmin <= Ln, str_="L_lb")
         cb.add_constraint(Ln <= Lmax, str_="L_ub")
 
+        # constraints --------------------------------------
         # define power injection as net generation
         cb.add_constraint(Pn == Gn - Ln, str_="def_P")
 
@@ -53,11 +54,10 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
         total_util = cp.sum(cp.multiply(util, Ln))
         objective = cp.Minimize(total_cost - total_util)
 
-
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
         result_ = prob.solve(solver=cp.ECOS)
-        print("problem status: %s" %prob.status)
+        print("problem status: %s" % prob.status)
 
         if prob.status not in ["infeasible", "unbounded"]:
             # Otherwise, problem.value is inf or -inf, respectively.
