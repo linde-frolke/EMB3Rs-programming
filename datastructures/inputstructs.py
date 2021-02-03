@@ -46,6 +46,7 @@ class MarketSettings:
         # TODO add agent locations in grid??
 
 
+
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
     """
@@ -91,6 +92,7 @@ class AgentData:
         else:
             self.co2_emission = None
 
+        # TODO could add preference matrix here.
 
 # # network data --------------------------------------------------------------------------------------------------------
 # TODO

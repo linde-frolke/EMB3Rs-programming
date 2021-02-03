@@ -15,9 +15,9 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
     """
 
     if settings.offer_type == "block":
-        ValueError("not implemented yet")
+        raise ValueError("block offer for p2p not implemented yet")
     elif settings.offer_type == "energyBudget":
-        ValueError("not implemented yet")
+        raise ValueError("energy Budget for p2p not implemented yet")
     elif settings.offer_type == "simple":
         # collect named constraints in cb
         cb = ConstraintBuilder()
@@ -68,7 +68,18 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
         # objective function
         total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
         total_util = cp.sum(cp.multiply(util, Ln))
-        objective = cp.Minimize(total_cost - total_util)
+        # make different objfun depending on preference settings
+        if settings.product_diff == "noPref":
+            objective = cp.Minimize(total_cost - total_util)
+        else:
+            # construct preference matrix
+            # TODO could move this to AgentData structure
+            if settings.product_diff == "co2Emissions":
+                raise ValueError("not implemented yet")
+            if settings.product_diff == "networkDistance":
+                raise ValueError("not implemented yet")
+            if settings.product_diff == "losses":
+                raise ValueError("not implemented yet")
 
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
