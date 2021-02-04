@@ -46,6 +46,7 @@ class MarketSettings:
         # TODO add agent locations in grid??
 
 
+
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
     """
@@ -90,6 +91,11 @@ class AgentData:
             self.co2_emission = pd.DataFrame(co2, columns=name)
         else:
             self.co2_emission = None
+
+        # TODO could add preference matrix here.
+        # def add_preference matrix(self, network):
+        #     blabla
+        #     self.pref_matrix = ..
 
 
 # # network data --------------------------------------------------------------------------------------------------------

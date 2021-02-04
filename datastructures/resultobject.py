@@ -36,9 +36,15 @@ class ResultData:
             self.Gn = pd.DataFrame(variables[varnames == "Gn"].value, columns=agent_data.agent_name)
 
             # get dual of powerbalance for each time
-            # TODO perhaps this is different for different market types
-            # TODO make data frame?
-            self.shadow_price = cb.get_constraint(str_="powerbalance").dual_value
+            if settings.market_design == "pool":
+                self.shadow_price = cb.get_constraint(str_="powerbalance").dual_value
+                self.shadow_price = pd.DataFrame(self.shadow_price, columns=["uniform price"])
+            elif settings.market_design == "p2p":
+                self.shadow_price = pd.DataFrame(index=settings.timestamps, columns=agent_data.agent_name)
+                for t in settings.timestamps:
+                    self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value
+            elif settings.market_design == "community":
+                raise ValueError("not implemented yet \n")
 
             # hourly social welfare an array of length settings.nr_of_h
             # TODO compute social welfare for each hour
@@ -54,6 +60,6 @@ class ResultData:
             settlement = 5.0  # TODO compute it
             self.joint = pd.DataFrame([qoe, settlement, self.social_welfare_tot],
                                       columns=[settings.market_design],
-                                      index = ["QoE", "settlement", "Social Welfare"])
+                                      index=["QoE", "settlement", "Social Welfare"])
 
 
