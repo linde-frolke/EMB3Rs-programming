@@ -93,6 +93,10 @@ class AgentData:
             self.co2_emission = None
 
         # TODO could add preference matrix here.
+        # def add_preference matrix(self, network):
+        #     blabla
+        #     self.pref_matrix = ..
+
 
 # # network data --------------------------------------------------------------------------------------------------------
 # TODO
