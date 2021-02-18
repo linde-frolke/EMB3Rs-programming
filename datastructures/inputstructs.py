@@ -3,6 +3,8 @@
 
 import pandas as pd
 import numpy as np
+import heapq
+
 
 
 # general settings object ---------------------------------------------------------------------------------------------
@@ -120,12 +122,78 @@ class Network:
             self.distance[From, To] = gis_data.Length.iloc[row_nr]
             self.losses[From, To] = gis_data["Losses total [W]"].iloc[row_nr]
 
+# =============================================================================
+# Star here 
+# =============================================================================
+        #DISTANCE
+        #Dijkstra's shortest path        
+        def calculate_distances(graph, starting_vertex):
+            distances = {vertex: float('infinity') for vertex in graph}
+            distances[starting_vertex] = 0
+        
+            pq = [(0, starting_vertex)]
+            while len(pq) > 0:
+                current_distance, current_vertex = heapq.heappop(pq)
+        
+                # Nodes can get added to the priority queue multiple times. We only
+                # process a vertex the first time we remove it from the priority queue.
+                if current_distance > distances[current_vertex]:
+                    continue
+        
+                for neighbor, weight in graph[current_vertex].items():
+                    distance = current_distance + weight
+        
+                    # Only consider this new path if it's better than any path we've
+                    # already found.
+                    if distance < distances[neighbor]:
+                        distances[neighbor] = distance
+                        heapq.heappush(pq, (distance, neighbor))
+            return distances
+        #graph for the Dijkstra's
+        graph={i:{j:np.inf for j in range(0,(agent_data.nr_of_agents))} for i in range(0,(agent_data.nr_of_agents))}
+        total_dist=[] #total network distance
+        
+        for j in range(0,(agent_data.nr_of_agents)): 
+            for i in range(0,(agent_data.nr_of_agents)):
+                if self.distance[i][j]!=0 and self.distance[i][j]!=np.inf:
+                    #symmetric matrix
+                    graph[i][j]=self.distance[i][j]
+                    graph[j][i]=self.distance[i][j]
+                    total_dist.append(self.distance[i][j])
+         
+        #Matrix with the distance between all the agents    
+        self.all_distance=np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents)) #might need this later
+        for i in range(0,(agent_data.nr_of_agents)):
+            aux=[]
+            aux=calculate_distances(graph,i)
+            for j in range(0,(agent_data.nr_of_agents)):
+                self.all_distance[i][j]=aux[j]
+        #network usage in percentage for each trade Pnm        
+        self.all_distance_percentage=self.all_distance/sum(total_dist)
 
 
-
-
-
-
+        #LOSSES
+        #graph for the Dijkstra's
+        graph={i:{j:np.inf for j in range(0,(agent_data.nr_of_agents))} for i in range(0,(agent_data.nr_of_agents))}
+        total_losses=[] #total network losses
+        
+        for j in range(0,(agent_data.nr_of_agents)): 
+            for i in range(0,(agent_data.nr_of_agents)):
+                if self.losses[i][j]!=0 and self.losses[i][j]!=np.inf:
+                    #symmetric matrix
+                    graph[i][j]=self.losses[i][j]
+                    graph[j][i]=self.losses[i][j]
+                    total_losses.append(self.losses[i][j])
+         
+        #Matrix with the losses between all the agents    
+        self.all_losses=np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents)) #might need this later
+        for i in range(0,(agent_data.nr_of_agents)):
+            aux=[]
+            aux=calculate_distances(graph,i) #calculuting losses shortest path
+            for j in range(0,(agent_data.nr_of_agents)):
+                self.all_losses[i][j]=aux[j]
+        #network usage in percentage for each trade Pnm        
+        self.all_losses_percentage=self.all_losses/sum(total_losses)
 
 
 
