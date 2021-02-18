@@ -3,6 +3,7 @@ import numpy as np
 from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings, Network
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from market_functions.add_energy_budget import add_energy_budget
 
 
 def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):
@@ -13,15 +14,13 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
     :param settings:
     :return: ResultData object.
     """
+    # collect named constraints in cb
+    cb = ConstraintBuilder()
     
     if settings.offer_type == "block":
         raise ValueError("block offer for p2p not implemented yet")
-    elif settings.offer_type == "energyBudget":
-        raise ValueError("energy Budget for p2p not implemented yet")
-    elif settings.offer_type == "simple":
-        # collect named constraints in cb
-        cb = ConstraintBuilder()
-
+    # the budget balance is an add on to simple offer formulation
+    else:
         # prepare parameters
         Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
         Gmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
@@ -55,6 +54,8 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
             cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
             # cannot sell more than I generate
             cb.add_constraint(cp.sum(Snm[t], axis=1) <= Gn[t, :], str_="S_ub_t" + str(t))
+            # cannot buy more than my load
+            cb.add_constraint(cp.sum(Bnm[t], axis=1) <= Ln[t, :], str_="S_ub_t" + str(t))
 
         # constraints ----------------------------------
         # define relation between generation, load, and power injection
@@ -64,6 +65,11 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
             cb.add_constraint(Tnm[t] == -np.transpose(Tnm[t]), str_="reciprocity_t" + str(t))
             # total trades have to match power injection
             cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
+
+        # add extra constraint if offer type is energy Budget.
+        if settings.offer_type == "energyBudget":
+            # add energy budget.
+            cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
 
         # objective function
         total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication

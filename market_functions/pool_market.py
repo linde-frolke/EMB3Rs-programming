@@ -3,6 +3,7 @@ import numpy as np
 from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from market_functions.add_energy_budget import add_energy_budget
 
 
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings):
@@ -56,10 +57,9 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
 
         # add extra constraint if offer type is energy Budget.
         if settings.offer_type == "energyBudget":
-            # add_energybudget(cb, Ln, P_tot) TODO could add it as a function, because will be reused in p2p
-            P_tot = cp.Parameter(agent_data.nr_of_agents,
-                                 value=np.sum(0.5*(agent_data.gmin + agent_data.gmax).to_numpy(), axis=0))
-            cb.add_constraint(cp.sum(Ln, axis=0) == P_tot, str_="energyBudget")
+            # add energy budget.
+            cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
+
 
     # common for all offer types ------------------------------------------------
     # define the problem and solve it.
