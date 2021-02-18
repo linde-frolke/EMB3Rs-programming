@@ -35,11 +35,14 @@ class ResultData:
             self.Ln = pd.DataFrame(variables[varnames == "Ln"].value, columns=agent_data.agent_name)
             self.Gn = pd.DataFrame(variables[varnames == "Gn"].value, columns=agent_data.agent_name)
 
+
             # get dual of powerbalance for each time
             if settings.market_design == "pool":
                 self.shadow_price = cb.get_constraint(str_="powerbalance").dual_value
                 self.shadow_price = pd.DataFrame(self.shadow_price, columns=["uniform price"])
             elif settings.market_design == "p2p":
+                self.Tnm = # TODO add
+
                 self.shadow_price = pd.DataFrame(index=settings.timestamps, columns=agent_data.agent_name)
                 for t in settings.timestamps:
                     self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value
