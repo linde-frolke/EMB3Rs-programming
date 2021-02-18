@@ -1,12 +1,12 @@
 import cvxpy as cp
 import numpy as np
 from datastructures.resultobject import ResultData
-from datastructures.inputstructs import AgentData, MarketSettings
+from datastructures.inputstructs import AgentData, MarketSettings, Network
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from market_functions.add_energy_budget import add_energy_budget
 
 
-def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
+def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
     :param name: string, can give the resulting ResultData object a name.
@@ -62,7 +62,7 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
         cb.add_constraint(Pn == Gn - Ln, str_="def_P")
         for t in settings.timestamps:
             # trade reciprocity
-            cb.add_constraint(Tnm[t] == -cp.transpose(Tnm[t]), str_="reciprocity_t" + str(t))
+            cb.add_constraint(Tnm[t] == -np.transpose(Tnm[t]), str_="reciprocity_t" + str(t))
             # total trades have to match power injection
             cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
 
@@ -73,7 +73,7 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
 
         # objective function
         total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
-        total_util = cp.sum(cp.multiply(util, Ln))
+        total_util = cp.sum(cp.multiply(util, Ln)) 
         # make different objfun depending on preference settings
         if settings.product_diff == "noPref":
             objective = cp.Minimize(total_cost - total_util)
@@ -81,11 +81,20 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings):
             # construct preference matrix
             # TODO could move this to AgentData structure
             if settings.product_diff == "co2Emissions":
-                raise ValueError("not implemented yet")
+                for t in settings.timestamps:
+                    co2_penalty = cp.sum(cp.multiply(agent_data.co2_emission, Tnm[t]))
+                    #Verificar com a linde se a multiplicação está a ser bem feita e se é Tnm
+
+                objective = cp.Minimize(total_cost - total_util + co2_penalty)
             if settings.product_diff == "networkDistance":
-                raise ValueError("not implemented yet")
+                for t in settings.timestamps:    
+                    distance_penalty = cp.sum(cp.multiply(network.all_distance_percentage, Tnm[t]))
+                objective = cp.Minimize(total_cost - total_util + distance_penalty)
+            
             if settings.product_diff == "losses":
-                raise ValueError("not implemented yet")
+                for t in settings.timestamps:    
+                    losses_penalty = cp.sum(cp.multiply(network.all_losses_percentage, Tnm[t]))
+                objective = cp.Minimize(total_cost - total_util + losses_penalty)
 
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
