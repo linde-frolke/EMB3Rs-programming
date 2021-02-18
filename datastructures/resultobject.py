@@ -20,6 +20,7 @@ class ResultData:
         """
         #
         self.name = name
+        self.fitted_model = prob
         self.Market = settings.market_design
 
         if prob.status in ["infeasible", "unbounded"]:
@@ -28,21 +29,26 @@ class ResultData:
 
         else:
             self.optimal = True
-            # store values of the optimized variables
+            # make variables and variable names easily accessible
             variables = prob.variables()
             varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-            self.Pn = pd.DataFrame(variables[varnames == "Pn"].value, columns=agent_data.agent_name)
-            self.Ln = pd.DataFrame(variables[varnames == "Ln"].value, columns=agent_data.agent_name)
-            self.Gn = pd.DataFrame(variables[varnames == "Gn"].value, columns=agent_data.agent_name)
+            self.varnames = varnames
 
+            # store values of the optimized variables ----------------------------------------------------------
+            self.Pn = pd.DataFrame(variables[varnames.index("Pn")].value, columns=agent_data.agent_name)
+            self.Ln = pd.DataFrame(variables[varnames.index("Ln")].value, columns=agent_data.agent_name)
+            self.Gn = pd.DataFrame(variables[varnames.index("Gn")].value, columns=agent_data.agent_name)
+            if settings.market_design == "p2p":
+                # extract trade variable - a square dataframe for each time index
+                self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
+                                         columns=agent_data.agent_name, index=agent_data.agent_name)
+                            for t in range(settings.nr_of_h)]
 
-            # get dual of powerbalance for each time
+            # get dual of powerbalance for each time ------------------------------------------------------------
             if settings.market_design == "pool":
                 self.shadow_price = cb.get_constraint(str_="powerbalance").dual_value
                 self.shadow_price = pd.DataFrame(self.shadow_price, columns=["uniform price"])
             elif settings.market_design == "p2p":
-                self.Tnm = # TODO add
-
                 self.shadow_price = pd.DataFrame(index=settings.timestamps, columns=agent_data.agent_name)
                 for t in settings.timestamps:
                     self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value

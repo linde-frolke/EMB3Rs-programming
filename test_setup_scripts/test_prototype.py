@@ -15,13 +15,18 @@ md = "pool"
 # setup inputs --------------------------------------------
 # make settings object
 settings = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref", market_design=md)
-settings = MarketSettings(nr_of_hours=12, offer_type="energyBudget", prod_diff="noPref", market_design=md)
+#settings = MarketSettings(nr_of_hours=12, offer_type="energyBudget", prod_diff="noPref", market_design=md)
 # make agent data object
 agent_ids = ["sérgio", "linde", "tiago1", "tiago2"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
+
+lmin = np.zeros((settings.nr_of_h, 4))
+lmin[:, 2] = 1
+gmax = np.ones((settings.nr_of_h, 4))
+gmax[:, 2] = 0
 agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
-                       gmin=np.zeros((settings.nr_of_h, 4)), gmax=np.ones((settings.nr_of_h, 4)),
-                       lmin=np.zeros((settings.nr_of_h, 4)), lmax=np.ones((settings.nr_of_h, 4)),
+                       gmin=np.zeros((settings.nr_of_h, 4)), gmax=gmax,
+                       lmin=lmin, lmax=np.ones((settings.nr_of_h, 4)),
                        cost=np.ones((settings.nr_of_h, 4)), util=np.ones((settings.nr_of_h, 4)))
 # make network data object
 # first get gis_data and convert from/to to tuple
@@ -53,7 +58,7 @@ result.Ln
 md = "p2p"
 # setup inputs --------------------------------------------
 settings = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref", market_design=md)
-settings = MarketSettings(nr_of_hours=12, offer_type="energyBudget", prod_diff="noPref", market_design=md)
+#settings = MarketSettings(nr_of_hours=12, offer_type="energyBudget", prod_diff="noPref", market_design=md)
 
 # set model name
 name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)
@@ -72,6 +77,9 @@ else:
 result.name
 result.joint
 result.Ln
+result.varnames
+# result of trades at time 0
+result.Tnm[0]
 
 # TEST P2P WITH PREFERENCES ########################################################################################
 md = "p2p_co2"

@@ -78,6 +78,7 @@ class AgentData:
         #
         if not lmin.shape == (settings.nr_of_h, self.nr_of_agents):
             raise ValueError("qmin has to have shape (nr_of_timesteps, nr_of_agents)")
+        # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times
         self.gmin = pd.DataFrame(gmin, columns=name)
         self.gmax = pd.DataFrame(gmax, columns=name)
         self.lmin = pd.DataFrame(lmin, columns=name)
