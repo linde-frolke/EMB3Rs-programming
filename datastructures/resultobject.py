@@ -53,7 +53,8 @@ class ResultData:
                 for t in settings.timestamps:
                     self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value
             elif settings.market_design == "community":
-                raise ValueError("not implemented yet \n")
+                self.shadow_price = "TODO!"
+                # raise ValueError("not implemented yet \n")
 
             # hourly social welfare an array of length settings.nr_of_h
             # TODO compute social welfare for each hour
