@@ -50,7 +50,8 @@ class MarketSettings:
         # TODO "integrated with electricity" option
         # TODO ELECTRICITY PRICE HERE
 
-    def add_community_settings(self, objective):
+    def add_community_settings(self, objective, g_peak= 10.0**2, g_exp=-5 * 10.0**1, g_imp=-4 * 10.0**1):
+        """ the parameters are optional inputs"""
         # add the options for community to the settings
         options_objective = ["autonomy", "peakShaving"]
         if objective not in options_objective:
@@ -58,11 +59,11 @@ class MarketSettings:
         self.community_objective = objective
 
         # for now, set default values of gammas
-        self.gamma_peak = 10.0**2
-        self.gamma_exp = -5 * 10.0**1
-        self.gamma_imp = -self.gamma_exp + 10.0 ** 1
+        self.gamma_peak = g_peak
+        self.gamma_exp = g_exp
+        self.gamma_imp = g_imp
         if not self.gamma_exp <= 0.0:
-            raise ValueError("export penalty should be nonpositive")
+            raise ValueError("export penalty must be nonpositive")
 
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:

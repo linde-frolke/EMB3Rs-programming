@@ -137,3 +137,23 @@ result.Ln
 
 # todo implement shadow price for community
 result.shadow_price
+
+
+# test the other community setup
+settings.add_community_settings(objective="peakShaving")
+# set model name
+name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.community_objective)
+
+# construct and solve market -----------------------------
+if settings.market_design == "pool":
+    result = make_pool_market(name="test", agent_data=agent_data, settings=settings)
+elif settings.market_design == "community":
+    result = make_community_market(name="test_comm", agent_data=agent_data, settings=settings)
+elif settings.market_design == "p2p":  # P2P should be here
+    result = make_p2p_market(name="test", agent_data=agent_data, settings=settings)
+
+# see the result object
+result.name
+result.joint
+result.Ln
+

@@ -47,7 +47,7 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
         q_imp = cp.Variable(settings.nr_of_h, name="q_imp")
         q_exp = cp.Variable(settings.nr_of_h, name="q_exp")
         if settings.community_objective == "peakShaving":
-            q_peak = cp.Variable(settings.nr_of_h, name="q_peak")
+            q_peak = cp.Variable(name="q_peak")
 
         # variable limits ----------------------------------
         #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
@@ -72,7 +72,6 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
             cb.add_constraint(q_imp <= q_peak, str_="def_peak")
 
         # objective function
-        ## TODO check it with Tiago
         total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
         total_util = cp.sum(cp.multiply(util, Ln))
         if settings.community_objective == "peakShaving":
@@ -81,7 +80,7 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
         elif settings.community_objective == "autonomy":
             punished_imp_exp = gamma_imp * cp.sum(q_imp) + gamma_exp * cp.sum(q_exp)
             objective = cp.Minimize(total_cost - total_util + punished_imp_exp)
-            print(objective)
+
 
         # add extra constraint if offer type is energy Budget.
         if settings.offer_type == "energyBudget":
