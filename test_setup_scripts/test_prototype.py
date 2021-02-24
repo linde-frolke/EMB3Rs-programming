@@ -106,7 +106,7 @@ agent_ids = ["sérgio", "linde", "tiago1", "tiago2"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
 agent_community = [False, False, True, True]
 lmin = np.zeros((settings.nr_of_h, 4))
-lmin[:, 2] = 1
+lmin[:, 2] = 0
 gmax = np.ones((settings.nr_of_h, 4))
 gmax[:, 2] = 0
 
@@ -140,7 +140,7 @@ result.shadow_price
 
 
 # test the other community setup
-settings.add_community_settings(objective="peakShaving")
+settings.add_community_settings(objective="peakShaving", g_peak=10.0**5)
 # set model name
 name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.community_objective)
 
