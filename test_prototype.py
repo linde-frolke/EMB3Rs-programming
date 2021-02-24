@@ -88,7 +88,7 @@ agent_types = ["prosumer", "prosumer", "consumer", "producer"]
 # =============================================================================
 
 # TEST P2P WITH PREFERENCES ########################################################################################
-md = "p2p"
+md = "pool"
 # setup inputs --------------------------------------------
 agent_ids = ["sérgio", "linde", "tiago1", "tiago2"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
