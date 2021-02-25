@@ -34,9 +34,9 @@ class ResultData:
             # store values of the optimized variables
             variables = prob.variables()
             varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-            self.Pn = pd.DataFrame(variables[varnames == "Pn"].value, columns=agent_data.agent_name)
-            self.Ln = pd.DataFrame(variables[varnames == "Ln"].value, columns=agent_data.agent_name)
-            self.Gn = pd.DataFrame(variables[varnames == "Gn"].value, columns=agent_data.agent_name)
+            self.Pn = pd.DataFrame(variables[varnames.index("Pn")].value, columns=agent_data.agent_name)
+            self.Ln = pd.DataFrame(variables[varnames.index("Ln")].value, columns=agent_data.agent_name)
+            self.Gn = pd.DataFrame(variables[varnames.index("Gn")].value, columns=agent_data.agent_name)
             if settings.market_design == "p2p":
                 # extract trade variable - a square dataframe for each time index
                 self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,

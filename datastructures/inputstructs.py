@@ -108,7 +108,7 @@ class AgentData:
             self.agent_is_in_community = None
         # add co2 emission info if needed
         if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name)
+            self.co2_emission = pd.DataFrame(np.reshape(co2, (self.nr_of_agents, self.nr_of_agents)), columns=name)
         else:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
