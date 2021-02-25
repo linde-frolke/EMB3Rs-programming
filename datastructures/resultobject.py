@@ -43,21 +43,7 @@ class ResultData:
                                          columns=agent_data.agent_name, index=agent_data.agent_name)
                             for t in range(settings.nr_of_h)]
             
-                #QoE
-                self.QoE=[]
-                for t in range(0,settings.nr_of_h):
-                    lambda_j=[]
-                    for a1 in agent_data.agent_name:
-                        for a2 in agent_data.agent_name:
-                            if self.Pn[a1][t]!=0: #avoid #DIV/0! error 
-                                lambda_j.append(agent_data.cost[a1][t]*self.Tnm[t][a1][a2]/self.Pn[a1][t])
-                            if self.Ln[a1][t]!=0: #avoid #DIV/0! error 
-                                lambda_j.append(agent_data.util[a1][t]*self.Tnm[t][a1][a2]/self.Ln[a1][t])
-                    if ((max(lambda_j)-min(lambda_j)))!=0:  #avoid #DIV/0! error        
-                        self.QoE.append(1-(st.pstdev(lambda_j)/((max(lambda_j)-min(lambda_j)))))  
-                    else:
-                        pass
-                self.qoe = np.average(self.QoE)
+                
             
             # get dual of powerbalance for each time
             if settings.market_design == "pool":
@@ -107,6 +93,24 @@ class ResultData:
                 self.shadow_price = pd.DataFrame(index=settings.timestamps, columns=agent_data.agent_name)
                 for t in settings.timestamps:
                     self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value
+                    
+                #QoE
+                self.QoE=[]
+                for t in range(0,settings.nr_of_h):
+                    lambda_j=[]
+                    for a1 in agent_data.agent_name:
+                        for a2 in agent_data.agent_name:
+                            if self.Pn[a1][t]!=0: #avoid #DIV/0! error 
+                                lambda_j.append(agent_data.cost[a1][t]*self.Tnm[t][a1][a2]/self.Pn[a1][t])
+                            if self.Ln[a1][t]!=0: #avoid #DIV/0! error 
+                                lambda_j.append(agent_data.util[a1][t]*self.Tnm[t][a1][a2]/self.Ln[a1][t])
+                    if ((max(lambda_j)-min(lambda_j)))!=0:  #avoid #DIV/0! error        
+                        self.QoE.append(1-(st.pstdev(lambda_j)/((max(lambda_j)-min(lambda_j)))))  
+                    else:
+                        pass
+                self.qoe = np.average(self.QoE)
+                
+                
             elif settings.market_design == "community":
                 raise ValueError("not implemented yet \n")
 
