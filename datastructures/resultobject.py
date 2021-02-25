@@ -112,7 +112,8 @@ class ResultData:
                 
                 
             elif settings.market_design == "community":
-                raise ValueError("not implemented yet \n")
+                self.shadow_price = "TODO!"
+                # raise ValueError("not implemented yet \n")
 
             # hourly social welfare an array of length settings.nr_of_h
             # TODO compute social welfare for each hour

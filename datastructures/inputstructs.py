@@ -6,7 +6,6 @@ import numpy as np
 import heapq
 
 
-
 # general settings object ---------------------------------------------------------------------------------------------
 class MarketSettings:
     """
@@ -42,11 +41,29 @@ class MarketSettings:
         if market_design not in options_market_design:
             raise ValueError('market_design should be one of ' + str(options_market_design))
         self.market_design = market_design
+
+        # entries to be filled in by other functions
+        self.community_objective = None
+        self.gamma_peak = None
+        self.gamma_imp = None
+        self.gamma_exp = None
         # TODO "integrated with electricity" option
         # TODO ELECTRICITY PRICE HERE
-        # TODO add co2
-        # TODO add agent locations in grid??
 
+    def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
+        """ the parameters are optional inputs"""
+        # add the options for community to the settings
+        options_objective = ["autonomy", "peakShaving"]
+        if objective not in options_objective:
+            raise ValueError("objective should be one of" + str(options_objective))
+        self.community_objective = objective
+
+        # for now, set default values of gammas
+        self.gamma_peak = g_peak
+        self.gamma_exp = g_exp
+        self.gamma_imp = g_imp
+        if self.gamma_exp >= 0.0:
+            raise ValueError("export penalty must be nonpositive")
 
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
@@ -56,7 +73,8 @@ class AgentData:
     If the input is constant in time, it is a dataframe with agent ID as column name, and the input as row
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
-    def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None):
+    def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None,
+                 is_in_community=None):
         """
         :param settings: a MarketSettings object. contains the time horizon that is needed here.
         :param name: an array with agents names, should be strings
@@ -67,19 +85,37 @@ class AgentData:
         :param lmax: array of size (nr_of_timesteps, nr_of_agents)
         :param cost:
         :param util:
-        :param co2: array of size (nr_of_timesteps, nr_of_agents)
+        :param co2: optional input. array of size (nr_of_timesteps, nr_of_agents)
+        :param is_in_community: optional input. Boolean array of size (1, nr_of_agents).
+                    contains True if is in community, False if not.
         """
 
-        print("todo, check all input types")
+        # TODO print("todo, check all input types")
         # set nr of agents, names, and types
         self.nr_of_agents = len(name)
-        print("todo make sure no ID is identical")
+        # TODO print("todo make sure no ID is identical")
         self.agent_name = name
         self.agent_type = dict(zip(name, a_type))
+        # add community info if that is needed
+        if settings.market_design == "community":
+            if is_in_community is None:
+                raise ValueError("The community market design is selected. In this case, is_in_community is "
+                                 "an obligatory input")
+            self.agent_is_in_community = pd.DataFrame(np.reshape(is_in_community, (1, self.nr_of_agents)),
+                                                      columns=name)
+            self.C = [i for i in range(self.nr_of_agents) if is_in_community[i]]
+        else:
+            self.agent_is_in_community = None
+        # add co2 emission info if needed
+        if settings.product_diff == "co2Emissions":
+            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name)
+        else:
+            self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
-        #
+        # time dependent data -------------------------------------------------
+        # check size of inputs
         if not lmin.shape == (settings.nr_of_h, self.nr_of_agents):
-            raise ValueError("qmin has to have shape (nr_of_timesteps, nr_of_agents)")
+            raise ValueError("lmin has to have shape (nr_of_timesteps, nr_of_agents)")
         # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times
         self.gmin = pd.DataFrame(gmin, columns=name)
         self.gmax = pd.DataFrame(gmax, columns=name)
@@ -88,11 +124,6 @@ class AgentData:
 
         self.cost = pd.DataFrame(cost, columns=name)
         self.util = pd.DataFrame(util, columns=name)
-
-        if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(co2, columns=name)
-        else:
-            self.co2_emission = pd.DataFrame(np.ones((1, len(name)))*np.nan, columns=name)
 
 
 # network data ---------------------------------------------------------------------------------------------------------
