@@ -4,6 +4,7 @@ from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings, Network
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from market_functions.add_energy_budget import add_energy_budget
+import itertools
 
 
 def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):
@@ -16,7 +17,7 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
     """
     # collect named constraints in cb
     cb = ConstraintBuilder()
-    
+
     if settings.offer_type == "block":
         raise ValueError("block offer for p2p not implemented yet")
     # the budget balance is an add on to simple offer formulation
@@ -52,17 +53,21 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
         for t in settings.timestamps:
             cb.add_constraint(0 <= Bnm[t], str_="B_lb_t" + str(t))
             cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
+            cb.add_constraint(Tnm[t] == Snm[t] - Bnm[t], str_="def_S_B_t" + str(t))
             # cannot sell more than I generate
-            cb.add_constraint(cp.sum(Snm[t], axis=1) <= Gn[t, :], str_="S_ub_t" + str(t))
+            # cb.add_constraint(cp.sum(Snm[t], axis=1) <= Gn[t, :], str_="S_ub_t" + str(t))
             # cannot buy more than my load
-            cb.add_constraint(cp.sum(Bnm[t], axis=1) <= Ln[t, :], str_="S_ub_t" + str(t))
+            # cb.add_constraint(cp.sum(Bnm[t], axis=1) <= Ln[t, :], str_="S_ub_t" + str(t))
 
         # constraints ----------------------------------
         # define relation between generation, load, and power injection
         cb.add_constraint(Pn == Gn - Ln, str_="def_P")
         for t in settings.timestamps:
             # trade reciprocity
-            cb.add_constraint(Tnm[t] == -np.transpose(Tnm[t]), str_="reciprocity_t" + str(t))
+            for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
+                # if not i == j:
+                if j >= i:
+                    cb.add_constraint(Tnm[t][i, j] + Tnm[t][j, i] == 0, str_="reciprocity_t" + str(t) + str(i) + str(j))
             # total trades have to match power injection
             cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
 
@@ -73,7 +78,7 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
 
         # objective function
         total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
-        total_util = cp.sum(cp.multiply(util, Ln)) 
+        total_util = cp.sum(cp.multiply(util, Ln))
         # make different objfun depending on preference settings
         if settings.product_diff == "noPref":
             objective = cp.Minimize(total_cost - total_util)
@@ -91,10 +96,11 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
                 for t in settings.timestamps:    
                     distance_penalty = cp.sum(cp.multiply(network.all_distance_percentage, Snm[t]))
                 objective = cp.Minimize(total_cost - total_util + distance_penalty)
-            
+
             if settings.product_diff == "losses":
                 for t in settings.timestamps:    
                     losses_penalty = cp.sum(cp.multiply(network.all_losses_percentage, Snm[t]))
+
                 objective = cp.Minimize(total_cost - total_util + losses_penalty)
 
         # define the problem and solve it.

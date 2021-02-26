@@ -65,6 +65,7 @@ class MarketSettings:
         if self.gamma_exp >= 0.0:
             raise ValueError("export penalty must be nonpositive")
 
+
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
     """
@@ -113,10 +114,17 @@ class AgentData:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
         # time dependent data -------------------------------------------------
+        if settings.nr_of_h == 1:
+            lmin = np.reshape(lmin, (1, self.nr_of_agents))
+            gmin = np.reshape(gmin, (1, self.nr_of_agents))
+            lmax = np.reshape(lmax, (1, self.nr_of_agents))
+            gmax = np.reshape(gmax, (1, self.nr_of_agents))
+            cost = np.reshape(cost, (1, self.nr_of_agents))
+            util = np.reshape(util, (1, self.nr_of_agents))
         # check size of inputs
         if not lmin.shape == (settings.nr_of_h, self.nr_of_agents):
             raise ValueError("lmin has to have shape (nr_of_timesteps, nr_of_agents)")
-        # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times
+        # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times, min smaller than max, etc.
         self.gmin = pd.DataFrame(gmin, columns=name)
         self.gmax = pd.DataFrame(gmax, columns=name)
         self.lmin = pd.DataFrame(lmin, columns=name)
@@ -155,7 +163,7 @@ class Network:
             self.losses[From, To] = gis_data["Losses total [W]"].iloc[row_nr]
 
 # =============================================================================
-# Star here 
+# Start here
 # =============================================================================
         #DISTANCE
         #Dijkstra's shortest path        
