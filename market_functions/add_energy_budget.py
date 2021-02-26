@@ -13,7 +13,7 @@ def add_energy_budget(constraint_builder, load_var, agent_data):
     """
     # decide on total budget
     total_budget = cp.Parameter(agent_data.nr_of_agents,
-                                value=np.sum(0.5 * (agent_data.gmin + agent_data.gmax).to_numpy(), axis=0))
+                                value=np.sum(0.5 * (agent_data.lmin + agent_data.lmax).to_numpy(), axis=0))
 
     # adapts constraintBuilder by adding the energy budget constraint for each load
     constraint_builder.add_constraint(cp.sum(load_var, axis=0) == total_budget, str_="energyBudget")
