@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "88ea343e2087ecad7e0f4e60d4ee740940dd5772d5e8650a1a5ec1e634b94e91"
+            "sha256": "3be4e78b002c2089a342d7d75fab38f7a6c09359da82df172214bb7b026c9331"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -217,6 +217,13 @@
             ],
             "markers": "python_version >= '2.7'",
             "version": "==0.3"
+        },
+        "future": {
+            "hashes": [
+                "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"
+            ],
+            "index": "pypi",
+            "version": "==0.18.2"
         },
         "idna": {
             "hashes": [
@@ -478,11 +485,11 @@
         },
         "nbclient": {
             "hashes": [
-                "sha256:0ed6e5700ad18818030a3a5f0f201408c5972d8e38793840cd9339488fd9f7c4",
-                "sha256:1e0375490cd33fda6c23e61084476298a87f34d02607a038aa8ecc6e8901615f"
+                "sha256:db17271330c68c8c88d46d72349e24c147bb6f34ec82d8481a8f025c4d26589c",
+                "sha256:e79437364a2376892b3f46bedbf9b444e5396cfb1bc366a472c37b48e9551500"
             ],
             "markers": "python_full_version >= '3.6.1'",
-            "version": "==0.5.2"
+            "version": "==0.5.3"
         },
         "nbconvert": {
             "hashes": [
@@ -927,6 +934,14 @@
                 "sha256:bfcf9411ef4bf3db7579063e0546938b1edda3d69f4e1fb8756991f5951f85d4"
             ],
             "version": "==0.4.4"
+        },
+        "tkinterx": {
+            "hashes": [
+                "sha256:50fd2841d9044b280fe5bda5df8c13b4d95e51cdf378a9e3afa6a523f31a0ca5",
+                "sha256:a826793d261aa23649eb78458a7ffb57017877b0fc84f81b3a134e145074ecb1"
+            ],
+            "index": "pypi",
+            "version": "==0.0.9"
         },
         "tornado": {
             "hashes": [

@@ -11,6 +11,8 @@ jupyterlab = "*"
 xlrd = "*"
 cvxpy = "*"
 matplotlib = "*"
+future = "*"
+tkinterx = "*"
 
 [dev-packages]
 

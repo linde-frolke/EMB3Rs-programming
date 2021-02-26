@@ -50,4 +50,3 @@ result.Pn
 result.Tnm[0]
 result.shadow_price[0]
 
-result.
