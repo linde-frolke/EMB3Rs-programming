@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def prep_plot_market_clearing_pool(period, agent_data):

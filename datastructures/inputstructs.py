@@ -65,6 +65,7 @@ class MarketSettings:
         if self.gamma_exp >= 0.0:
             raise ValueError("export penalty must be nonpositive")
 
+
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
     """
@@ -162,7 +163,7 @@ class Network:
             self.losses[From, To] = gis_data["Losses total [W]"].iloc[row_nr]
 
 # =============================================================================
-# Star here 
+# Start here
 # =============================================================================
         #DISTANCE
         #Dijkstra's shortest path        

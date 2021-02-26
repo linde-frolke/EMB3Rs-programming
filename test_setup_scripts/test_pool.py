@@ -4,15 +4,13 @@ script that makes input datastructures, then applies market functions
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-import tkinter
 # import own modules
 from datastructures.inputstructs import AgentData, MarketSettings, Network
 from market_functions.pool_market import make_pool_market
 from market_functions.p2p_market import make_p2p_market
 from market_functions.community_market import make_community_market
 from ast import literal_eval
-mpl.use('TkAgg')
+
 
 # TEST POOL #######################################################################################
 md = "pool"
@@ -47,7 +45,6 @@ elif settings.market_design == "p2p":  # P2P should be here
 
 # see the result object
 result.name
-result.joint
 result.Ln
 result.shadow_price
 
