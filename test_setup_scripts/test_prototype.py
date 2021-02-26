@@ -22,9 +22,9 @@ agent_ids = ["sérgio", "linde", "tiago1", "tiago2"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
 
 lmin = np.zeros((settings.nr_of_h, 4))
-#lmin[:, 2] = 1
+lmin[:, 2] = 1
 gmax = np.ones((settings.nr_of_h, 4))
-#gmax[:, 2] = 0
+gmax[:, 2] = 0
 agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
                        gmin=np.zeros((settings.nr_of_h, 4)), gmax=gmax,
                        lmin=lmin, lmax=np.ones((settings.nr_of_h, 4)),
@@ -77,9 +77,10 @@ result.joint
 result.Ln
 result.Gn
 result.Pn
-result.varnames
+# result.varnames
 # result of trades at time 0
-result.Tnm[0]
+result.Tnm[1]
+result.shadow_price[1]
 
 # TEST P2P WITH PREFERENCES ########################################################################################
 md = "p2p_co2"

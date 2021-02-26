@@ -5,7 +5,7 @@ import statistics as st
 import matplotlib.pyplot as plt
 from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
-
+import itertools
 
 
 class ResultData:
@@ -80,7 +80,7 @@ class ResultData:
                 yy_gen=np.insert(yy_gen,0,0)
                 yy_gen=np.insert(yy_gen,-1,yy_gen[-1])
                 
-                #Plotting
+                # Plotting
                 plt.step(data1,yy_gen) #Generation curve
                 plt.step(data2,yy_load) #Load curve
                 plt.plot(sum(self.Pn.T[hour]),abs(self.shadow_price.T[hour]),'ro') #(heat negotiated,shadow price)
@@ -90,22 +90,28 @@ class ResultData:
                 plt.ylim([0, max(yy_load)*1.1])
                 
             elif settings.market_design == "p2p":
-                self.shadow_price = pd.DataFrame(index=settings.timestamps, columns=agent_data.agent_name)
+                self.shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
+                                     for t in settings.timestamps]
                 for t in settings.timestamps:
-                    self.shadow_price.iloc[t, :] = cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value
-                    
-                #QoE
-                self.QoE=[]
-                for t in range(0,settings.nr_of_h):
+                    for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
+                        # if not i == j:
+                        if j >= i:
+                            constr_name = "reciprocity_t" + str(t) + str(i) + str(j)
+                            self.shadow_price[t].iloc[i, j] = cb.get_constraint(str_=constr_name).dual_value
+                            self.shadow_price[t].iloc[j, i] = - self.shadow_price[t].iloc[i, j]
+
+                # QoE
+                self.QoE = []
+                for t in range(0, settings.nr_of_h):
                     lambda_j=[]
                     for a1 in agent_data.agent_name:
                         for a2 in agent_data.agent_name:
-                            if self.Pn[a1][t]!=0: #avoid #DIV/0! error 
+                            if self.Pn[a1][t] != 0:  # avoid #DIV/0! error
                                 lambda_j.append(agent_data.cost[a1][t]*self.Tnm[t][a1][a2]/self.Pn[a1][t])
-                            if self.Ln[a1][t]!=0: #avoid #DIV/0! error 
+                            if self.Ln[a1][t] != 0:  # avoid #DIV/0! error
                                 lambda_j.append(agent_data.util[a1][t]*self.Tnm[t][a1][a2]/self.Ln[a1][t])
-                    if ((max(lambda_j)-min(lambda_j)))!=0:  #avoid #DIV/0! error        
-                        self.QoE.append(1-(st.pstdev(lambda_j)/((max(lambda_j)-min(lambda_j)))))  
+                    if (max(lambda_j) - min(lambda_j)) != 0:  # avoid #DIV/0! error
+                        self.QoE.append(1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                     else:
                         pass
                 self.qoe = np.average(self.QoE)
@@ -133,7 +139,3 @@ class ResultData:
                                       columns=[settings.market_design],
                                       index=["QoE", "settlement", "Social Welfare"])
 
-            
-            
-                        
-            
