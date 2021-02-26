@@ -52,6 +52,7 @@ elif settings.market_design == "p2p":  # P2P should be here
 result.name
 result.joint
 result.Ln
+result.shadow_price
 
 # TEST P2P ########################################################################################
 md = "p2p"
