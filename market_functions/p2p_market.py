@@ -80,20 +80,21 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
         else:
             # construct preference matrix
             # TODO could move this to AgentData structure
-            if settings.product_diff == "co2Emissions":
+            if settings.product_diff == "co2Emissions": 
+                emissions_p = agent_data.co2_emission/sum(agent_data.co2_emission.T[0]) #percentage
+                emissions_p = np.tile(emissions_p,(len(agent_data.agent_name),1))
                 for t in settings.timestamps:
-                    co2_penalty = cp.sum(cp.multiply(agent_data.co2_emission, Tnm[t]))
-                    #Verificar com a linde se a multiplicação está a ser bem feita e se é Tnm
-
-                objective = cp.Minimize(total_cost - total_util + co2_penalty)
+                    co2_penalty = cp.sum(cp.multiply(np.array(emissions_p), Snm[t]))
+                objective = cp.Minimize(total_cost - total_util + co2_penalty )
+                
             if settings.product_diff == "networkDistance":
                 for t in settings.timestamps:    
-                    distance_penalty = cp.sum(cp.multiply(network.all_distance_percentage, Tnm[t]))
+                    distance_penalty = cp.sum(cp.multiply(network.all_distance_percentage, Snm[t]))
                 objective = cp.Minimize(total_cost - total_util + distance_penalty)
             
             if settings.product_diff == "losses":
                 for t in settings.timestamps:    
-                    losses_penalty = cp.sum(cp.multiply(network.all_losses_percentage, Tnm[t]))
+                    losses_penalty = cp.sum(cp.multiply(network.all_losses_percentage, Snm[t]))
                 objective = cp.Minimize(total_cost - total_util + losses_penalty)
 
         # define the problem and solve it.

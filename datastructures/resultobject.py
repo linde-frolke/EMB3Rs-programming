@@ -83,7 +83,7 @@ class ResultData:
                 #Plotting
                 plt.step(data1,yy_gen) #Generation curve
                 plt.step(data2,yy_load) #Load curve
-                plt.plot(sum(self.Pn.T[hour]),abs(self.shadow_price.T[hour]),'ro') #(heat negotiated,shadow price)
+                plt.plot(sum(self.Gn.T[hour]),abs(self.shadow_price.T[hour]),'ro') #(heat negotiated,shadow price)
                 plt.ylabel('Price (€/kWh)')
                 plt.xlabel('Heat (kWh)')
                 plt.xlim([0, max(data2)*1.1])
