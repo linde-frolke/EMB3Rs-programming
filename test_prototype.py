@@ -98,9 +98,6 @@ name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + 
 
 # agent data
 random_co2 = np.random.rand(len(agent_ids))
-random_co2 = random_co2/sum(random_co2) #percentage
-random_co2 = np.tile(random_co2,(len(agent_ids),1)) #Dimension [len(agents_ids) x nr_of_h] 
-
 
 agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
                        gmin=np.zeros((settings.nr_of_h, 4)), gmax=np.ones((settings.nr_of_h, 4)),
