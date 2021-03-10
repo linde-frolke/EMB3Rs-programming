@@ -49,6 +49,14 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
         if settings.community_objective == "peakShaving":
             q_peak = cp.Variable(name="q_peak")
 
+        alpha = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="alpha", nonneg=True)  # buy from outside
+        cb.add_constraint(alpha[:, agent_data.notC] == 0, str_="set_alpha_zero")  # for not in community
+        beta = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="beta", nonneg=True)  # sell to outside
+        cb.add_constraint(beta[:, agent_data.notC] == 0, str_="set_beta_zero")  # for not in community
+        # sale to / buy from community (negative if bought)
+        s_comm = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="s_comm")
+        cb.add_constraint(s_comm[:, agent_data.notC] == 0, str_="set_beta_zero")  # for not in community
+
         # variable limits ----------------------------------
         #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
         cb.add_constraint(Gmin <= Gn, str_="G_lb")
@@ -63,11 +71,21 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
         # constraints --------------------------------------
         # define power injection as net generation
         cb.add_constraint(Pn == Gn - Ln, str_="def_P")
-        # power balance at each time - a list of n_t constraints
-        cb.add_constraint(cp.sum(Pn, axis=1) == 0, str_="powerbalance")
 
-        # constraints particular to community
-        cb.add_constraint(q_exp - q_imp == sum(Pn[:, i] for i in agent_data.C), str_="def_imp_exp")
+        # constraints particular to community market
+        # agents outside the community power balance
+        cb.add_constraint(q_imp - q_exp == sum(Pn[:, i] for i in agent_data.notC), str_="noncom_powerbalance")
+
+        # net injection is sold to community, bought from community, or sold/bought from outside
+        cb.add_constraint(Pn[:, agent_data.C] == s_comm[:, agent_data.C] - alpha[:, agent_data.C] +
+                          beta[:, agent_data.C], str_="comm_agent_powerbalance")
+        # internal trades add up to zero
+        cb.add_constraint(-cp.sum(s_comm, axis=1) == 0, str_="internal_trades")
+        # define total import and export
+        cb.add_constraint(cp.sum(alpha, axis=1) == q_imp, str_="total_imp")
+        cb.add_constraint(q_exp == cp.sum(beta, axis=1), str_="total_exp")
+
+
         if settings.community_objective == "peakShaving":
             cb.add_constraint(q_imp <= q_peak, str_="def_peak")
 
