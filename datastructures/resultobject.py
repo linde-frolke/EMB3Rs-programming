@@ -44,6 +44,10 @@ class ResultData:
                 self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
                                          columns=agent_data.agent_name, index=agent_data.agent_name)
                             for t in range(settings.nr_of_h)]
+            elif settings.market_design == "community":
+                trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
+                                               variables[varnames.index("q_exp")].value])
+                self.Tnm = pd.DataFrame(trade_array, index=settings.timestamps, columns=["q_imp", "q_exp"])
 
             # get values related to duals  ----------------------------------------
             if settings.market_design == "pool":
@@ -60,12 +64,18 @@ class ResultData:
                             self.shadow_price[t].iloc[i, j] = cb.get_constraint(str_=constr_name).dual_value
                             self.shadow_price[t].iloc[j, i] = - self.shadow_price[t].iloc[i, j]
             elif settings.market_design == "community":
-                self.shadow_price = "TODO!"
+                price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
+                                              cb.get_constraint(str_="total_exp").dual_value,
+                                              cb.get_constraint(str_="total_imp").dual_value,
+                                              cb.get_constraint(str_="noncom_powerbalance").dual_value])
+                self.shadow_price = pd.DataFrame(price_array, index=settings.timestamps,
+                                                 columns=["community", "export", "import", "non-community"])
 
             # initialize empty slots for uncomputed result quantities
             self.QoE = None
             self.social_welfare_h = None
             self.settlement = None
+            # fill the empty slots
             self.compute_output_quantities(settings, agent_data)
 
     # a function to make all relevant output variables
