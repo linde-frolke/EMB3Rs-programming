@@ -76,7 +76,7 @@ class ResultData:
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "p2p":
             # QoE
-            self.QoE = []
+            self.QoE = pd.DataFrame(index=range(settings.nr_of_h),columns=["QoE"])
             for t in range(0, settings.nr_of_h):
                 lambda_j = []
                 for a1 in agent_data.agent_name:
@@ -86,7 +86,7 @@ class ResultData:
                         if self.Ln[a1][t] != 0:  # avoid #DIV/0! error
                             lambda_j.append(agent_data.util[a1][t] * self.Tnm[t][a1][a2] / self.Ln[a1][t])
                 if (max(lambda_j) - min(lambda_j)) != 0:  # avoid #DIV/0! error
-                    self.QoE.append(1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
+                    self.QoE["QoE"][t] = (1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                 else:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
@@ -95,13 +95,24 @@ class ResultData:
             # raise Warning("community shadow price and QoE not implemented yet \n")
 
         # hourly social welfare an array of length settings.nr_of_h
-        # TODO compute social welfare for each hour!!
-        social_welfare = np.nan * np.ones(settings.nr_of_h)
-        self.social_welfare_h = social_welfare
+        self.social_welfare_h = pd.DataFrame(index=range(settings.nr_of_h),columns=["Social Welfare"])
+        for t in range(0, settings.nr_of_h):
+            total_cost = np.sum(np.multiply(agent_data.cost.T[t], self.Gn.T[t]))
+            total_util = np.sum(np.multiply(agent_data.util.T[t], self.Ln.T[t]))
+            self.social_welfare_h["Social Welfare"][t] = (total_cost - total_util)
+        
+        
+        
         # TODO compute settlement for each hour!!
         # ObfFun not considering penalties; Must be equal to social_welfare except when considering preferences
-        self.settlement = (np.sum(np.sum(np.multiply(agent_data.cost, self.Gn))) -
-                           np.sum(np.sum(np.multiply(agent_data.util, self.Ln))))
+        #self.settlement = (np.sum(np.sum(np.multiply(agent_data.cost, self.Gn))) -
+                           #np.sum(np.sum(np.multiply(agent_data.util, self.Ln))))
+        #self.settlement = np.zeros([settings.nr_of_h,len(agent_data.agent_name)])
+        self.settlement = pd.DataFrame(index=range(settings.nr_of_h),columns=agent_data.agent_name)
+        for t in range(0, settings.nr_of_h):
+            for agent in agent_data.agent_name:
+                self.settlement[agent][t] = agent_data.cost[agent][t]*self.Gn[agent][t] - agent_data.util[agent][t]*self.Ln[agent][t]
+        
 
     # a function working on the result object, to create plots
     def plot_market_clearing(self, period: int, settings: MarketSettings, agent_data: AgentData, outfile: str):
