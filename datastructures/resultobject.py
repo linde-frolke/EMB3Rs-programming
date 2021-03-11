@@ -7,7 +7,8 @@ from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from plotting_processing_functions.plot_pool_clearing import prep_plot_market_clearing_pool
 import itertools
-
+from datetime import datetime
+import pickle
 
 class ResultData:
     def __init__(self, name, prob: cp.problems.problem.Problem,
@@ -133,3 +134,17 @@ class ResultData:
             return "success"
         else:
             return print("not implemented yet")
+
+    def save_as_pickle(self, path_to_file=None):
+        if path_to_file is None:
+            # generate file path
+            today = datetime.now()
+            filename = self.market + today.strftime("%d%m%Y_%H:%M:%S") + ".pickle"
+            path_to_file = "./pickled_data/" + filename
+
+        # open a file, where you want to store the data
+        file = open(path_to_file, 'wb')
+        # dump information to that file
+        pickle.dump(self, file)
+        # close the file
+        file.close()

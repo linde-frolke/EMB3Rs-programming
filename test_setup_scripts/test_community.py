@@ -7,7 +7,9 @@ from market_functions.pool_market import make_pool_market
 from market_functions.p2p_market import make_p2p_market
 from market_functions.community_market import make_community_market
 from ast import literal_eval
-
+import os
+os.getcwd()
+#os.chdir("pickled_data")
 
 # TEST COMMUNITY ##################################################################################################
 md = "community"
@@ -53,6 +55,9 @@ result.Tnm
 
 result.shadow_price
 result.settlement
+
+result.save_as_pickle()
+
 
 # test the other community setup
 settings.add_community_settings(objective="peakShaving", g_peak=10.0**2)
