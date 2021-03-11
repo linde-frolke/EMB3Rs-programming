@@ -55,3 +55,22 @@ elif settings.market_design == "p2p":  # P2P should be here
 else:
     raise ValueError("settings.market_design has to be in [p2p, community, pool]")
 
+
+#MAIN RESULTS
+    
+#Shadow price per hour
+print(result.shadow_price)
+
+#Energy dispatch
+print(result.Pn)
+
+#Settlement
+print(result.settlement)
+
+#Social welfare
+print(result.social_welfare_h)
+
+#Quality of Experience (QoE)
+print(result.QoE)
+    
+    
