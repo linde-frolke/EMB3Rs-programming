@@ -1,7 +1,9 @@
 # Prototype of Markets Module
 The Market Module (MM) will provide the user with economic and fairness indicators including energy transaction, market price, social welfare, fairness among prices. This will be done by short-term and long market analyses that simulate various market structures and incorporate business conditions and network models. The MM will consider the existing Pool market as well as new, decentralized market setups, here named “community” and “peer-t-peer”. The modeling of heat/cold sources and sinks will include flexibility, offering price and business preferences. This document describes the implementation of the first prototype of the MM, which covers the programming of MM for the short-term analysis.
+
 ## Needed tools
 The prototype is written in Python 3.8, and is organized using functions and classes written in .py files. Required Python packages are listed in the file ‘requirements.txt’.
+
 ## Main Features and access to the prototype
 The first prototype contains only the short term market. It should also be noted that block bids have not been implemented yet. 
 
@@ -16,9 +18,8 @@ The first version of the MM prototype is structured as follows:
     • The function named add_energy_budget() in file “market_functions/add_energy_budget.py” implements the energy budget constraint, that may be used in any of the 3 market types
     • For now, we have created some scripts with case studies for each market type to make sure the functions are working as they should. Until we are connected to some input data from user interface, we are using these scripts to test our module. They are located in the base folder and in “/test_setup_scripts”, with name ‘test_prototype_...’ and a description of the type of market that is tested.
 
-The MM module can be accessed through the following link:
-    • Market Module GitHub repo called EMB3Rs-programming - link
 The users can run the prototype through the py.file ‘test_prototype’ in the folder ‘test_setup_scripts/’ in the GitHub repo. Further instructions are also available in the README file.
+
 ## Inputs and Outputs
 Inputs: (for now, inputs are written in scripts in the /test_setup_scripts/ folder. )
     • Settings: 
