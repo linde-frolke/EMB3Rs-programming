@@ -105,6 +105,7 @@ class AgentData:
             self.agent_is_in_community = pd.DataFrame(np.reshape(is_in_community, (1, self.nr_of_agents)),
                                                       columns=name)
             self.C = [i for i in range(self.nr_of_agents) if is_in_community[i]]
+            self.notC = [i for i in range(self.nr_of_agents) if not is_in_community[i]]
         else:
             self.agent_is_in_community = None
         # add co2 emission info if needed
