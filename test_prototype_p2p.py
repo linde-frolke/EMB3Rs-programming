@@ -4,6 +4,7 @@ script that makes input datastructures, then applies market functions
 import numpy as np
 import pandas as pd
 
+
 # import own modules
 from datastructures.inputstructs import AgentData, MarketSettings, Network
 from market_functions.pool_market import make_pool_market
@@ -17,10 +18,12 @@ md = "p2p"
 agent_ids = ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
 
-settings = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref", market_design=md)
+settings = MarketSettings(nr_of_hours=12, offer_type="block", prod_diff="noPref", market_design=md)
 name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)
 
 #DATA
+block_offer={'prosumer_1':[[0,1]],'producer_1':[[3,4,5,6],[10,11]]}
+
 co2_emissions = np.array([1, 1.1, 0, 1.8])
 gmin=np.zeros((settings.nr_of_h, len(agent_ids)))
 gmax=np.array([[1,2,0,5],[3,4,0,4],[1,5,0,3],[0,0,0,0],[1,1,0,1],[2,3,0,1],[4,2,0,5],[3,4,0,4],[1,5,0,3],
@@ -37,7 +40,7 @@ agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
                        gmin=gmin, gmax=gmax,
                        lmin=lmin, lmax=lmax,
                        cost=cost, util=util,
-                       co2=co2_emissions)
+                       co2=co2_emissions, block_offer=block_offer)
 
 gis_data = pd.read_csv("test_setup_scripts/Results_GIS.csv")
 gis_data["From/to"] = [literal_eval(i) for i in gis_data["From/to"]]

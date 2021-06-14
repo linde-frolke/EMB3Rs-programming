@@ -75,7 +75,7 @@ class AgentData:
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
     def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None,
-                 is_in_community=None):
+                 is_in_community=None, block_offer=None):
         """
         :param settings: a MarketSettings object. contains the time horizon that is needed here.
         :param name: an array with agents names, should be strings
@@ -112,6 +112,9 @@ class AgentData:
             self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name) #1xnr_of_agents dimension
         else:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
+        
+        if settings.offer_type == 'block':      
+            self.block=block_offer
 
         # time dependent data -------------------------------------------------
         if settings.nr_of_h == 1:
