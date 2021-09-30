@@ -108,11 +108,14 @@ class AgentData:
             self.notC = [i for i in range(self.nr_of_agents) if not is_in_community[i]]
         else:
             self.agent_is_in_community = None
+            self.C = None
+            self.notC = None
+
         # add co2 emission info if needed
         if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name) #1xnr_of_agents dimension
+            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name)  #1xnr_of_agents dimension
         else:
-            self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
+            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
         # time dependent data -------------------------------------------------
         if settings.nr_of_h == 1:
