@@ -4,14 +4,15 @@ from datastructures.resultobject import ResultData
 from datastructures.inputstructs import AgentData, MarketSettings
 from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from market_functions.add_energy_budget import add_energy_budget
+from market_functions.add_network import add_network_directions
 
-
-def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings):
+def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings, network=None):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
     :param name: str
     :param agent_data:
     :param settings:
+    :param network: an object of class Network, or None if the network data is not needed.
     :return: ResultData object.
     """
     # collect named constraints in cb
@@ -66,7 +67,14 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings)
     # add extra constraint if offer type is energy Budget.
     if settings.offer_type == "energyBudget":
         # add energy budget.
-        cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data) 
+        cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
+
+    # add network constraints if this is in the settings
+    if settings.network_type == "direction":
+        if network is None:
+            raise ValueError("You need to give a Network object as input, if you want to include network constraints")
+        else:
+            cb = add_network_directions(cb, settings, network, Pn)
 
     # common for all offer types ------------------------------------------------
     # define the problem and solve it.
