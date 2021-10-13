@@ -1,0 +1,34 @@
+import cvxpy as cp
+import numpy as np
+from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+
+
+def add_network_directions(constraint_builder, settings, network_data, Pn_var):
+    """
+    :param constraint_builder A constraintBuilder object.
+    :param settings     Object of type MarketSetting
+    :param network_data    An object of type Network, containing set of nodes and edges, and the node for each agent.
+    :param Pn_var    A cp.variable of size (hours, agents) containing the power injection variable for each agent.
+
+    :return: the constraintBuilder with added power flow direction constraints.
+    """
+
+    # define network flows
+    Ppipe = cp.Variable((settings.nr_of_h, len(network_data.E)))
+
+    # define total nodal power injections
+    Pnode = cp.Variable((settings.nr_of_h, len(network_data.N)))
+    for t in settings.timestamps:
+        for n in range(len(network_data.N)):
+            select_agents = np.where(network_data.loc_a == network_data.N[n])
+            constraint_builder.add_constraint(cp.sum(Pn_var[t, select_agents]) == Pnode[t, n],
+                                              str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
+
+    # add flow continuity constraint relating nodal and pipeline power flows
+    for t in settings.timestamps:
+        constraint_builder.add_constraint(network_data.A @ Ppipe[t, :] == Pnode[t, :], str_="flow_continuity")
+
+    # adapt constraintBuilder by adding pipeline flow restrictions
+    constraint_builder.add_constraint(Ppipe >= 0, str_="unidirectional_pipeline_flow")
+
+    return constraint_builder
