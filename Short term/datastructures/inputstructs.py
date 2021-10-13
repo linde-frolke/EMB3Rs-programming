@@ -13,7 +13,7 @@ class MarketSettings:
     On creation, it checks whether settings are valid
     """
     def __init__(self, nr_of_hours, offer_type: str, prod_diff: str,
-                 market_design: str):
+                 market_design: str, network_type=None):
         """
         create MarketSettings object if all inputs are correct
         :param nr_of_hours: Integer between 1 and ... ?
@@ -49,6 +49,12 @@ class MarketSettings:
         self.gamma_exp = None
         # TODO "integrated with electricity" option
         # TODO ELECTRICITY PRICE HERE
+        if network_type is not None:
+            options_network_type = ["direction"]
+            if network_type not in options_network_type:
+                raise ValueError("network_type should be None or one of " + str(options_network_type))
+
+
 
     def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
         """ the parameters are optional inputs"""
@@ -143,7 +149,7 @@ class AgentData:
 
 # network data ---------------------------------------------------------------------------------------------------------
 class Network:
-    def __init__(self, agent_data, gis_data): # agent_loc,
+    def __init__(self, agent_data, gis_data, settings): # agent_loc,
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
@@ -152,11 +158,15 @@ class Network:
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
         # TODO get this data from GIS module.
-        # # node numbers
-        # self.N = nodes
-        # self.E = edges
-        # define location where agents are
-        # self.loc_a = agent_loc  # TODO map agent id to node numbers
+        if settings.network_type is not None:
+            print("I have to add the GIS data here")
+            # # node numbers
+            # self.N = gis_data.nodes  # set of nodes
+            # self.E = gis_data.from_to  # set of edges
+            # make the A matrix
+            # self.A = TODO
+            # define location where agents are
+            # self.loc_a = agent_loc  # TODO map agent id to node numbers
 
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
