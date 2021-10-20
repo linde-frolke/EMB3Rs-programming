@@ -115,14 +115,10 @@ class AgentData:
         if settings.product_diff == "co2Emissions":
             self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name)  #1xnr_of_agents dimension
         else:
-<<<<<<< HEAD:Short term/datastructures/inputstructs.py
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
         
         if settings.offer_type == 'block':      
-            self.block=block_offer
-=======
-            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
->>>>>>> linde-community-make-complete:datastructures/inputstructs.py
+            self.block = block_offer
 
         # time dependent data -------------------------------------------------
         if settings.nr_of_h == 1:
