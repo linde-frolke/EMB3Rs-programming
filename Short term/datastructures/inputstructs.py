@@ -53,8 +53,12 @@ class MarketSettings:
             options_network_type = ["direction"]
             if network_type not in options_network_type:
                 raise ValueError("network_type should be None or one of " + str(options_network_type))
-
-        self.network_type = network_type
+            else:
+                self.network_type = network_type
+            if not offer_type == "simple":
+                raise ValueError("If you want network-awareness, offer_type must be 'simple'")
+            if not market_design == "pool":
+                raise NotImplementedError("network-aware is not implemented for p2p and community markets")
 
     def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
         """ the parameters are optional inputs"""
