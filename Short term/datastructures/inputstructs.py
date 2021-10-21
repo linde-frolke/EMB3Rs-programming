@@ -54,7 +54,7 @@ class MarketSettings:
             if network_type not in options_network_type:
                 raise ValueError("network_type should be None or one of " + str(options_network_type))
 
-
+        self.network_type = network_type
 
     def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
         """ the parameters are optional inputs"""
@@ -153,20 +153,31 @@ class Network:
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
-        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m), total costs
+        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m),
+                        total costs
+        :param settings: a MarketSettings object
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
-        # TODO get this data from GIS module.
+
         if settings.network_type is not None:
-            print("I have to add the GIS data here")
-            # # node numbers
-            # self.N = gis_data.nodes  # set of nodes
-            # self.E = gis_data.from_to  # set of edges
+            # extract node numbers from GIS data
+            nodes = np.array(list(set([item for t in gis_data["From/to"] for item in t])))
+            self.N = nodes
+            self.nr_of_n = len(self.N)
+            self.P = gis_data["From/to"]  # tuples
+            self.nr_of_p = len(self.P)
             # make the A matrix
-            # self.A = TODO
+            A = np.zeros((len(self.N), len(self.P)))
+            for p_nr in range(self.nr_of_p):
+                p = self.P[p_nr]
+                n1_nr = np.where(self.N == p[0])
+                n2_nr = np.where(self.N == p[1])
+                A[n1_nr, p_nr] = 1
+                A[n2_nr, p_nr] = -1
+            self.A = A
             # define location where agents are
-            # self.loc_a = agent_loc  # TODO map agent id to node numbers
+            # Not needed - each agent will be at own node, so node == agent.
 
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
