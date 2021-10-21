@@ -45,7 +45,8 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
     cb.add_constraint(Pn == Gn - Ln, str_="def_P")
 
     # power balance at each time - a list of n_t constraints
-    cb.add_constraint(-cp.sum(Pn, axis=1) == 0, str_="powerbalance")
+    if settings.network_type is None:
+        cb.add_constraint(-cp.sum(Pn, axis=1) == 0, str_="powerbalance")
 
     # objective function
     total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
@@ -94,6 +95,6 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
         raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
     # store result in result object
-    result = ResultData(name, prob, cb, agent_data, settings)
+    result = ResultData(name, prob, cb, agent_data, settings, network_data=network)
 
     return result
