@@ -6,6 +6,7 @@ from constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from market_functions.add_energy_budget import add_energy_budget
 from market_functions.add_network import add_network_directions
 
+
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings, network=None):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
@@ -51,18 +52,20 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
     total_util = cp.sum(cp.multiply(util, Ln))
     objective = cp.Minimize(total_cost - total_util)
 
-       
-    
+    # add block offers
     if settings.offer_type == "block":
-        #Binary variable
-        b = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents),boolean=True ,name="b")
+        # Binary variable
+        b = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), boolean=True, name="b")
         
         for agent in agent_data.block:
             for j in agent_data.block[agent]:
                 for hour in j:
-                    #agent_ids.index(agent)->getting the agent's index
-                    cb.add_constraint(Gn[hour,agent_data.agent_name.index(agent)] == Gmax[hour][agent_data.agent_name.index(agent)]*b[hour,agent_data.agent_name.index(agent)], str_='block_constraint1') 
-                    cb.add_constraint(cp.sum(b[j,agent_data.agent_name.index(agent)]) == len(j)*b[j[0],agent_data.agent_name.index(agent)], str_='block_constraint2')
+                    # agent_ids.index(agent)->getting the agent's index
+                    cb.add_constraint(Gn[hour, agent_data.agent_name.index(agent)] ==
+                                      Gmax[hour][agent_data.agent_name.index(agent)] *
+                                      b[hour, agent_data.agent_name.index(agent)], str_='block_constraint1')
+                    cb.add_constraint(cp.sum(b[j, agent_data.agent_name.index(agent)]) ==
+                                      len(j)*b[j[0], agent_data.agent_name.index(agent)], str_='block_constraint2')
  
     # add extra constraint if offer type is energy Budget.
     if settings.offer_type == "energyBudget":
