@@ -178,6 +178,7 @@ class Network:
             self.A = A
             # define location where agents are
             # Not needed - each agent will be at own node, so node == agent.
+            self.loc_a = self.N  # TODO for now, put this. can be removed later
 
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
