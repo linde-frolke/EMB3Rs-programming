@@ -19,9 +19,9 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
         # define total nodal power injections
         Pnode = cp.Variable((settings.nr_of_h, network_data.nr_of_n))
         for t in settings.timestamps:
-            for n in range(len(network_data.N)):
+            for n in range(network_data.nr_of_n):
                 select_agents = np.where(network_data.loc_a == network_data.N[n])
-                constraint_builder.add_constraint(cp.sum(Pn_var[t, select_agents]) == Pnode[t, n],
+                constraint_builder.add_constraint(Pnode[t, n] == cp.sum(Pn_var[t, select_agents]),
                                                   str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
 
         # add flow continuity constraint relating nodal and pipeline power flows
