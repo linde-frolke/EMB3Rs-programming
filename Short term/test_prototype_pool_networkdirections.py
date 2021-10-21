@@ -20,12 +20,12 @@ md = "pool"
 agent_ids = ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"]
 agent_types = ["prosumer", "prosumer", "consumer", "producer"]
 
-settings = MarketSettings(nr_of_hours=12, offer_type="block", prod_diff="noPref", market_design=md,
+settings = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref", market_design=md,
                           network_type="direction")
-name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)
+name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff) + \
+    "_" + str(settings.network_type)
 
 # DATA
-block_offer = {'prosumer_1': [[0, 1]], 'producer_1': [[3, 4, 5, 6], [10, 11]]}
 co2_emissions = np.array([1, 1.1, 0, 1.8])
 gmin = np.zeros((settings.nr_of_h, len(agent_ids)))
 gmax = np.array(
@@ -48,32 +48,26 @@ agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
                        gmin=gmin, gmax=gmax,
                        lmin=lmin, lmax=lmax,
                        cost=cost, util=util,
-                       co2=co2_emissions, block_offer=block_offer)
+                       co2=co2_emissions)
 
 gis_data = pd.read_csv("Short term/test_setup_scripts/Results_GIS.csv")
 gis_data["From/to"] = [literal_eval(i) for i in gis_data["From/to"]]
 network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 
-network.N
-network.P
-network.A
 
-
-# set model name
-name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)
 # construct and solve market -----------------------------
 if settings.market_design == "pool":
-    result = make_pool_market(name="test", agent_data=agent_data, settings=settings)
+    result = make_pool_market(name=name, agent_data=agent_data, settings=settings, network=network)
 elif settings.market_design == "community":
     print("the " + settings.market_design + " market is not implemented yet")
 elif settings.market_design == "p2p":  # P2P should be here
-    result = make_p2p_market(name="test", agent_data=agent_data, settings=settings, network=network)
+    result = make_p2p_market(name=name, agent_data=agent_data, settings=settings, network=network)
 else:
     raise ValueError("settings.market_design has to be in [p2p, community, pool]")
 
 # MAIN RESULTS
 
-# Shadow price per hour
+# Shadow price per hour per node
 print(result.shadow_price)
 
 # Energy dispatch
@@ -85,5 +79,19 @@ print(result.settlement)
 # Social welfare
 print(result.social_welfare_h)
 
-# Market Clearing Figure
+# Market Clearing Figure - not implemented for this case
 print(result.plot_market_clearing(0, settings, agent_data, 'pool_0'))  # user must select the hour
+
+# COMPARE TO MARKET WITHOUT NETWORK -------------------------------------------------
+# all other settings identical
+settings2 = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref",
+                           market_design=md, network_type=None)
+name2 = "test_" + str(settings2.market_design) + "_" + str(settings2.offer_type) + "_" + str(settings2.product_diff) + \
+    "_" + str(settings2.network_type)
+result2 = make_pool_market(name=name2, agent_data=agent_data, settings=settings2, network=network)
+
+result2.shadow_price
+
+# we can see that prosumer 1 can only export, producer 1 can only import (as it is on a destination node)
+print(result2.Pn)
+print(result.Pn)
