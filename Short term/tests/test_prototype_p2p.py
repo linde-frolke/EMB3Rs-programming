@@ -4,6 +4,7 @@ script that makes input datastructures, then applies market functions
 import numpy as np
 import pandas as pd
 
+
 # import own modules
 from datastructures.inputstructs import AgentData, MarketSettings, Network
 from market_functions.pool_market import make_pool_market
@@ -15,10 +16,10 @@ from ast import literal_eval
 # setup inputs --------------------------------------------
 user_input={'md': 'p2p',
             'nr_of_hours': 12,
-            'offer_type': 'block',
-            'prod_diff':'co2Emissions'}
+            'offer_type': 'simple',
+            'prod_diff':'noPref'}
 agent_ids = {'agent_ids': ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"]}
-agent_types = {'agent_types': ["prosumer", "prosumer", "consumer", "producer"]}  
+agent_types = {'agent_types': ["prosumer", "prosumer", "consumer", "producer"]}           
 
 settings = MarketSettings(nr_of_hours=user_input['nr_of_hours'], offer_type=user_input['offer_type'], 
                           prod_diff=user_input['prod_diff'], market_design=user_input['md'])
@@ -46,6 +47,7 @@ agent_data = AgentData(settings=settings, name=agent_ids['agent_ids'], a_type=ag
                        cost=cost['cost'], util=util['util'],
                        co2=co2_emissions['co2_emissions'], block_offer=block_offer)
 
+
 gis_data = {'From/to':[(0,1),(1,2),(1,3)], 
             'Losses total [W]':[22969.228855, 24122.603833,18138.588662],
             'Length':[1855.232413,1989.471069,1446.688900], 
@@ -66,6 +68,7 @@ elif settings.market_design == "p2p":  # P2P should be here
 else:
     raise ValueError("settings.market_design has to be in [p2p, community, pool]")
 
+
 #MAIN RESULTS
     
 #Shadow price per hour
@@ -82,3 +85,5 @@ print(result.social_welfare_h)
 
 #Quality of Experience (QoE)
 print(result.QoE)
+    
+    

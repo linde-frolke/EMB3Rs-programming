@@ -45,6 +45,7 @@ class ResultData:
                 self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
                                          columns=agent_data.agent_name, index=agent_data.agent_name)
                             for t in range(settings.nr_of_h)]
+
             elif settings.market_design == "community":
                 trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
                                                variables[varnames.index("q_exp")].value])
