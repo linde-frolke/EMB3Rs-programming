@@ -11,54 +11,46 @@ from market_functions.decentralized_market import make_decentralized_market
 from ast import literal_eval
 
 # TEST DECENTRALIZED #######################################################################################
-md = "decentralized"
 # setup inputs --------------------------------------------
-agent_ids = ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"]
-agent_types = ["prosumer", "prosumer", "consumer", "producer"]
-horizon_basis = "months"
-recurrence = 2
-yearly_demand_rate = 0.05
-data_profile = 'daily'
+user_input={'md': 'decentralized',
+            'horizon_basis': 'months',
+            'data_profile': 'daily',
+            'recurrence': 2,
+            'yearly_demand_rate': 0.05,
+            'prod_diff_option':'co2Emissions'
+            }
+agent_ids = {'agent_ids': ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"]}
+agent_types = {'agent_types': ["prosumer", "prosumer", "consumer", "producer"]}  
 
-settings = MarketSettings(prod_diff="co2Emissions", market_design=md,
-                          horizon_b=horizon_basis, recurr=recurrence, data_prof=data_profile,
-                          ydr=yearly_demand_rate)
+settings = MarketSettings(prod_diff=user_input['prod_diff_option'], market_design=user_input['md'],
+                          horizon_b=user_input['horizon_basis'], recurr=user_input['recurrence'],
+                          data_prof=user_input['data_profile'],
+                          ydr=user_input['yearly_demand_rate'])
 
 name = "test_" + str(settings.market_design) + "_" + str(settings.product_diff)
 
-
 #DATA
-co2_emissions = np.array([1, 1.1, 0, 1.8])
-gmin = np.zeros([60,4])
-gmax = np.random.uniform(low=1, high=8, size=(60,4))
-lmin = np.zeros([60,4])
-lmax = np.random.uniform(low=1, high=3, size=(60,4))
+co2_emissions = {'co2_emissions': np.array([1, 1.1, 0, 1.8])}
+gmin = {'gmin':np.zeros([60,4])}
+gmax = {'gmax':np.random.uniform(low=1, high=8, size=(60,4))}
+lmin = {'lmin':np.zeros([60,4])}
+lmax = {'lmax':np.random.uniform(low=1, high=3, size=(60,4))}
  
-cost = np.random.uniform(low=20, high=30, size=(60,4))
-util = np.random.uniform(low=25, high=35, size=(60,4))
-
-# =============================================================================
-# gmin=np.zeros((settings.nr_of_h, len(agent_ids)))
-# gmax=np.array([[1,2,0,5],[3,4,0,4],[1,5,0,3],[0,0,0,0],[1,1,0,1],[2,3,0,1],[4,2,0,5],[3,4,0,4],[1,5,0,3],
-#               [0,0,0,0],[1,1,0,1],[2,3,0,1]])
-# lmin=np.zeros((settings.nr_of_h, len(agent_ids)))
-# lmax=np.array([[2,2,1,0],[2,1,0,0],[1,2,1,0],[3,0,2,0],[1,1,4,0],[2,3,3,0],[4,2,1,0],[3,4,2,0],[1,5,3,0],
-#               [0,0,5,0],[1,1,3,0],[2,3,1,0]])
-# cost=np.array([[24,25,45,30],[31,24,0,24],[18,19,0,32],[0,0,0,0],[20,25,0,18],[25,31,0,19],[24,27,0,22],[32,31,0,19],
-#                [15,25,0,31],[0,0,0,0],[19,20,0,21],[22,33,0,17]])
-# util=np.array([[40,42,35,25],[45,50,40,0],[55,36,45,0],[44,34,43,0],[34,44,55,0],[29,33,45,0],[40,55,33,0],
-#                [33,42,38,0],[24,55,35,0],[25,35,51,0],[19,43,45,0],[34,55,19,0]])
-# =============================================================================
+cost = {'cost':np.random.uniform(low=20, high=30, size=(60,4))}
+util = {'util':np.random.uniform(low=25, high=35, size=(60,4))}
 
 
-agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
-                       gmin=gmin, gmax=gmax,
-                       lmin=lmin, lmax=lmax,
-                       cost=cost, util=util, co2=co2_emissions
+agent_data = AgentData(settings=settings, name=agent_ids['agent_ids'], a_type=agent_types['agent_types'],
+                       gmin=gmin['gmin'], gmax=gmax['gmax'],
+                       lmin=lmin['lmin'], lmax=lmax['lmax'],
+                       cost=cost['cost'], util=util['util'], co2=co2_emissions['co2_emissions']
                        )
 
-gis_data = pd.read_csv("test_setup_scripts/Results_GIS.csv")
-gis_data["From/to"] = [literal_eval(i) for i in gis_data["From/to"]]
+gis_data = {'From/to':[(0,1),(1,2),(1,3)], 
+            'Losses total [W]':[22969.228855, 24122.603833,18138.588662],
+            'Length':[1855.232413,1989.471069,1446.688900], 
+            'Total_costs':[1.848387e+06,1.934302e+06, 1.488082e+06]}
+gis_data = pd.DataFrame(data=gis_data)
 network = Network(agent_data=agent_data, gis_data=gis_data)
 
 # set model name
@@ -94,4 +86,4 @@ print(result.Gn)
 
 
 #Find the best price
-print(result.find_best_price(15, 'prosumer_1', agent_data, settings)) #user must select hour and agent_id
+#print(result.find_best_price(15, 'prosumer_1', agent_data, settings)) #user must select hour and agent_id

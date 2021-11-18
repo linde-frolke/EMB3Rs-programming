@@ -100,6 +100,7 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
             for t in settings.timestamps:
                 co2_penalty = cp.sum(cp.multiply(np.array(emissions_p), Snm[t]))
             objective = cp.Minimize(total_cost - total_util + co2_penalty )
+            #print(co2_penalty)
             
         if settings.product_diff == "networkDistance":
             for t in settings.timestamps:    
