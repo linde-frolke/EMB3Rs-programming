@@ -49,6 +49,7 @@ class MarketSettings:
         self.gamma_exp = None
         # TODO "integrated with electricity" option
         # TODO ELECTRICITY PRICE HERE
+
         if network_type is not None:
             options_network_type = ["direction"]
             if network_type not in options_network_type:

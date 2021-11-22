@@ -10,7 +10,6 @@ import itertools
 from datetime import datetime
 import pickle
 
-
 class ResultData:
     def __init__(self, name, prob: cp.problems.problem.Problem,
                  cb: ConstraintBuilder,
@@ -107,6 +106,7 @@ class ResultData:
                                 self.shadow_price[t].iloc[i, j] = agent_data.cost[agent_data.agent_name[i]][t]
                                 if j == i:
                                     self.shadow_price[t].iloc[i, j] = 0
+
                     else:
                         for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                             # if not i == j:
@@ -114,7 +114,7 @@ class ResultData:
                                 constr_name = "reciprocity_t" + str(t) + str(i) + str(j)
                                 self.shadow_price[t].iloc[i, j] = cb.get_constraint(str_=constr_name).dual_value
                                 self.shadow_price[t].iloc[j, i] = - self.shadow_price[t].iloc[i, j]
-            # community
+
             elif settings.market_design == "community":
                 price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
                                               cb.get_constraint(str_="total_exp").dual_value,

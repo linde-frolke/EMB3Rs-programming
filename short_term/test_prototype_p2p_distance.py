@@ -10,6 +10,7 @@ from market_functions.pool_market import make_pool_market
 from market_functions.p2p_market import make_p2p_market
 from ast import literal_eval
 
+
 # TEST P2P #######################################################################################
 # setup inputs --------------------------------------------
 user_input = {'md': 'p2p',
