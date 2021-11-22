@@ -51,7 +51,7 @@ gis_data = {'From/to':[(0,1),(1,2),(1,3)],
             'Length':[1855.232413,1989.471069,1446.688900], 
             'Total_costs':[1.848387e+06,1.934302e+06, 1.488082e+06]}
 gis_data = pd.DataFrame(data=gis_data)
-network = Network(agent_data=agent_data, gis_data=gis_data)
+network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 
 # set model name
 name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)

@@ -1,1 +1,1 @@
-__all__ = ["resultobject.py", "inputstructs"]
+__all__ = ["resultobject", "inputstructs"]

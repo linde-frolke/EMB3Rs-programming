@@ -13,7 +13,7 @@ class MarketSettings:
     On creation, it checks whether settings are valid
     """
     def __init__(self, nr_of_hours, offer_type: str, prod_diff: str,
-                 market_design: str):
+                 market_design: str, network_type=None):
         """
         create MarketSettings object if all inputs are correct
         :param nr_of_hours: Integer between 1 and ... ?
@@ -49,6 +49,17 @@ class MarketSettings:
         self.gamma_exp = None
         # TODO "integrated with electricity" option
         # TODO ELECTRICITY PRICE HERE
+
+        if network_type is not None:
+            options_network_type = ["direction"]
+            if network_type not in options_network_type:
+                raise ValueError("network_type should be None or one of " + str(options_network_type))
+            else:
+                self.network_type = network_type
+            if not offer_type == "simple":
+                raise ValueError("If you want network-awareness, offer_type must be 'simple'")
+            if not market_design == "pool":
+                raise NotImplementedError("network-aware is not implemented for p2p and community markets")
 
     def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
         """ the parameters are optional inputs"""
@@ -143,20 +154,36 @@ class AgentData:
 
 # network data ---------------------------------------------------------------------------------------------------------
 class Network:
-    def __init__(self, agent_data, gis_data): # agent_loc,
+    def __init__(self, agent_data, gis_data, settings):  # agent_loc,
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
-        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m), total costs
+        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m),
+                        total costs
+        :param settings: a MarketSettings object
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
-        # TODO get this data from GIS module.
-        # # node numbers
-        # self.N = nodes
-        # self.E = edges
-        # define location where agents are
-        # self.loc_a = agent_loc  # TODO map agent id to node numbers
+
+        if settings.network_type is not None:
+            # extract node numbers from GIS data
+            nodes = np.array(list(set([item for t in gis_data["From/to"] for item in t])))
+            self.N = nodes
+            self.nr_of_n = len(self.N)
+            self.P = gis_data["From/to"]  # tuples
+            self.nr_of_p = len(self.P)
+            # make the A matrix
+            A = np.zeros((len(self.N), len(self.P)))
+            for p_nr in range(self.nr_of_p):
+                p = self.P[p_nr]
+                n1_nr = np.where(self.N == p[0])
+                n2_nr = np.where(self.N == p[1])
+                A[n1_nr, p_nr] = 1
+                A[n2_nr, p_nr] = -1
+            self.A = A
+            # define location where agents are
+            # Not needed - each agent will be at own node, so node == agent.
+            self.loc_a = self.N  # TODO for now, put this. can be removed later
 
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
