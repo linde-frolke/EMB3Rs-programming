@@ -12,6 +12,7 @@ class MarketSettings:
     Object to store market settings.
     On creation, it checks whether settings are valid
     """
+
     def __init__(self, nr_of_hours, offer_type: str, prod_diff: str,
                  market_design: str, network_type=None):
         """
@@ -21,7 +22,7 @@ class MarketSettings:
         :param prod_diff:
         """
 
-        max_time_steps = 48         # max 48 hours.
+        max_time_steps = 48  # max 48 hours.
         if not ((type(nr_of_hours) == int) and (1 <= nr_of_hours <= max_time_steps)):
             raise ValueError("nr_of_hours should be an integer between 1 and " + str(max_time_steps))
         self.nr_of_h = nr_of_hours
@@ -41,6 +42,9 @@ class MarketSettings:
         if market_design not in options_market_design:
             raise ValueError('market_design should be one of ' + str(options_market_design))
         self.market_design = market_design
+        # exclude bad combination of inputs
+        if self.market_design is not "p2p" and prod_diff is not "noPref":
+            raise ValueError('prod_diff can only be something else than "noPref" if market_design == "p2p')
 
         # entries to be filled in by other functions
         self.community_objective = None
@@ -61,7 +65,7 @@ class MarketSettings:
             if not market_design == "pool":
                 raise NotImplementedError("network-aware is not implemented for p2p and community markets")
 
-    def add_community_settings(self, objective, g_peak=10.0**2, g_exp=-4 * 10.0**1, g_imp=5 * 10.0**1):
+    def add_community_settings(self, objective, g_peak=10.0 ** 2, g_exp=-4 * 10.0 ** 1, g_imp=5 * 10.0 ** 1):
         """ the parameters are optional inputs"""
         # add the options for community to the settings
         options_objective = ["autonomy", "peakShaving"]
@@ -85,6 +89,7 @@ class AgentData:
     If the input is constant in time, it is a dataframe with agent ID as column name, and the input as row
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
+
     def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None,
                  is_in_community=None, block_offer=None):
         """
@@ -102,10 +107,8 @@ class AgentData:
                     contains True if is in community, False if not.
         """
 
-        # TODO print("todo, check all input types")
         # set nr of agents, names, and types
         self.nr_of_agents = len(name)
-        # TODO print("todo make sure no ID is identical")
         self.agent_name = name
         self.agent_type = dict(zip(name, a_type))
         # add community info if that is needed
@@ -124,11 +127,12 @@ class AgentData:
 
         # add co2 emission info if needed
         if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name)  #1xnr_of_agents dimension
+            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)),
+                                             columns=name)  # 1xnr_of_agents dimension
         else:
-            self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
-        
-        if settings.offer_type == 'block':      
+            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
+
+        if settings.offer_type == 'block':
             self.block = block_offer
 
         # time dependent data -------------------------------------------------
@@ -182,118 +186,87 @@ class Network:
                 A[n2_nr, p_nr] = -1
             self.A = A
             # define location where agents are
-            # Not needed - each agent will be at own node, so node == agent.
             self.loc_a = self.N  # TODO for now, put this. can be removed later
 
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
         self.losses = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
         for i in range(agent_data.nr_of_agents):
-            self.distance[i, i] = 0.0   # distance to self is zero.
-            self.losses[i, i] = 0.0     # losses to self is zero.
+            self.distance[i, i] = 0.0  # distance to self is zero.
+            self.losses[i, i] = 0.0  # losses to self is zero.
         for row_nr in range(len(gis_data["From/to"].values)):
             (From, To) = gis_data["From/to"].values[row_nr]
             self.distance[From, To] = gis_data.Length.iloc[row_nr]
             self.losses[From, To] = gis_data["Losses total [W]"].iloc[row_nr]
 
-# =============================================================================
-# Start here
-# =============================================================================
-        #DISTANCE
-        #Dijkstra's shortest path        
+        # DISTANCE
+        # Dijkstra's shortest path
         def calculate_distances(graph, starting_vertex):
             distances = {vertex: float('infinity') for vertex in graph}
             distances[starting_vertex] = 0
-        
+
             pq = [(0, starting_vertex)]
             while len(pq) > 0:
                 current_distance, current_vertex = heapq.heappop(pq)
-        
+
                 # Nodes can get added to the priority queue multiple times. We only
                 # process a vertex the first time we remove it from the priority queue.
                 if current_distance > distances[current_vertex]:
                     continue
-        
+
                 for neighbor, weight in graph[current_vertex].items():
                     distance = current_distance + weight
-        
+
                     # Only consider this new path if it's better than any path we've
                     # already found.
                     if distance < distances[neighbor]:
                         distances[neighbor] = distance
                         heapq.heappush(pq, (distance, neighbor))
             return distances
-        #graph for the Dijkstra's
-        graph={i:{j:np.inf for j in range(0,(agent_data.nr_of_agents))} for i in range(0,(agent_data.nr_of_agents))}
-        total_dist=[] #total network distance
-        
-        for j in range(0,(agent_data.nr_of_agents)): 
-            for i in range(0,(agent_data.nr_of_agents)):
-                if self.distance[i][j]!=0 and self.distance[i][j]!=np.inf:
-                    #symmetric matrix
-                    graph[i][j]=self.distance[i][j]
-                    graph[j][i]=self.distance[i][j]
+
+        # graph for the Dijkstra's
+        graph = {i: {j: np.inf for j in range(0, agent_data.nr_of_agents)} for i in
+                 range(0, agent_data.nr_of_agents)}
+        total_dist = []  # total network distance
+
+        for j in range(0, agent_data.nr_of_agents):
+            for i in range(0, agent_data.nr_of_agents):
+                if self.distance[i][j] != 0 and self.distance[i][j] != np.inf:
+                    # symmetric matrix
+                    graph[i][j] = self.distance[i][j]
+                    graph[j][i] = self.distance[i][j]
                     total_dist.append(self.distance[i][j])
-         
-        #Matrix with the distance between all the agents    
-        self.all_distance=np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents)) #might need this later
-        for i in range(0,(agent_data.nr_of_agents)):
-            aux=[]
-            aux=calculate_distances(graph,i)
-            for j in range(0,(agent_data.nr_of_agents)):
-                self.all_distance[i][j]=aux[j]
-        #network usage in percentage for each trade Pnm        
-        self.all_distance_percentage=self.all_distance/sum(total_dist)
 
+        # Matrix with the distance between all the agents
+        self.all_distance = np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))  # might need this later
+        for i in range(0, agent_data.nr_of_agents):
+            aux = []
+            aux = calculate_distances(graph, i)
+            for j in range(0, agent_data.nr_of_agents):
+                self.all_distance[i][j] = aux[j]
+        # network usage in percentage for each trade Pnm
+        self.all_distance_percentage = self.all_distance / sum(total_dist)
 
-        #LOSSES
-        #graph for the Dijkstra's
-        graph={i:{j:np.inf for j in range(0,(agent_data.nr_of_agents))} for i in range(0,(agent_data.nr_of_agents))}
-        total_losses=[] #total network losses
-        
-        for j in range(0,(agent_data.nr_of_agents)): 
-            for i in range(0,(agent_data.nr_of_agents)):
-                if self.losses[i][j]!=0 and self.losses[i][j]!=np.inf:
-                    #symmetric matrix
-                    graph[i][j]=self.losses[i][j]
-                    graph[j][i]=self.losses[i][j]
+        # LOSSES
+        # graph for the Dijkstra's
+        graph = {i: {j: np.inf for j in range(0, agent_data.nr_of_agents)} for i in
+                 range(0, agent_data.nr_of_agents)}
+        total_losses = []  # total network losses
+
+        for j in range(0, agent_data.nr_of_agents):
+            for i in range(0, agent_data.nr_of_agents):
+                if self.losses[i][j] != 0 and self.losses[i][j] != np.inf:
+                    # symmetric matrix
+                    graph[i][j] = self.losses[i][j]
+                    graph[j][i] = self.losses[i][j]
                     total_losses.append(self.losses[i][j])
-         
-        #Matrix with the losses between all the agents    
-        self.all_losses=np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents)) #might need this later
-        for i in range(0,(agent_data.nr_of_agents)):
-            aux=[]
-            aux=calculate_distances(graph,i) #calculuting losses shortest path
-            for j in range(0,(agent_data.nr_of_agents)):
-                self.all_losses[i][j]=aux[j]
-        #network usage in percentage for each trade Pnm        
-        self.all_losses_percentage=self.all_losses/sum(total_losses)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # Matrix with the losses between all the agents
+        self.all_losses = np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))  # might need this later
+        for i in range(0, agent_data.nr_of_agents):
+            aux = []
+            aux = calculate_distances(graph, i)  # calculating losses shortest path
+            for j in range(0, agent_data.nr_of_agents):
+                self.all_losses[i][j] = aux[j]
+        # network usage in percentage for each trade Pnm
+        self.all_losses_percentage = self.all_losses / sum(total_losses)

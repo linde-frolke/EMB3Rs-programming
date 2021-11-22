@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import sys
 # make sure it can find modules
-sys.path.insert(0, os.getcwd() + '/Short term/')
+sys.path.insert(0, os.getcwd() + '/short_term/')
 
 # import own modules
 from datastructures.inputstructs import AgentData, MarketSettings, Network

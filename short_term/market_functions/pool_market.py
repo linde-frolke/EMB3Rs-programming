@@ -74,7 +74,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
         cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
 
     # add network constraints if this is in the settings
-    if settings.network_type == "direction":
+    if settings.network_type is not None:
         if network is None:
             raise ValueError("You need to give a Network object as input, if you want to include network constraints")
         else:

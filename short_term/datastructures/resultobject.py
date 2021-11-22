@@ -224,3 +224,6 @@ class ResultData:
         pickle.dump(self, file)
         # close the file
         file.close()
+
+    def convert_to_dicts(self):
+        print("todo")
