@@ -50,8 +50,11 @@ agent_data = AgentData(settings=settings, name=agent_ids, a_type=agent_types,
                        cost=cost, util=util,
                        co2=co2_emissions)
 
-gis_data = pd.read_csv("Short term/test_setup_scripts/Results_GIS.csv")
-gis_data["From/to"] = [literal_eval(i) for i in gis_data["From/to"]]
+gis_data = {'From/to': [(0, 1), (1, 2), (1, 3)],
+            'Losses total [W]': [22969.228855, 24122.603833, 18138.588662],
+            'Length': [1855.232413, 1989.471069, 1446.688900],
+            'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
+gis_data = pd.DataFrame(data=gis_data)
 network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 
 
