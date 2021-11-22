@@ -3,6 +3,10 @@ script that makes input datastructures, then applies market functions
 """
 import numpy as np
 import pandas as pd
+import os
+import sys
+# make sure it can find modules
+sys.path.insert(0, os.getcwd() + '/Short term/')
 
 
 # import own modules
