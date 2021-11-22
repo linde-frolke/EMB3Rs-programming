@@ -153,7 +153,7 @@ class AgentData:
 
 # network data ---------------------------------------------------------------------------------------------------------
 class Network:
-    def __init__(self, agent_data, gis_data, settings): # agent_loc,
+    def __init__(self, agent_data, gis_data, settings):  # agent_loc,
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
