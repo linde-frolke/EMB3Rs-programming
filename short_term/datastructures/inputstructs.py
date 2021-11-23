@@ -14,12 +14,13 @@ class MarketSettings:
     """
 
     def __init__(self, nr_of_hours, offer_type: str, prod_diff: str,
-                 market_design: str, network_type=None):
+                 market_design: str, network_type=None, el_dependent=False, el_price=None):
         """
         create MarketSettings object if all inputs are correct
         :param nr_of_hours: Integer between 1 and ... ?
         :param offer_type:
         :param prod_diff:
+        TODO explain all inputs
         """
 
         max_time_steps = 48  # max 48 hours.
@@ -43,16 +44,24 @@ class MarketSettings:
             raise ValueError('market_design should be one of ' + str(options_market_design))
         self.market_design = market_design
         # exclude bad combination of inputs
-        if self.market_design is not "p2p" and prod_diff is not "noPref":
+        if self.market_design != "p2p" and prod_diff != "noPref":
             raise ValueError('prod_diff can only be something else than "noPref" if market_design == "p2p')
+        # check inputs for electricity dependence. Can be combined with all 3 market types
+        self.el_dependent = el_dependent
+        if el_dependent:
+            if el_price is None:
+                raise ValueError('el_price must be given if el_dependent == True')
+            elif not len(el_price) == nr_of_hours:
+                raise ValueError('el_price must be given for each hour')
+            self.elPrice = pd.DataFrame(el_price, columns=["elprice"])
+        else:
+            self.elPrice = None
 
         # entries to be filled in by other functions
         self.community_objective = None
         self.gamma_peak = None
         self.gamma_imp = None
         self.gamma_exp = None
-        # TODO "integrated with electricity" option
-        # TODO ELECTRICITY PRICE HERE
 
         if network_type is not None:
             options_network_type = ["direction"]
@@ -91,7 +100,8 @@ class AgentData:
     """
 
     def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None,
-                 is_in_community=None, block_offer=None):
+                 is_in_community=None, block_offer=None, is_chp=None, chp_pars=None,
+                 default_alpha=10.0):
         """
         :param settings: a MarketSettings object. contains the time horizon that is needed here.
         :param name: an array with agents names, should be strings
@@ -105,6 +115,11 @@ class AgentData:
         :param co2: optional input. array of size (nr_of_timesteps, nr_of_agents)
         :param is_in_community: optional input. Boolean array of size (1, nr_of_agents).
                     contains True if is in community, False if not.
+        :param block_offer: TODO sergio can you define this variable?
+        :param is_chp: list with ids of agents that are CHPs
+        :params chp_pars: a dictionary of dictionaries, including parameters for each agents in is_chp.
+                                                        {'agent_1' : {'rho' : 1.0, 'r' : 0.15, ...},
+                                                         'agent_2' : {'rho' : 0.8, 'r' : 0.10, ...} }
         """
 
         # set nr of agents, names, and types
@@ -154,6 +169,34 @@ class AgentData:
 
         self.cost = pd.DataFrame(cost, columns=name)
         self.util = pd.DataFrame(util, columns=name)
+
+        # change the self.cost for agents in is_chp if el_dependent option is True
+        if settings.el_dependent:
+            # make sure that cph_params.keys() is a subset of is_chp
+            if not set(list(chp_pars.keys())).issubset(is_chp):
+                raise ValueError("some keys in chp_pars do not belong to the set is_chp")
+            # organize the CHP parameters in a dataframe
+            self.chp_params = pd.DataFrame.from_dict(chp_pars)
+            # defaults for CHP:
+            defaults = pd.DataFrame({"col": {"alpha": default_alpha, "r": 0.45, "rho_H": 0.9, "rho_E": 0.25}})
+            for i in range(len(is_chp)):
+                if is_chp[i] not in chp_pars.keys():
+                    self.chp_params[is_chp[i]] = defaults
+            # compute the hourly cost bid for each chp
+            for i in range(len(is_chp)):
+                criterion = self.chp_params.loc["alpha", is_chp[i]] * self.chp_params.loc["rho_E", is_chp[i]]
+                print(criterion)
+                for t in range(settings.nr_of_h):
+                    if settings.elPrice.iloc[t, 0] <= criterion:
+                        self.cost.loc[t, is_chp[i]] = self.chp_params.loc["alpha", is_chp[i]] * (
+                                    self.chp_params.loc["rho_E", is_chp[i]] * self.chp_params.loc["r", is_chp[i]] +
+                                    self.chp_params.loc["rho_H", is_chp[i]]) - settings.elPrice.iloc[t, 0] * \
+                                                      self.chp_params.loc["r", is_chp[i]]
+                    else:
+                        self.cost.loc[t, is_chp[i]] = settings.elPrice.iloc[t, 0] * (
+                                self.chp_params.loc["rho_H", is_chp[i]] / self.chp_params.loc["rho_E", is_chp[i]])
+        else:
+            self.chp_params = None
 
 
 # network data ---------------------------------------------------------------------------------------------------------
