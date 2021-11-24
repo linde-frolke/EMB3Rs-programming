@@ -1,6 +1,7 @@
 import cvxpy as cp
 import numpy as np
-from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+
+from short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def add_network_directions(constraint_builder, settings, network_data, Pn_var):
@@ -20,16 +21,19 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
         Pnode = cp.Variable((settings.nr_of_h, network_data.nr_of_n))
         for t in settings.timestamps:
             for n in range(network_data.nr_of_n):
-                select_agents = np.where(network_data.loc_a == network_data.N[n])
+                select_agents = np.where(
+                    network_data.loc_a == network_data.N[n])
                 constraint_builder.add_constraint(Pnode[t, n] == cp.sum(Pn_var[t, select_agents]),
                                                   str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
 
         # add flow continuity constraint relating nodal and pipeline power flows
         for t in settings.timestamps:
-            constraint_builder.add_constraint(network_data.A @ Ppipe[t, :] == Pnode[t, :], str_="flow_continuity")
+            constraint_builder.add_constraint(
+                network_data.A @ Ppipe[t, :] == Pnode[t, :], str_="flow_continuity")
 
         # adapt constraintBuilder by adding pipeline flow restrictions
-        constraint_builder.add_constraint(Ppipe >= 0, str_="unidirectional_pipeline_flow")
+        constraint_builder.add_constraint(
+            Ppipe >= 0, str_="unidirectional_pipeline_flow")
     elif settings.network_type == "size":
         raise NotImplemented("need to implement this")
 

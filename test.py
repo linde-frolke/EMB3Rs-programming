@@ -1,4 +1,4 @@
-from .tests.test_lib import defineArguments, processInput
+from tests.test_lib import defineArguments, processInput
 
 # Write Here all the available tests you want to run
 availableTests = {

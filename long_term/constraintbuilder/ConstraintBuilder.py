@@ -1,6 +1,6 @@
-
 class ConstraintBuilder:
     """adds name functionality to constraints in CVXPY"""
+
     def __init__(self):
         self.constraintList = []
         self.str2constr = {}

@@ -1,8 +1,8 @@
 import cvxpy as cp
 import numpy as np
-from datastructures.resultobject import ResultData
-from datastructures.inputstructs import AgentData, MarketSettings
-from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from long_term.datastructures.resultobject import ResultData
+from long_term.datastructures.inputstructs import AgentData, MarketSettings
+from long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def make_centralized_market(name: str, agent_data: AgentData, settings: MarketSettings):
@@ -16,18 +16,27 @@ def make_centralized_market(name: str, agent_data: AgentData, settings: MarketSe
     # collect named constraints in cb
     cb = ConstraintBuilder()
     # prepare parameters
-    Gmin = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
-    Gmax = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
-    Lmin = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
-    Lmax = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
+    Gmin = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
+    Gmax = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
+    Lmin = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
+    Lmax = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
 
-    cost = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
-    util = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), value=agent_data.util.to_numpy())
+    cost = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
+    util = cp.Parameter((agent_data.day_range*settings.recurrence*agent_data.data_size,
+                        agent_data.nr_of_agents), value=agent_data.util.to_numpy())
 
     # variables
-    Pn = cp.Variable((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), name="Pn")
-    Gn = cp.Variable((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), name="Gn")
-    Ln = cp.Variable((agent_data.day_range*settings.recurrence*agent_data.data_size, agent_data.nr_of_agents), name="Ln")
+    Pn = cp.Variable((agent_data.day_range*settings.recurrence *
+                     agent_data.data_size, agent_data.nr_of_agents), name="Pn")
+    Gn = cp.Variable((agent_data.day_range*settings.recurrence *
+                     agent_data.data_size, agent_data.nr_of_agents), name="Gn")
+    Ln = cp.Variable((agent_data.day_range*settings.recurrence *
+                     agent_data.data_size, agent_data.nr_of_agents), name="Ln")
 
     # variable limits ----------------------------------
     #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
@@ -44,10 +53,10 @@ def make_centralized_market(name: str, agent_data: AgentData, settings: MarketSe
     cb.add_constraint(-cp.sum(Pn, axis=1) == 0, str_="powerbalance")
 
     # objective function
-    total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
+    # cp.multiply is element-wise multiplication
+    total_cost = cp.sum(cp.multiply(cost, Gn))
     total_util = cp.sum(cp.multiply(util, Ln))
     objective = cp.Minimize(total_cost - total_util)
-
 
     # common for all offer types ------------------------------------------------
     # define the problem and solve it.
