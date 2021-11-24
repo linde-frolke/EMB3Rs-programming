@@ -1,7 +1,7 @@
 import cvxpy as cp
 import numpy as np
 
-from short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def add_network_directions(constraint_builder, settings, network_data, Pn_var):

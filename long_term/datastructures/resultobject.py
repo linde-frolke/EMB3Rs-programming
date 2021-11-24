@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import statistics as st
 import matplotlib.pyplot as plt
-from long_term.datastructures.inputstructs import AgentData, MarketSettings
-from long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
+from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 import itertools
 
 

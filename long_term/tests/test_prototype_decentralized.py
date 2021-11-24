@@ -6,9 +6,9 @@ import pandas as pd
 from ast import literal_eval
 
 # import own modules
-from long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
-from long_term.market_functions.centralized_market import make_centralized_market
-from long_term.market_functions.decentralized_market import make_decentralized_market
+from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...long_term.market_functions.centralized_market import make_centralized_market
+from ...long_term.market_functions.decentralized_market import make_decentralized_market
 
 # TEST DECENTRALIZED #######################################################################################
 # setup inputs --------------------------------------------

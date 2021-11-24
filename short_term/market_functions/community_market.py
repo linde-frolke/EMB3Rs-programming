@@ -1,10 +1,10 @@
 import cvxpy as cp
 import numpy as np
 
-from short_term.datastructures.resultobject import ResultData
-from short_term.datastructures.inputstructs import AgentData, MarketSettings
-from short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
-from short_term.market_functions.add_energy_budget import add_energy_budget
+from ...short_term.datastructures.resultobject import ResultData
+from ...short_term.datastructures.inputstructs import AgentData, MarketSettings
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.market_functions.add_energy_budget import add_energy_budget
 
 
 def make_community_market(name: str, agent_data: AgentData, settings: MarketSettings):

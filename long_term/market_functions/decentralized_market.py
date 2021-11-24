@@ -2,9 +2,9 @@ import cvxpy as cp
 import numpy as np
 from pyscipopt.scip import Model
 import itertools
-from long_term.datastructures.resultobject import ResultData
-from long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
-from long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...long_term.datastructures.resultobject import ResultData
+from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def make_decentralized_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):

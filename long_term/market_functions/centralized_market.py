@@ -1,8 +1,8 @@
 import cvxpy as cp
 import numpy as np
-from long_term.datastructures.resultobject import ResultData
-from long_term.datastructures.inputstructs import AgentData, MarketSettings
-from long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...long_term.datastructures.resultobject import ResultData
+from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
+from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def make_centralized_market(name: str, agent_data: AgentData, settings: MarketSettings):

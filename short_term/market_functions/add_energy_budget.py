@@ -1,7 +1,7 @@
 import cvxpy as cp
 import numpy as np
 
-from short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def add_energy_budget(constraint_builder, load_var, agent_data):

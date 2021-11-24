@@ -7,9 +7,9 @@ from ast import literal_eval
 
 
 # import own modules
-from short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
-from short_term.market_functions.pool_market import make_pool_market
-from short_term.market_functions.p2p_market import make_p2p_market
+from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...short_term.market_functions.pool_market import make_pool_market
+from ...short_term.market_functions.p2p_market import make_p2p_market
 
 
 # TEST P2P #######################################################################################
