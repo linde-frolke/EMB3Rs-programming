@@ -1,8 +1,9 @@
 from .tests.test_lib import defineArguments, processInput
+from .short_term.tests.test_prototype_p2p import test
 
 # Write Here all the available tests you want to run
 availableTests = {
-    "example:test": "fuction_name",
+    "example:test": test,
 }
 
 

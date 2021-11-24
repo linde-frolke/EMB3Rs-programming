@@ -42,7 +42,7 @@ def printSuccess(message):
 
 
 def defineArguments(availableTests):
-    parser = argparse.ArgumentParser(description='Test CF Functions')
+    parser = argparse.ArgumentParser(description='Test Market Functions')
     parser.add_argument('--show', help='Show test outputs',
                         dest='show_outputs', action='store_true')
     parser.add_argument('--all', help='Run All Tests',
