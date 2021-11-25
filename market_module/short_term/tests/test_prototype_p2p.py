@@ -11,7 +11,7 @@ from ...short_term.datastructures.inputstructs import AgentData, MarketSettings,
 from ...short_term.market_functions.pool_market import make_pool_market
 from ...short_term.market_functions.p2p_market import make_p2p_market
 
-def test():
+def test_p2p():
     # TEST P2P #######################################################################################
     # setup inputs --------------------------------------------
     user_input = {'md': 'p2p',
@@ -56,7 +56,7 @@ def test():
                 'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
     gis_data = pd.DataFrame(data=gis_data)
 
-    network = Network(agent_data=agent_data, gis_data=gis_data)
+    network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 
     # set model name
     name = "test_" + str(settings.market_design) + "_" + \

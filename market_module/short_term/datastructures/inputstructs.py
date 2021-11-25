@@ -186,7 +186,6 @@ class AgentData:
             # compute the hourly cost bid for each chp
             for i in range(len(is_chp)):
                 criterion = self.chp_params.loc["alpha", is_chp[i]] * self.chp_params.loc["rho_E", is_chp[i]]
-                print(criterion)
                 for t in range(settings.nr_of_h):
                     if settings.elPrice.iloc[t, 0] <= criterion:
                         self.cost.loc[t, is_chp[i]] = self.chp_params.loc["alpha", is_chp[i]] * (
