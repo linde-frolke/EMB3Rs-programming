@@ -107,7 +107,6 @@ def make_decentralized_market(name: str, agent_data: AgentData, settings: Market
     # define the problem and solve it.
     prob = cp.Problem(objective, constraints=cb.get_constraint_list())
     result_ = prob.solve(solver=cp.SCIP)
-
     print("problem status: %s" % prob.status)
 
     if prob.status not in ["infeasible", "unbounded"]:

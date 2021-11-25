@@ -76,7 +76,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
                                       b[hour, agent_data.agent_name.index(agent)], str_='block_constraint1')
                     cb.add_constraint(cp.sum(b[j, agent_data.agent_name.index(agent)]) ==
                                       len(j)*b[j[0], agent_data.agent_name.index(agent)], str_='block_constraint2')
-
+    
     # add extra constraint if offer type is energy Budget.
     if settings.offer_type == "energyBudget":
         # add energy budget.

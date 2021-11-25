@@ -79,6 +79,7 @@ class ResultData:
             self.settlement = None
             self.compute_output_quantities(settings, agent_data)
 
+
     # a function to make all relevant output variables
 
     def compute_output_quantities(self, settings, agent_data):

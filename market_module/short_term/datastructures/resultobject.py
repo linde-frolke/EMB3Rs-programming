@@ -114,7 +114,6 @@ class ResultData:
                                 elif len(max_cost_disp) == 0:  # if there is no generation
                                     self.shadow_price[t].iloc[i, j] = min(
                                         agent_data.cost.T[t])
-
                                 if j == i:
                                     self.shadow_price[t].iloc[i, j] = 0
                         else:
