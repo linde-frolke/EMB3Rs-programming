@@ -1,11 +1,12 @@
 import cvxpy as cp
 import numpy as np
-from datastructures.resultobject import ResultData
-from datastructures.inputstructs import AgentData, MarketSettings, Network
-from constraintbuilder.ConstraintBuilder import ConstraintBuilder
-from market_functions.add_energy_budget import add_energy_budget
 import itertools
 from pyscipopt.scip import Model
+
+from ...short_term.datastructures.resultobject import ResultData
+from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.market_functions.add_energy_budget import add_energy_budget
 
 
 def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):
@@ -21,13 +22,19 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
 
 
 # prepare parameters
-    Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
-    Gmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
-    Lmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
-    Lmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
+    Gmin = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
+    Gmax = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
+    Lmin = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
+    Lmax = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
 
-    cost = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
-    util = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.util.to_numpy())
+    cost = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
+    util = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.util.to_numpy())
 
     # variables
     Pn = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="Pn")
@@ -65,28 +72,34 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
         for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
             # if not i == j:
             if j >= i:
-                cb.add_constraint(Tnm[t][i, j] + Tnm[t][j, i] == 0, str_="reciprocity_t" + str(t) + str(i) + str(j))
+                cb.add_constraint(Tnm[t][i, j] + Tnm[t][j, i] == 0,
+                                  str_="reciprocity_t" + str(t) + str(i) + str(j))
         # total trades have to match power injection
-        cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
+        cb.add_constraint(Pn[t, :] == cp.sum(
+            Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
 
     # add extra constraint if offer type is energy Budget.
     if settings.offer_type == "energyBudget":
         # add energy budget.
         cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
-        
+
     if settings.offer_type == "block":
-        #Binary variable
-        b = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents),boolean=True ,name="b")
-        
+        # Binary variable
+        b = cp.Variable(
+            (settings.nr_of_h, agent_data.nr_of_agents), boolean=True, name="b")
+
         for agent in agent_data.block:
             for j in agent_data.block[agent]:
                 for hour in j:
-                    #agent_ids.index(agent)->getting the agent's index
-                    cb.add_constraint(Gn[hour,agent_data.agent_name.index(agent)] == Gmax[hour][agent_data.agent_name.index(agent)]*b[hour,agent_data.agent_name.index(agent)], str_='block_constraint1') 
-                    cb.add_constraint(cp.sum(b[j,agent_data.agent_name.index(agent)]) == len(j)*b[j[0],agent_data.agent_name.index(agent)], str_='block_constraint2')
+                    # agent_ids.index(agent)->getting the agent's index
+                    cb.add_constraint(Gn[hour, agent_data.agent_name.index(agent)] == Gmax[hour][agent_data.agent_name.index(
+                        agent)]*b[hour, agent_data.agent_name.index(agent)], str_='block_constraint1')
+                    cb.add_constraint(cp.sum(b[j, agent_data.agent_name.index(agent)]) == len(
+                        j)*b[j[0], agent_data.agent_name.index(agent)], str_='block_constraint2')
 #
     # objective function
-    total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
+    # cp.multiply is element-wise multiplication
+    total_cost = cp.sum(cp.multiply(cost, Gn))
     total_util = cp.sum(cp.multiply(util, Ln))
     # make different objfun depending on preference settings
     if settings.product_diff == "noPref":
@@ -94,40 +107,42 @@ def make_p2p_market(name: str, agent_data: AgentData, settings: MarketSettings, 
     else:
         # construct preference matrix
         # TODO could move this to AgentData structure
-        if settings.product_diff == "co2Emissions": 
-            emissions_p = agent_data.co2_emission/sum(agent_data.co2_emission.T[0]) #percentage
-            emissions_p = np.tile(emissions_p,(len(agent_data.agent_name),1))
+        if settings.product_diff == "co2Emissions":
+            emissions_p = agent_data.co2_emission / \
+                sum(agent_data.co2_emission.T[0])  # percentage
+            emissions_p = np.tile(emissions_p, (len(agent_data.agent_name), 1))
             for t in settings.timestamps:
-                co2_penalty = cp.sum(cp.multiply(np.array(emissions_p), Snm[t]))
-            objective = cp.Minimize(total_cost - total_util + co2_penalty )
-            #print(co2_penalty)
-            
+                co2_penalty = cp.sum(cp.multiply(
+                    np.array(emissions_p), Snm[t]))
+            objective = cp.Minimize(total_cost - total_util + co2_penalty)
+            # print(co2_penalty)
+
         if settings.product_diff == "networkDistance":
-            for t in settings.timestamps:    
-                distance_penalty = cp.sum(cp.multiply(network.all_distance_percentage, Snm[t]))
+            for t in settings.timestamps:
+                distance_penalty = cp.sum(cp.multiply(
+                    network.all_distance_percentage, Snm[t]))
             objective = cp.Minimize(total_cost - total_util + distance_penalty)
 
         if settings.product_diff == "losses":
-            for t in settings.timestamps:    
-                losses_penalty = cp.sum(cp.multiply(network.all_losses_percentage, Snm[t]))
+            for t in settings.timestamps:
+                losses_penalty = cp.sum(cp.multiply(
+                    network.all_losses_percentage, Snm[t]))
 
             objective = cp.Minimize(total_cost - total_util + losses_penalty)
 
     # define the problem and solve it.
     prob = cp.Problem(objective, constraints=cb.get_constraint_list())
     result_ = prob.solve(solver=cp.SCIP)
-    
- 
 
     print("problem status: %s" % prob.status)
- 
+
     if prob.status not in ["infeasible", "unbounded"]:
         # Otherwise, problem.value is inf or -inf, respectively.
         print("Optimal value: %s" % prob.value)
     else:
         print("Problem status is %s" % prob.status)
- 
+
     # store result in result object
     result = ResultData(name, prob, cb, agent_data, settings)
- 
+
     return result

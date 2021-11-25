@@ -1,10 +1,11 @@
 import cvxpy as cp
 import numpy as np
-from datastructures.resultobject import ResultData
-from datastructures.inputstructs import AgentData, MarketSettings
-from constraintbuilder.ConstraintBuilder import ConstraintBuilder
-from market_functions.add_energy_budget import add_energy_budget
-from market_functions.add_network import add_network_directions
+
+from ...short_term.datastructures.resultobject import ResultData
+from ...short_term.datastructures.inputstructs import AgentData, MarketSettings
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.market_functions.add_energy_budget import add_energy_budget
+from ...short_term.market_functions.add_network import add_network_directions
 
 
 def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings, network=None):
@@ -20,13 +21,19 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
     cb = ConstraintBuilder()
 
     # prepare parameters
-    Gmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
-    Gmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
-    Lmin = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
-    Lmax = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
+    Gmin = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
+    Gmax = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy())
+    Lmin = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy())
+    Lmax = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy())
 
-    cost = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
-    util = cp.Parameter((settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.util.to_numpy())
+    cost = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.cost.to_numpy())
+    util = cp.Parameter(
+        (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.util.to_numpy())
 
     # variables
     Pn = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), name="Pn")
@@ -49,15 +56,17 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
         cb.add_constraint(-cp.sum(Pn, axis=1) == 0, str_="powerbalance")
 
     # objective function
-    total_cost = cp.sum(cp.multiply(cost, Gn))  # cp.multiply is element-wise multiplication
+    # cp.multiply is element-wise multiplication
+    total_cost = cp.sum(cp.multiply(cost, Gn))
     total_util = cp.sum(cp.multiply(util, Ln))
     objective = cp.Minimize(total_cost - total_util)
 
     # add block offers
     if settings.offer_type == "block":
         # Binary variable
-        b = cp.Variable((settings.nr_of_h, agent_data.nr_of_agents), boolean=True, name="b")
-        
+        b = cp.Variable(
+            (settings.nr_of_h, agent_data.nr_of_agents), boolean=True, name="b")
+
         for agent in agent_data.block:
             for j in agent_data.block[agent]:
                 for hour in j:
@@ -67,7 +76,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
                                       b[hour, agent_data.agent_name.index(agent)], str_='block_constraint1')
                     cb.add_constraint(cp.sum(b[j, agent_data.agent_name.index(agent)]) ==
                                       len(j)*b[j[0], agent_data.agent_name.index(agent)], str_='block_constraint2')
- 
+    
     # add extra constraint if offer type is energy Budget.
     if settings.offer_type == "energyBudget":
         # add energy budget.
@@ -76,7 +85,8 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
     # add network constraints if this is in the settings
     if settings.network_type is not None:
         if network is None:
-            raise ValueError("You need to give a Network object as input, if you want to include network constraints")
+            raise ValueError(
+                "You need to give a Network object as input, if you want to include network constraints")
         else:
             cb = add_network_directions(cb, settings, network, Pn)
 
@@ -95,6 +105,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
         raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
     # store result in result object
-    result = ResultData(name, prob, cb, agent_data, settings, network_data=network)
+    result = ResultData(name, prob, cb, agent_data,
+                        settings, network_data=network)
 
     return result

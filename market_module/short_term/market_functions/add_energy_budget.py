@@ -1,6 +1,7 @@
 import cvxpy as cp
 import numpy as np
-from constraintbuilder.ConstraintBuilder import ConstraintBuilder
+
+from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
 def add_energy_budget(constraint_builder, load_var, agent_data):
@@ -16,6 +17,7 @@ def add_energy_budget(constraint_builder, load_var, agent_data):
                                 value=np.sum(0.5 * (agent_data.lmin + agent_data.lmax).to_numpy(), axis=0))
 
     # adapts constraintBuilder by adding the energy budget constraint for each load
-    constraint_builder.add_constraint(cp.sum(load_var, axis=0) == total_budget, str_="energyBudget")
+    constraint_builder.add_constraint(
+        cp.sum(load_var, axis=0) == total_budget, str_="energyBudget")
 
     return constraint_builder
