@@ -84,7 +84,11 @@ def run_shortterm_market(input_dict):
                            chp_pars=input_dict['chp_pars'], default_alpha=10.0
                            )
     # create Network object
-    network = Network(agent_data=agent_data, gis_data=input_dict['gis_data'], settings=settings)
+    if input_dict['gis_data'] == "none":
+        gis_data = None
+    else:
+        gis_data = pd.DataFrame(data=input_dict['gis_data'])
+    network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 
     # run market
     # construct and solve market -----------------------------
@@ -98,4 +102,4 @@ def run_shortterm_market(input_dict):
     # convert result to dict
     result_dict = result.convert_to_dicts()
 
-    return result_dict
+    return settings, agent_data, network, result_dict

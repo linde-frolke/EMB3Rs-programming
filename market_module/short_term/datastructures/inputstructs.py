@@ -212,6 +212,15 @@ class Network:
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
 
+        if settings.network_type is not None and gis_data is None:
+            raise ValueError(
+                "gis_data has to be given if network_type is not None"
+            )
+        if settings.market_design == "p2p" and settings.product_diff != "noPref" and gis_data is None:
+            raise ValueError(
+                "gis_data has to be given for p2p market with preferences"
+            )
+
         if settings.network_type is not None:
             # extract node numbers from GIS data
             nodes = np.array(list(set([item for t in gis_data["From/to"] for item in t])))
@@ -292,7 +301,7 @@ class Network:
     
     # DISTANCE
     # Dijkstra's shortest path
-    def calculate_distances(graph, starting_vertex):
+    def calculate_distances(self, graph, starting_vertex):
         distances = {vertex: float('infinity') for vertex in graph}
         distances[starting_vertex] = 0
 
