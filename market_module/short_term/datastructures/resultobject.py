@@ -162,20 +162,20 @@ class ResultData:
             self.QoE = pd.DataFrame(index=range(
                 settings.nr_of_h), columns=["QoE"])
             for t in range(0, settings.nr_of_h):
-                self.lambda_j = []
+                lambda_j = []
                 for a1 in agent_data.agent_name:
                     for a2 in agent_data.agent_name:
                         if self.Pn[a1][t] != 0:  # avoid #DIV/0! error
-                            self.lambda_j.append(
+                            lambda_j.append(
                                 agent_data.cost[a1][t] * self.Tnm[t][a1][a2] / self.Pn[a1][t])
                         if self.Ln[a1][t] != 0:  # avoid #DIV/0! error
-                            self.lambda_j.append(
+                            lambda_j.append(
                                 agent_data.util[a1][t] * self.Tnm[t][a1][a2] / self.Ln[a1][t])
-                if len(self.lambda_j) == 0:  # If no power is traded in t
+                if len(lambda_j) == 0:  # If no power is traded in t
                     self.QoE["QoE"][t] = 'Not Defined'
-                elif (max(self.lambda_j) - min(self.lambda_j)) != 0:  # avoid #DIV/0! error
+                elif (max(lambda_j) - min(lambda_j)) != 0:  # avoid #DIV/0! error
                     self.QoE["QoE"][t] = (
-                        1 - (st.pstdev(self.lambda_j) / (max(self.lambda_j) - min(self.lambda_j))))
+                        1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                 else:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
@@ -264,4 +264,17 @@ class ResultData:
         file.close()
 
     def convert_to_dicts(self):
-        print("todo")
+        return_dict = {'Gn': self.Gn,
+                       'Ln': self.Ln,
+                       'Pn': self.Pn,
+                       'QoE': self.QoE,
+                       'Tnm': self.Tnm,
+                       'market': self.market,
+                       'name': self.name,
+                       'optimal': self.optimal,
+                       # 'plot_market_clearing': ,
+                       'settlement': self.settlement,
+                       'shadow_price': self.shadow_price,
+                       'social_welfare_h': self.social_welfare_h
+                       }
+        return return_dict
