@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 
 # import own modules
-from datastructures.inputstructs import AgentData, MarketSettings, Network
-from market_functions.pool_market import make_pool_market
-from market_functions.p2p_market import make_p2p_market
-from market_functions.community_market import make_community_market
+from ..short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ..short_term.market_functions.pool_market import make_pool_market
+from ..short_term.market_functions.p2p_market import make_p2p_market
+from ..short_term.market_functions.community_market import make_community_market
 from ast import literal_eval
 import os
 os.getcwd()
