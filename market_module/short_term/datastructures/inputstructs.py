@@ -173,6 +173,10 @@ class AgentData:
 
         # change the self.cost for agents in is_chp if el_dependent option is True
         if settings.el_dependent:
+            if is_chp is None:
+                raise ValueError("if el_dependent is chosen, the input is_chp must be given")
+            if chp_pars is None:
+                raise ValueError("if el_dependent is chosen, the input chp_pars must be given")
             # make sure that cph_params.keys() is a subset of is_chp
             if not set(list(chp_pars.keys())).issubset(is_chp):
                 raise ValueError("some keys in chp_pars do not belong to the set is_chp")

@@ -62,10 +62,20 @@ def run_shortterm_market(input_dict):
                             #  'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
                   }
     """
+    # convert some of the inputs ----------------------------------
+    el_dependent = False
+    if input_dict["el_dependent"] == "true":
+        el_dependent = True
 
-    # create Settings object
+    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars']:
+        if input_dict[str_] == 'none':
+            input_dict[str_] = None
+
+    # create Settings object ---------------------------------------
     settings = MarketSettings(nr_of_hours=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
-                              prod_diff=input_dict['prod_diff'], market_design=input_dict['md'])
+                              prod_diff=input_dict['prod_diff'], market_design=input_dict['md'],
+                              network_type=input_dict['network'], el_dependent=el_dependent,
+                              el_price=input_dict['el_price'])
 
     if settings.market_design == "community":
         settings.add_community_settings(input_dict['objective'],
