@@ -48,7 +48,7 @@ def run_shortterm_market(input_dict):
                   'util': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
-                  'co2': 'none',  # allowed values are 'none' or array of size (nr_of_timesteps, nr_of_agents)
+                  'co2_emissions': 'none',  # allowed values are 'none' or array of size (nr_of_agents)
                   'is_in_community': 'none',  # allowed values are 'none' or boolean array of size (nr_of_agents) 
                   'block_offer': 'none',  # allowed values are 'none' or TODO ask Sergio what format is 
                   'is_chp': 'none', # allowed values are 'none' or a list with ids of agents that are CHPs
