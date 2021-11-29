@@ -75,7 +75,7 @@ class MarketSettings:
         # save network type
         self.network_type = network_type
 
-    def add_community_settings(self, objective, g_peak=10.0 ** 2, g_exp=-4 * 10.0 ** 1, g_imp=5 * 10.0 ** 1):
+    def add_community_settings(self, objective, g_peak, g_exp, g_imp):
         """ the parameters are optional inputs"""
         # add the options for community to the settings
         options_objective = ["autonomy", "peakShaving"]
@@ -83,12 +83,21 @@ class MarketSettings:
             raise ValueError("objective should be one of" + str(options_objective))
         self.community_objective = objective
 
-        # for now, set default values of gammas
-        self.gamma_peak = g_peak
-        self.gamma_exp = g_exp
-        self.gamma_imp = g_imp
-        if self.gamma_exp >= 0.0:
-            raise ValueError("export penalty must be nonpositive")
+        # set values of gammas
+        if g_peak is None:
+            self.gamma_peak = 10.0 ** 2
+        else:
+            self.gamma_peak = g_peak
+        if g_exp is None:
+            self.gamma_exp = -4 * 10.0 ** 1
+        else:
+            if self.gamma_exp >= 0.0:
+                raise ValueError("export penalty must be nonpositive")
+            self.gamma_exp = g_exp
+        if g_imp is None:
+            self.gamma_imp = 5 * 10.0 ** 1
+        else:
+            self.gamma_imp = g_imp
 
 
 # agents information --------------------------------------------------------------------------------------------------
@@ -150,6 +159,8 @@ class AgentData:
 
         if settings.offer_type == 'block':
             self.block = block_offer
+        else:
+            self.block = None
 
         # time dependent data -------------------------------------------------
         if settings.nr_of_h == 1:

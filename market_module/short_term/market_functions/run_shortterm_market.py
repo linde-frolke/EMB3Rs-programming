@@ -29,7 +29,7 @@ def run_shortterm_market(input_dict):
                             "prosumer_2", "consumer_1", "producer_1"],
                   'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'none', # objective for community
-                  'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'}, 
+                  'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'}, # or values instead
                   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
@@ -71,6 +71,10 @@ def run_shortterm_market(input_dict):
         if input_dict[str_] == 'none':
             input_dict[str_] = None
 
+    for str_ in ['g_peak', 'g_exp', 'g_imp']:
+        if input_dict['community_settings'][str_] == 'none':
+            input_dict['community_settings'][str_] = None
+
     # create Settings object ---------------------------------------
     settings = MarketSettings(nr_of_hours=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
                               prod_diff=input_dict['prod_diff'], market_design=input_dict['md'],
@@ -90,7 +94,7 @@ def run_shortterm_market(input_dict):
                            cost=input_dict['cost'], util=input_dict['util'],
                            co2=input_dict['co2_emissions'],
                            is_in_community=input_dict['is_in_community'],
-                           block_offer=['block_offer'], is_chp=input_dict['is_chp'],
+                           block_offer=input_dict['block_offer'], is_chp=input_dict['is_chp'],
                            chp_pars=input_dict['chp_pars'], default_alpha=10.0
                            )
     # create Network object
@@ -105,7 +109,7 @@ def run_shortterm_market(input_dict):
     if settings.market_design == "pool":
         result = make_pool_market(name="test", agent_data=agent_data, settings=settings, network=network)
     elif settings.market_design == "community":
-        result = make_community_market(name="test_comm", agent_data=agent_data, settings=settings, network=network)
+        result = make_community_market(name="test_comm", agent_data=agent_data, settings=settings)
     elif settings.market_design == "p2p":
         result = make_p2p_market(name="test", agent_data=agent_data, settings=settings, network=network)
 
