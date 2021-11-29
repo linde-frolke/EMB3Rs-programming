@@ -141,4 +141,3 @@ def test_community_peakshaving():
     print(result_dict['QoE'])
 
     print("finished test_community_peakshaving().........................................")
-    
