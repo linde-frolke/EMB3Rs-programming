@@ -5,7 +5,7 @@ from .short_term.tests.test_prototype_p2p_distance import test_p2p_distance
 from .short_term.tests.test_prototype_p2p_losses import test_p2p_losses
 from .short_term.tests.test_prototype_pool import test_pool
 from .short_term.tests.test_prototype_pool_networkdirections import test_pool_networkdir
-from .short_term.tests.test_community import test_community
+from .short_term.tests.test_community import test_community_autonomy, test_community_peakshaving
 
 
 # Write Here all the available tests you want to run
@@ -16,7 +16,8 @@ availableTests = {
     "test:shortterm:p2p:co2": test_p2p_co2, 
     "test:shortterm:p2p:distance": test_p2p_distance, 
     "test:shortterm:p2p:losses": test_p2p_losses,
-    "test:shortterm:community": test_community
+    "test:shortterm:community:autonomy": test_community_autonomy,
+    "test:shortterm:community:peakshaving": test_community_peakshaving
 }
 
 
