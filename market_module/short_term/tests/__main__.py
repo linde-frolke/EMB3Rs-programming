@@ -8,6 +8,8 @@ from .test_community import test_community_autonomy, test_community_peakshaving
 # test_p2p_co2()
 # test_p2p_distance()
 # test_pool()
-test_pool_networkdir()
-test_community_autonomy()
-test_community_peakshaving()
+# test_pool_networkdir()
+# test_community_autonomy()
+# test_community_peakshaving()
+
+# print("Linde")
