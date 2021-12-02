@@ -49,6 +49,8 @@ class ResultData:
                 self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
                                          columns=agent_data.agent_name, index=agent_data.agent_name)
                             for t in range(agent_data.day_range*settings.recurrence*agent_data.data_size)]
+            else:
+                self.Tnm = None
 
             # get values related to duals  ----------------------------------------
             if settings.market_design == "centralized":
@@ -74,14 +76,16 @@ class ResultData:
                                 self.shadow_price[t].iloc[i, j]
 
             # initialize empty slots for uncomputed result quantities
+            self.ADG = None
+            self.expensive_prod = None
             self.QoE = None
             self.social_welfare_h = None
             self.settlement = None
+            self.SPM = None
+            # compute outputs
             self.compute_output_quantities(settings, agent_data)
 
-
     # a function to make all relevant output variables
-
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
         if settings.market_design == "centralized":
@@ -95,21 +99,21 @@ class ResultData:
                 agent_data.day_range*settings.recurrence*agent_data.data_size), columns=["QoE"])
 
             for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
-                self.lambda_j = []
+                lambda_j = []
                 for a1 in agent_data.agent_name:
                     for a2 in agent_data.agent_name:
                         if self.Pn[a1][t] != 0:  # avoid #DIV/0! error
-                            self.lambda_j.append(
+                            lambda_j.append(
                                 agent_data.cost[a1][t] * self.Tnm[t][a1][a2] / self.Pn[a1][t])
                         if self.Ln[a1][t] != 0:  # avoid #DIV/0! error
-                            self.lambda_j.append(
+                            lambda_j.append(
                                 agent_data.util[a1][t] * self.Tnm[t][a1][a2] / self.Ln[a1][t])
 
-                if len(self.lambda_j) == 0:  # If no power is traded in t
+                if len(lambda_j) == 0:  # If no power is traded in t
                     self.QoE["QoE"][t] = 'Not Defined'
-                elif (max(self.lambda_j) - min(self.lambda_j)) != 0:  # avoid #DIV/0! error
+                elif (max(lambda_j) - min(lambda_j)) != 0:  # avoid #DIV/0! error
                     self.QoE["QoE"][t] = (
-                        1 - (st.pstdev(self.lambda_j) / (max(self.lambda_j) - min(self.lambda_j))))
+                        1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                 else:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
@@ -147,14 +151,14 @@ class ResultData:
                     self.settlement[agent][t] = sum(aux)
 
         # list with producers+prosumers
-        self.prod_pros = []
+        prod_pros = []
         for i, j in enumerate(agent_data.agent_type.values()):
             if j == 'prosumer' or j == 'producer':
-                self.prod_pros.append(agent_data.agent_name[i])
+                prod_pros.append(agent_data.agent_name[i])
 
         # AVERAGE DISPATCHED GENERATION (ADG)
-        self.ADG = pd.DataFrame(index=['ADG'], columns=self.prod_pros)
-        for agent in self.prod_pros:
+        self.ADG = pd.DataFrame(index=['ADG'], columns=prod_pros)
+        for agent in prod_pros:
             aux = []
             for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
                 if agent_data.gmax[agent][t] == 0:
@@ -164,8 +168,8 @@ class ResultData:
             self.ADG[agent]['ADG'] = np.average(aux)*100
 
         # SUCCESSFUL PARTICIPATION IN THE MARKET (SPM)
-        self.SPM = pd.DataFrame(index=['SPM'], columns=self.prod_pros)
-        for agent in self.prod_pros:
+        self.SPM = pd.DataFrame(index=['SPM'], columns=prod_pros)
+        for agent in prod_pros:
             aux = []
             for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
                 if agent_data.gmax[agent][t] == 0:
@@ -195,3 +199,27 @@ class ResultData:
             else:
                 self.expensive_prod = max(aux, key=lambda x: x[0])
                 return agent_data.cost[self.expensive_prod[1]][period]
+
+    def convert_to_dicts(self):
+        return_dict = {'Gn': self.Gn.to_dict(orient='list'),
+                       'Ln': self.Ln.to_dict(orient='list'),
+                       'Pn': self.Pn.to_dict(orient='list'),
+                       'QoE': self.QoE.tolist(),
+                       'market': self.market,
+                       'name': self.name,
+                       'optimal': self.optimal,
+                       # 'plot_market_clearing': ,
+                       'settlement': self.settlement.to_dict(orient='list'),
+                       'social_welfare_h': self.social_welfare_h.values.T.tolist()[0],
+                       'SPM': self.SPM.transpose().to_dict()['SPM'],
+                       'ADG': self.ADG.transpose().to_dict()['ADG'],
+                       'expensive_prod': self.expensive_prod
+                       }
+        if return_dict['market'] == 'centralized':
+            return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
+            return_dict['Tnm'] = "none"
+        else:
+            return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')
+            return_dict['Tnm'] = self.Tnm.to_dict(orient='list')
+
+        return return_dict

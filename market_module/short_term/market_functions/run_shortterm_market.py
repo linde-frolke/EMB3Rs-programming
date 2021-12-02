@@ -2,9 +2,7 @@
 function that makes input structures, runs short term market, makes result object, and returns dictionary outputs
 the inputs are also in the dictionary format
 """
-import numpy as np
 import pandas as pd
-from ast import literal_eval
 
 # import own modules
 from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
