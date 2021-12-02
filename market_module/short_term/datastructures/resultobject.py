@@ -265,17 +265,21 @@ class ResultData:
         file.close()
 
     def convert_to_dicts(self):
-        return_dict = {'Gn': self.Gn,
-                       'Ln': self.Ln,
-                       'Pn': self.Pn,
-                       'QoE': self.QoE,
-                       'Tnm': self.Tnm,
+        return_dict = {'Gn': self.Gn.to_dict(),
+                       'Ln': self.Ln.to_dict(),
+                       'Pn': self.Pn.to_dict(),
+                       'QoE': self.QoE.tolist(),
                        'market': self.market,
                        'name': self.name,
                        'optimal': self.optimal,
                        # 'plot_market_clearing': ,
-                       'settlement': self.settlement,
-                       'shadow_price': self.shadow_price,
-                       'social_welfare_h': self.social_welfare_h
+                       'settlement': self.settlement.to_dict(),
+                       'shadow_price': self.shadow_price.to_dict(),
+                       'social_welfare_h': self.social_welfare_h.values.T.tolist()[0]
                        }
+        if self.market == "p2p":
+            return_dict['Tnm'] = self.Tnm.to_dict()
+        else:
+            return_dict['Tnm'] = self.Tnm
+
         return return_dict

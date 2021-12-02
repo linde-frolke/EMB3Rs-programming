@@ -6,12 +6,12 @@ import pandas as pd
 import os
 import sys
 # make sure it can find modules
-sys.path.insert(0, os.getcwd() + '/short_term/')
+sys.path.extend([os.getcwd() + '/market_module/'])
 
 # import own modules
-from datastructures.inputstructs import AgentData, MarketSettings, Network
-from market_functions.pool_market import make_pool_market
-from market_functions.p2p_market import make_p2p_market
+from market_module.short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from market_module.short_term.market_functions.pool_market import make_pool_market
+from market_module.short_term.market_functions.p2p_market import make_p2p_market
 from ast import literal_eval
 
 # TEST POOL #######################################################################################
@@ -85,6 +85,10 @@ print(result.social_welfare_h)
 # Market Clearing Figure - not implemented for this case
 print(result.plot_market_clearing(0, settings, agent_data, 'pool_0'))  # user must select the hour
 
+result_dict = result.convert_to_dicts()
+dir(result_dict)
+
+
 # COMPARE TO MARKET WITHOUT NETWORK -------------------------------------------------
 # all other settings identical
 settings2 = MarketSettings(nr_of_hours=12, offer_type="simple", prod_diff="noPref",
@@ -94,6 +98,8 @@ name2 = "test_" + str(settings2.market_design) + "_" + str(settings2.offer_type)
 result2 = make_pool_market(name=name2, agent_data=agent_data, settings=settings2, network=network)
 
 result2.shadow_price
+result.shadow_price
+
 
 # we can see that prosumer 1 can only export, producer 1 can only import (as it is on a destination node)
 print(result2.Pn)

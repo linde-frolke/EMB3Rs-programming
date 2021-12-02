@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="58c8ac62-d38f-44a8-beab-743584a744db" name="Default Changelist" comment="" />
+    <list default="true" id="58c8ac62-d38f-44a8-beab-743584a744db" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/short_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/datastructures/resultobject.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/short_term/test_prototype_pool_networkdirections.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/test_prototype_pool_networkdirections.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,6 +31,9 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="1njrS0Z797zeHc1vo9NWEntByAY" />
   <component name="ProjectLevelVcsManager">
@@ -120,7 +130,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
