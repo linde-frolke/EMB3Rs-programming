@@ -203,19 +203,16 @@ class ResultData:
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t][agent][agent2]*self.Gn[agent]
-                                   [t] - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
+                        aux.append(self.shadow_price[t][agent][agent2]*self.Tnm[agent][agent2]
+                                   [t])  # - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
             if settings.network_type is None:
                 for t in range(0, settings.nr_of_h):
                     for agent in agent_data.agent_name:
-                        aux = []
-                        for agent2 in agent_data.agent_name:  # TODO check this!
-                            aux.append(self.shadow_price['uniform price'][t]*self.Gn[agent]
-                                       [t] - self.shadow_price['uniform price'][t] * self.Ln[agent][t])
-                        self.settlement[agent][t] = sum(aux)
+                        self.settlement[agent][t] = self.shadow_price['uniform price'][t]*(self.Gn[agent][t] -
+                                                                                           self.Ln[agent][t])
             elif settings.network_type == "direction":
                 for t in range(settings.nr_of_h):
                     for agent in agent_data.agent_name:
@@ -268,7 +265,7 @@ class ResultData:
         return_dict = {'Gn': self.Gn.to_dict(),
                        'Ln': self.Ln.to_dict(),
                        'Pn': self.Pn.to_dict(),
-                       'QoE': self.QoE.tolist(),
+                       'QoE': self.QoE.to_dict(orient="list"),
                        'market': self.market,
                        'name': self.name,
                        'optimal': self.optimal,

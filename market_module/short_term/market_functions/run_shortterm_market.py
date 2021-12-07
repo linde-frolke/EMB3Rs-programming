@@ -48,7 +48,8 @@ def run_shortterm_market(input_dict):
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
                   'co2_emissions': 'none',  # allowed values are 'none' or array of size (nr_of_agents)
                   'is_in_community': 'none',  # allowed values are 'none' or boolean array of size (nr_of_agents) 
-                  'block_offer': 'none',  # allowed values are 'none' or TODO ask Sergio what format is 
+                  'block_offer': 'none',  # allowed values are 'none' or list of lists for each agent,
+                                e.g {'prosumer_1': [[0, 1]], 'producer_1': [[3, 4, 5, 6], [10, 11]]}
                   'is_chp': 'none', # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',  # a dictionary of dictionaries, including parameters for each agent in is_chp.
                                                         # {'agent_1' : {'rho' : 1.0, 'r' : 0.15, ...},
