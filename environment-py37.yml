@@ -11,3 +11,7 @@ dependencies:
   - pandas=
   - pyscipopt=
   - scipy=
+
+  # for pypi packages (uncomment only if there are packages)
+  # - pip:
+  #     - numpy==

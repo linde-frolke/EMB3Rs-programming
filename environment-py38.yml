@@ -12,5 +12,6 @@ dependencies:
   - pyscipopt=
   - scipy=
 
-  # for pypi packages
+  # for pypi packages (uncomment only if there are packages)
   # - pip:
+  #     - numpy==
