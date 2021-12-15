@@ -1,0 +1,17 @@
+name: emb3rs-market-module
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip=
+  - colorama=
+  - cvxpy=
+  - matplotlib=
+  - numpy=
+  - pandas=
+  - pyscipopt=
+  - scipy=
+
+  # for pypi packages (uncomment only if there are packages)
+  # - pip:
+  #     - numpy==
