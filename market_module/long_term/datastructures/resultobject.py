@@ -204,7 +204,6 @@ class ResultData:
         return_dict = {'Gn': self.Gn.to_dict(orient='list'),
                        'Ln': self.Ln.to_dict(orient='list'),
                        'Pn': self.Pn.to_dict(orient='list'),
-                       'QoE': self.QoE.tolist(),
                        'market': self.market,
                        'name': self.name,
                        'optimal': self.optimal,
@@ -218,8 +217,10 @@ class ResultData:
         if return_dict['market'] == 'centralized':
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
+            return_dict['Qoe'] = self.QoE.to_list()
         else:
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')
-            return_dict['Tnm'] = self.Tnm.to_dict(orient='list')
+            return_dict['Qoe'] = self.QoE.to_dict(orient='list')
+            # return_dict['shadow_price'] = self.shadow_price.to_dict()  # TODO make it work
+            # return_dict['Tnm'] = self.Tnm.to_dict()   # TODO make it work
 
         return return_dict

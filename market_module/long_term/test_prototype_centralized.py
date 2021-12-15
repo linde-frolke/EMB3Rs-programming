@@ -1,8 +1,6 @@
 """
 script that makes input datastructures, then applies market functions
 """
-import numpy as np
-import pandas as pd
 import sys
 import os
 
