@@ -48,7 +48,7 @@ class ResultData:
                 # extract trade variable - a square dataframe for each time index
                 self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
                                          columns=agent_data.agent_name, index=agent_data.agent_name)
-                            for t in range(agent_data.day_range*settings.recurrence*agent_data.data_size)]
+                            for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
             else:
                 self.Tnm = None
 
@@ -62,14 +62,14 @@ class ResultData:
             elif settings.market_design == "decentralized":
 
                 self.shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
-                                     for t in range(agent_data.day_range*settings.recurrence*agent_data.data_size)]
+                                     for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
 
-                for t in range(agent_data.day_range*settings.recurrence*agent_data.data_size):
+                for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size):
                     for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                         # if not i == j:
                         if j >= i:
                             constr_name = "reciprocity_t" + \
-                                str(t) + str(i) + str(j)
+                                          str(t) + str(i) + str(j)
                             self.shadow_price[t].iloc[i, j] = cb.get_constraint(
                                 str_=constr_name).dual_value
                             self.shadow_price[t].iloc[j, i] = - \
@@ -89,16 +89,14 @@ class ResultData:
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
         if settings.market_design == "centralized":
-            self.QoE = np.nan * \
-                np.ones(agent_data.day_range *
-                        settings.recurrence*agent_data.data_size)
+            self.QoE = pd.DataFrame(["none"])
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "decentralized":
             # QoE
             self.QoE = pd.DataFrame(index=range(
-                agent_data.day_range*settings.recurrence*agent_data.data_size), columns=["QoE"])
+                agent_data.day_range * settings.recurrence * agent_data.data_size), columns=["QoE"])
 
-            for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 lambda_j = []
                 for a1 in agent_data.agent_name:
                     for a2 in agent_data.agent_name:
@@ -113,41 +111,41 @@ class ResultData:
                     self.QoE["QoE"][t] = 'Not Defined'
                 elif (max(lambda_j) - min(lambda_j)) != 0:  # avoid #DIV/0! error
                     self.QoE["QoE"][t] = (
-                        1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
+                            1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                 else:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
 
         # hourly social welfare an array of length agent_data.day_range*settings.recurrence*agent_data.data_size
         self.social_welfare_h = pd.DataFrame(index=range(
-            agent_data.day_range*settings.recurrence*agent_data.data_size), columns=["Social Welfare"])
-        for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=["Social Welfare"])
+        for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
             total_cost = np.sum(np.multiply(
                 agent_data.cost.T[t], self.Gn.T[t]))
             total_util = np.sum(np.multiply(
                 agent_data.util.T[t], self.Ln.T[t]))
             self.social_welfare_h["Social Welfare"][t] = (
-                total_cost - total_util)
+                    total_cost - total_util)
 
         # Settlement
         self.settlement = pd.DataFrame(index=range(
-            agent_data.day_range*settings.recurrence*agent_data.data_size), columns=agent_data.agent_name)
+            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=agent_data.agent_name)
         if settings.market_design == "decentralized":
-            for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t][agent][agent2]*self.Gn[agent]
-                                   [t] - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
+                        aux.append(self.shadow_price[t][agent][agent2] * self.Gn[agent]
+                        [t] - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "centralized":
-            for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price['uniform price'][t]*self.Gn[agent]
-                                   [t] - self.shadow_price['uniform price'][t] * self.Ln[agent][t])
+                        aux.append(self.shadow_price['uniform price'][t] * self.Gn[agent]
+                        [t] - self.shadow_price['uniform price'][t] * self.Ln[agent][t])
                     self.settlement[agent][t] = sum(aux)
 
         # list with producers+prosumers
@@ -160,18 +158,18 @@ class ResultData:
         self.ADG = pd.DataFrame(index=['ADG'], columns=prod_pros)
         for agent in prod_pros:
             aux = []
-            for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 if agent_data.gmax[agent][t] == 0:
                     aux.append(1)  # if source production is zero
                 else:
-                    aux.append(self.Gn[agent][t]/agent_data.gmax[agent][t])
-            self.ADG[agent]['ADG'] = np.average(aux)*100
+                    aux.append(self.Gn[agent][t] / agent_data.gmax[agent][t])
+            self.ADG[agent]['ADG'] = np.average(aux) * 100
 
         # SUCCESSFUL PARTICIPATION IN THE MARKET (SPM)
         self.SPM = pd.DataFrame(index=['SPM'], columns=prod_pros)
         for agent in prod_pros:
             aux = []
-            for t in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 if agent_data.gmax[agent][t] == 0:
                     aux.append(0)
                 else:
@@ -180,13 +178,13 @@ class ResultData:
                         aux.append(1)
                     else:
                         aux.append(0)
-            self.SPM[agent]['SPM'] = np.average(aux)*100
+            self.SPM[agent]['SPM'] = np.average(aux) * 100
 
     def find_best_price(self, period: int, agent_name, agent_data, settings):
         if settings.market_design == "decentralized":
             raise ValueError(
                 "Find the best price option is only available in centralized market")
-        elif period >= agent_data.day_range*settings.recurrence*agent_data.data_size:
+        elif period >= agent_data.day_range * settings.recurrence * agent_data.data_size:
             raise ValueError(
                 'Please select a period within the simulation time range')
         else:
@@ -212,15 +210,15 @@ class ResultData:
                        'social_welfare_h': self.social_welfare_h.values.T.tolist()[0],
                        'SPM': self.SPM.transpose().to_dict()['SPM'],
                        'ADG': self.ADG.transpose().to_dict()['ADG'],
-                       'expensive_prod': self.expensive_prod
+                       'expensive_prod': self.expensive_prod,
+                       'QoE': self.QoE.to_dict(orient='list')
                        }
         if return_dict['market'] == 'centralized':
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
-            return_dict['Qoe'] = self.QoE.to_list()
         else:
-            return_dict['Qoe'] = self.QoE.to_dict(orient='list')
-            # return_dict['shadow_price'] = self.shadow_price.to_dict()  # TODO make it work
-            # return_dict['Tnm'] = self.Tnm.to_dict()   # TODO make it work
+            return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list")
+                                           for t in range(len(self.shadow_price))]
+            return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
 
         return return_dict
