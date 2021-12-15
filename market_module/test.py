@@ -7,6 +7,7 @@ from .short_term.tests.test_prototype_pool import test_pool
 from .short_term.tests.test_prototype_pool_networkdirections import test_pool_networkdir
 from .short_term.tests.test_community import test_community_autonomy, test_community_peakshaving
 from .long_term.tests.test_prototype_centralized import test_centralized
+from .long_term.tests.test_prototype_decentralized import test_decentralized
 
 # Write Here all the available tests you want to run
 availableTests = {
@@ -18,7 +19,8 @@ availableTests = {
     "test:shortterm:p2p:losses": test_p2p_losses,
     "test:shortterm:community:autonomy": test_community_autonomy,
     "test:shortterm:community:peakshaving": test_community_peakshaving,
-    "test:longterm:centralized": test_centralized
+    "test:longterm:centralized": test_centralized,
+    "test:longterm:decentralized": test_decentralized
 }
 
 

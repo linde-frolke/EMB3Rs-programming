@@ -7,6 +7,7 @@ from ...long_term.market_functions.run_longterm_market import run_longterm_marke
 
 
 def test_centralized():
+    print("start test_decentralized().............................................")
     # TEST CENTRALIZED #######################################################################################
     # DATA
     gmin = {'gmin': [[0., 0., 0., 0.],
@@ -420,3 +421,4 @@ def test_centralized():
     # Find the best price
     print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
 
+    print("finished test_decentralized().............................................")

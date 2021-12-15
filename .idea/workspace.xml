@@ -9,10 +9,9 @@
       <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/test_prototype_centralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/test_prototype_centralized.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/test_prototype_decentralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/test_prototype_decentralized.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/short_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/datastructures/resultobject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/short_term/test_prototype_p2p_co2.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/test_prototype_p2p_co2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/short_term/test_prototype_pool.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/test_prototype_pool.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/short_term/tests/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/short_term/tests/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_decentralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_decentralized.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

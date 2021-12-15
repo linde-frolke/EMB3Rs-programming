@@ -407,6 +407,7 @@ print(result.SPM)
 #Shadow price per hour
 print(result.shadow_price)
 
+print(result_dict["shadow_price"])
 
 #Energy dispatch
 #print(result.Pn)

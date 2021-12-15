@@ -426,3 +426,4 @@ print(result.Gn)
 # Find the best price
 print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
 
+print(result_dict['shadow_price'])
