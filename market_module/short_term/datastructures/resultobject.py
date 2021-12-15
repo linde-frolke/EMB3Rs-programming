@@ -156,7 +156,7 @@ class ResultData:
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
         if settings.market_design == "pool":
-            self.QoE = np.nan * np.ones(settings.nr_of_h)
+            self.QoE = pd.DataFrame(["none"])
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "p2p":
             # QoE
@@ -181,7 +181,7 @@ class ResultData:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
         elif settings.market_design == "community":
-            self.QoE = np.nan * np.ones(settings.nr_of_h)
+            self.QoE = pd.DataFrame(np.nan * np.ones(settings.nr_of_h))
             # raise Warning("community shadow price and QoE not implemented yet \n")
 
         # hourly social welfare an array of length settings.nr_of_h, same for all markets
@@ -202,9 +202,9 @@ class ResultData:
             for t in range(0, settings.nr_of_h):
                 for agent in agent_data.agent_name:
                     aux = []
-                    for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t][agent][agent2]*self.Tnm[agent][agent2]
-                                   [t])  # - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
+                    for agent2 in agent_data.agent_name:  # TODO check this
+                        aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
+                                   )  # - self.shadow_price[t].loc[agent, agent2] * self.Ln[agent][t])
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
@@ -270,13 +270,14 @@ class ResultData:
                        'name': self.name,
                        'optimal': self.optimal,
                        # 'plot_market_clearing': ,
-                       'settlement': self.settlement.to_dict(),
-                       'shadow_price': self.shadow_price.to_dict(),
+                       'settlement' : self.settlement.to_dict(),
                        'social_welfare_h': self.social_welfare_h.values.T.tolist()[0]
                        }
         if self.market == "p2p":
-            return_dict['Tnm'] = self.Tnm.to_dict()
+            return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
+            return_dict['shadow_price'] = [self.shadow_price[t].to_dict() for t in range(len(self.shadow_price))]
         else:
             return_dict['Tnm'] = self.Tnm
+            return_dict['shadow_price'] = self.shadow_price.to_dict()
 
         return return_dict
