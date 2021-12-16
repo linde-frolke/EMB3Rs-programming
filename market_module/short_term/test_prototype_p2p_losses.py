@@ -6,13 +6,10 @@ import pandas as pd
 import os
 import sys
 
-# make sure it can find modules
-sys.path.insert(0, os.getcwd() + '/short_term/')
-
 # import own modules
-from datastructures.inputstructs import AgentData, MarketSettings, Network
-from market_functions.pool_market import make_pool_market
-from market_functions.p2p_market import make_p2p_market
+from market_module.short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from market_module.short_term.market_functions.pool_market import make_pool_market
+from market_module.short_term.market_functions.p2p_market import make_p2p_market
 from ast import literal_eval
 
 
