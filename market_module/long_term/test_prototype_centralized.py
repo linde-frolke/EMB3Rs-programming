@@ -410,7 +410,7 @@ print(result_dict['shadow_price'])
 # Energy dispatch
 # print(result.Pn)
 print(result_dict['Pn'])
-# print(result.Ln)
+print(result.Ln)
 print(result.Gn)
 
 # Settlement

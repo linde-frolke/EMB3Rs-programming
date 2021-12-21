@@ -202,9 +202,9 @@ class ResultData:
             for t in range(0, settings.nr_of_h):
                 for agent in agent_data.agent_name:
                     aux = []
-                    for agent2 in agent_data.agent_name:  # TODO check this
+                    for agent2 in agent_data.agent_name:
                         aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
-                                   )  # - self.shadow_price[t].loc[agent, agent2] * self.Ln[agent][t])
+                                   )
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
@@ -217,7 +217,7 @@ class ResultData:
                 for t in range(settings.nr_of_h):
                     for agent in agent_data.agent_name:
                         self.settlement[agent][t] = self.shadow_price[agent][t] * \
-                            self.Pn[agent][t]
+                            self.Pn[agent][t] # TODO check this
             elif settings.network_type == "size":
                 raise NotImplementedError(
                     "network-aware size is not implemented yet")
