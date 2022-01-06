@@ -4,9 +4,6 @@ script that makes input datastructures, then applies market functions
 import sys
 import os
 
-# make sure it can find modules
-sys.path.extend([os.getcwd() + '/market_module/'])
-
 # import own modules
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
@@ -413,7 +410,7 @@ print(result_dict['shadow_price'])
 # Energy dispatch
 # print(result.Pn)
 print(result_dict['Pn'])
-# print(result.Ln)
+print(result.Ln)
 print(result.Gn)
 
 # Settlement

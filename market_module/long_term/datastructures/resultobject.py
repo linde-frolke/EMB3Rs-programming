@@ -135,18 +135,15 @@ class ResultData:
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t][agent][agent2] * self.Gn[agent]
-                        [t] - self.shadow_price[t][agent][agent2] * self.Ln[agent][t])
+                        aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
+                                   )
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "centralized":
             for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
                 for agent in agent_data.agent_name:
-                    aux = []
-                    for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price['uniform price'][t] * self.Gn[agent]
-                        [t] - self.shadow_price['uniform price'][t] * self.Ln[agent][t])
-                    self.settlement[agent][t] = sum(aux)
+                    self.settlement[agent][t] = self.shadow_price['uniform price'][t] * (self.Gn[agent][t] -
+                                                                                         self.Ln[agent][t])
 
         # list with producers+prosumers
         prod_pros = []
