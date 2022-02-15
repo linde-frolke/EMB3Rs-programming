@@ -9,9 +9,9 @@ import sys
 sys.path.extend([os.getcwd() + '/market_module/'])
 
 # import own modules
-from market_module.short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
-from market_module.short_term.market_functions.pool_market import make_pool_market
-from market_module.short_term.market_functions.p2p_market import make_p2p_market
+from ...market_module.short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...market_module.short_term.market_functions.pool_market import make_pool_market
+from ...market_module.short_term.market_functions.p2p_market import make_p2p_market
 from ast import literal_eval
 
 # TEST POOL #######################################################################################

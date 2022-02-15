@@ -5,7 +5,7 @@ import sys
 import os
 
 # import own modules
-from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
+from ...market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
 # TEST DECENTRALIZED #######################################################################################
 # setup inputs --------------------------------------------
