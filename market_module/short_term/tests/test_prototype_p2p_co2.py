@@ -14,7 +14,7 @@ def test_p2p_co2():
     # setup inputs --------------------------------------------
     print("running test_p2p_co2().............................................")
     # TEST P2P #######################################################################################
-    input_dict = {'sim_name': 'test_p2p_co2',
+    input_dict = {#'sim_name': 'test_p2p_co2',
                   'md': 'p2p',  # other options are  'p2p' or 'community'
                   'nr_of_hours': 12,
                   'offer_type': 'block',

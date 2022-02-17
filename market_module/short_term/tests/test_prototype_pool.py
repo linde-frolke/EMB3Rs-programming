@@ -10,7 +10,7 @@ from ...short_term.market_functions.run_shortterm_market import run_shortterm_ma
 def test_pool():
     print("running test_pool().............................................")
     # TEST POOL ###############################################################################
-    input_dict = {'sim_name': 'test_pool',
+    input_dict = {#'sim_name': 'test_pool',
                   'md': 'pool',  # other options are  'p2p' or 'community'
                   'nr_of_hours': 12,
                   'offer_type': 'simple',

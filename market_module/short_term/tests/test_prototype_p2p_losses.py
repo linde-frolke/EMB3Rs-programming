@@ -10,7 +10,7 @@ from ...short_term.market_functions.run_shortterm_market import run_shortterm_ma
 def test_p2p_losses():
     print("running test_p2p_losses().............................................")
     # TEST P2P #######################################################################################
-    input_dict = {'sim_name': 'test_p2p',
+    input_dict = {#'sim_name': 'test_p2p',
                   'md': 'p2p',  # other options are  'p2p' or 'community'
                   'nr_of_hours': 12,
                   'offer_type': 'simple',

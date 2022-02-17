@@ -3,6 +3,7 @@ test function for long term market, centralized
 """
 
 # import own modules
+from msilib.schema import Error
 from ...long_term.market_functions.run_longterm_market import run_longterm_market
 
 

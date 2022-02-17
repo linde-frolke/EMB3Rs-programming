@@ -15,8 +15,7 @@ def run_shortterm_market(input_dict):
     """
     :param input_dict: could be like this:
     
-    input_dict = {'sim_name': 'name_of_simulation',
-                  'md': 'pool',  # other options are  'p2p' or 'community'
+    input_dict = {'md': 'pool',  # other options are  'p2p' or 'community'
                   'nr_of_hours': 12,
                   'offer_type': 'simple',
                   'prod_diff': 'noPref',
@@ -25,16 +24,10 @@ def run_shortterm_market(input_dict):
                   'el_price': 'none',
                   'agent_ids': ["prosumer_1",
                             "prosumer_2", "consumer_1", "producer_1"],
-                  'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
+                  #'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'none', # objective for community
                   'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'}, # or values instead
-                  'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
                   'gmax': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
-                  'lmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], 
                   'lmax': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
@@ -87,9 +80,11 @@ def run_shortterm_market(input_dict):
                                         g_imp=input_dict['community_settings']['g_imp'])
 
     # create AgentData object
-    agent_data = AgentData(settings=settings, name=input_dict['agent_ids'], a_type=input_dict['agent_types'],
-                           gmin=input_dict['gmin'], gmax=input_dict['gmax'],
-                           lmin=input_dict['lmin'], lmax=input_dict['lmax'],
+    agent_data = AgentData(settings=settings, name=input_dict['agent_ids'], #a_type=input_dict['agent_types'],
+                           #gmin=input_dict['gmin'], 
+                           gmax=input_dict['gmax'],
+                           #lmin=input_dict['lmin'], 
+                           lmax=input_dict['lmax'],
                            cost=input_dict['cost'], util=input_dict['util'],
                            co2=input_dict['co2_emissions'],
                            is_in_community=input_dict['is_in_community'],

@@ -109,7 +109,7 @@ class AgentData:
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
 
-    def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None,
+    def __init__(self, settings, name, gmax, lmax, cost, util, co2=None,
                  is_in_community=None, block_offer=None, is_chp=None, chp_pars=None,
                  default_alpha=10.0):
         """
@@ -135,7 +135,7 @@ class AgentData:
         # set nr of agents, names, and types
         self.nr_of_agents = len(name)
         self.agent_name = name
-        self.agent_type = dict(zip(name, a_type))
+        #self.agent_type = dict(zip(name, a_type))
         # add community info if that is needed
         if settings.market_design == "community":
             if is_in_community is None:
@@ -164,12 +164,16 @@ class AgentData:
 
         # time dependent data -------------------------------------------------
         if settings.nr_of_h == 1:
-            lmin = np.reshape(lmin, (1, self.nr_of_agents))
-            gmin = np.reshape(gmin, (1, self.nr_of_agents))
+            lmin = np.zeros((1, self.nr_of_agents))
+            gmin = np.zeros((1, self.nr_of_agents))
             lmax = np.reshape(lmax, (1, self.nr_of_agents))
             gmax = np.reshape(gmax, (1, self.nr_of_agents))
             cost = np.reshape(cost, (1, self.nr_of_agents))
             util = np.reshape(util, (1, self.nr_of_agents))
+        else:
+            # set lmin and gmin to zero.
+            lmin = np.zeros((settings.nr_of_h, self.nr_of_agents))
+            gmin = np.zeros((settings.nr_of_h, self.nr_of_agents))
         # check size of inputs
         if not np.array(lmin).shape == (settings.nr_of_h, self.nr_of_agents):
             raise ValueError("lmin has to have shape (nr_of_timesteps, nr_of_agents)")

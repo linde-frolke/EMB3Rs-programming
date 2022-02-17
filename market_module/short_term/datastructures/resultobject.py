@@ -267,7 +267,7 @@ class ResultData:
                        'Pn': self.Pn.to_dict(),
                        'QoE': self.QoE.to_dict(orient="list"),
                        'market': self.market,
-                       'name': self.name,
+                       #'name': self.name,
                        'optimal': self.optimal,
                        # 'plot_market_clearing': ,
                        'settlement' : self.settlement.to_dict(),
