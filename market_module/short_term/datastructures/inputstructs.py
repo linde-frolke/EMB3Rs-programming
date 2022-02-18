@@ -116,9 +116,7 @@ class AgentData:
         :param settings: a MarketSettings object. contains the time horizon that is needed here.
         :param name: an array with agents names, should be strings
         :param a_type: array of strings. should be one of "producer, "consumer", "prosumer"
-        :param gmin: array of size (nr_of_timesteps, nr_of_agents)
         :param gmax: array of size (nr_of_timesteps, nr_of_agents)
-        :param lmin: array of size (nr_of_timesteps, nr_of_agents)
         :param lmax: array of size (nr_of_timesteps, nr_of_agents)
         :param cost:
         :param util:
