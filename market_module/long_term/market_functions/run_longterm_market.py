@@ -14,9 +14,9 @@ def run_longterm_market(input_dict):
                               ydr=input_dict['yearly_demand_rate'])
 
     agent_data = AgentData(settings=settings, name=input_dict['agent_ids'],
-                           a_type=input_dict['agent_types'],
-                           gmin=input_dict['gmin'], gmax=input_dict['gmax'],
-                           lmin=input_dict['lmin'], lmax=input_dict['lmax'],
+                           #a_type=input_dict['agent_types'],
+                            gmax=input_dict['gmax'],
+                           lmax=input_dict['lmax'],
                            cost=input_dict['cost'], util=input_dict['util'], co2=input_dict['co2_emissions']
                            )
 
@@ -25,9 +25,9 @@ def run_longterm_market(input_dict):
 
     # construct and solve market -----------------------------
     if settings.market_design == "centralized":
-        result = make_centralized_market(name=input_dict['name'], agent_data=agent_data, settings=settings)
+        result = make_centralized_market(agent_data=agent_data, settings=settings)
     elif settings.market_design == "decentralized":
-        result = make_decentralized_market(name=input_dict['name'], agent_data=agent_data, settings=settings,
+        result = make_decentralized_market(agent_data=agent_data, settings=settings,
                                            network=network)
     else:
         raise ValueError("settings.market_design has to be in [centralized, decentralized]")

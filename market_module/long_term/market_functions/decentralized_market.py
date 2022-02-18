@@ -7,7 +7,7 @@ from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, 
 from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
-def make_decentralized_market(name: str, agent_data: AgentData, settings: MarketSettings, network: Network):
+def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, network: Network):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
     :param name: string, can give the resulting ResultData object a name.
@@ -116,6 +116,6 @@ def make_decentralized_market(name: str, agent_data: AgentData, settings: Market
         print("Problem status is %s" % prob.status)
 
     # store result in result object
-    result = ResultData(name, prob, cb, agent_data, settings)
+    result = ResultData(prob, cb, agent_data, settings)
 
     return result

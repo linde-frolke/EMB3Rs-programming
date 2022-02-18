@@ -52,12 +52,12 @@ class AgentData:
     If the input is constant in time, it is a dataframe with agent ID as column name, and the input as row
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
-    def __init__(self, settings, name, a_type, gmin, gmax, lmin, lmax, cost, util, co2=None):
+    def __init__(self, settings, name, gmax, lmax, cost, util, co2=None):
         # set nr of agents, names, and types
         self.nr_of_agents = len(name)
         # TODO print("todo make sure no ID is identical")
         self.agent_name = name
-        self.agent_type = dict(zip(name, a_type))
+        #self.agent_type = dict(zip(name, a_type))
         # add co2 emission info if needed
         if settings.product_diff == "co2Emissions":
             self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name) #1xnr_of_agents dimension
@@ -81,14 +81,21 @@ class AgentData:
             if settings.horizon_basis == 'weeks' and settings.recurrence > 52:
                 raise ValueError('For horizon basis weeks, recurrence must not exceed 52')
             if settings.horizon_basis == 'months' and settings.recurrence > 12:
-                raise ValueError('For horizon basis weeks, recurrence must not exceed 12')    
+                raise ValueError('For horizon basis weeks, recurrence must not exceed 12')
+
+            #These are parameters now
+
+            lmin = np.zeros((self.day_range * settings.recurrence * self.data_size, self.nr_of_agents))
+            gmin = np.zeros((self.day_range * settings.recurrence * self.data_size, self.nr_of_agents))
+            self.gmin = pd.DataFrame(gmin, columns=name)
+            self.lmin = pd.DataFrame(lmin, columns=name)
+
              #checking data dimensions
             if len(gmin) + len(gmax) + len(lmin) + len(lmax) + len(cost) + len(util) != 6*self.day_range*settings.recurrence*self.data_size:
                 raise ValueError('Data dimensions should be {:d}'.format(self.day_range*settings.recurrence*self.data_size))
             
-            self.gmin = pd.DataFrame(gmin, columns=name)
+
             self.gmax = pd.DataFrame(gmax, columns=name)
-            self.lmin = pd.DataFrame(lmin, columns=name)
             self.lmax = pd.DataFrame(lmax, columns=name)
     
             self.cost = pd.DataFrame(cost, columns=name)
@@ -101,20 +108,15 @@ class AgentData:
             if len(gmin) + len(gmax) + len(lmin) + len(lmax) + len(cost) + len(util) != 6*self.day_range*self.data_size:
                 raise ValueError('Data dimensions should be {:d}'.format(self.day_range*self.data_size))
             
-            lmin = self.yearly_demand_rate(lmin, settings) #demand increase
+
             lmax = self.yearly_demand_rate(lmax, settings) #demand increase
-            gmin = self.replicate_data(gmin, settings)
             gmax = self.replicate_data(gmax, settings)
             
             cost = self.replicate_data(cost, settings)
             util = self.replicate_data(util, settings)
  
         # time dependent data -------------------------------------------------
-
-       
-            self.gmin = pd.DataFrame(gmin, columns=name)
             self.gmax = pd.DataFrame(gmax, columns=name)
-            self.lmin = pd.DataFrame(lmin, columns=name)
             self.lmax = pd.DataFrame(lmax, columns=name)
     
             self.cost = pd.DataFrame(cost, columns=name)

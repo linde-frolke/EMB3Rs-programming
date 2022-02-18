@@ -9,7 +9,7 @@ import itertools
 
 
 class ResultData:
-    def __init__(self, name, prob: cp.problems.problem.Problem,
+    def __init__(self, prob: cp.problems.problem.Problem,
                  cb: ConstraintBuilder,
                  agent_data: AgentData, settings: MarketSettings):
         """
@@ -24,7 +24,7 @@ class ResultData:
         :param settings: MarketSettings object
         """
         #
-        self.name = name
+        #self.name = name
         self.market = settings.market_design
 
         if prob.status in ["infeasible", "unbounded"]:
@@ -81,6 +81,7 @@ class ResultData:
             self.QoE = None
             self.social_welfare_h = None
             self.settlement = None
+            self.agent_operational_cost = None
             self.SPM = None
             # compute outputs
             self.compute_output_quantities(settings, agent_data)
@@ -145,11 +146,21 @@ class ResultData:
                     self.settlement[agent][t] = self.shadow_price['uniform price'][t] * (self.Gn[agent][t] -
                                                                                          self.Ln[agent][t])
 
+        # agent_operational_cost
+        self.agent_operational_cost = pd.DataFrame(index=range(
+            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=agent_data.agent_name)
+        for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for agent in agent_data.agent_name:
+                    self.agent_operational_cost[agent][t]=agent_data.cost[agent][t]*self.Gn[agent][t] - agent_data.util[agent][t]*self.Ln[agent][t]
+
         # list with producers+prosumers
         prod_pros = []
-        for i, j in enumerate(agent_data.agent_type.values()):
-            if j == 'prosumer' or j == 'producer':
-                prod_pros.append(agent_data.agent_name[i])
+        for agent in agent_data.agent_name:
+            aux = []
+            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+                aux.append(agent_data.gmax[agent][t] - agent_data.lmax[agent][t])
+            if max(aux) > 0 and agent not in prod_pros:
+                prod_pros.append(agent)
 
         # AVERAGE DISPATCHED GENERATION (ADG)
         self.ADG = pd.DataFrame(index=['ADG'], columns=prod_pros)
@@ -200,10 +211,11 @@ class ResultData:
                        'Ln': self.Ln.to_dict(orient='list'),
                        'Pn': self.Pn.to_dict(orient='list'),
                        'market': self.market,
-                       'name': self.name,
+                       #'name': self.name,
                        'optimal': self.optimal,
                        # 'plot_market_clearing': ,
                        'settlement': self.settlement.to_dict(orient='list'),
+                       'agent_operational_cost': self.agent_operational_cost.to_dict(orient='list'),
                        'social_welfare_h': self.social_welfare_h.values.T.tolist()[0],
                        'SPM': self.SPM.transpose().to_dict()['SPM'],
                        'ADG': self.ADG.transpose().to_dict()['ADG'],
