@@ -35,4 +35,4 @@ def run_longterm_market(input_dict):
     # convert result to right format
     result_dict = result.convert_to_dicts()
 
-    return settings, agent_data, network, result, result_dict
+    return result_dict

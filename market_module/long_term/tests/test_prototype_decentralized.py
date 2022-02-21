@@ -281,19 +281,19 @@ def test_decentralized():
 
     # MAIN RESULTS
     # ADG
-    print(result.ADG)
-    print(result.SPM)
+    # MAIN RESULTS
+    # ADG
+    print(result_dict["ADG"])
+    print(result_dict["SPM"])
 
     # Shadow price per hour
-    print(result.shadow_price)
-
-    print(result_dict["shadow_price"])
-
+    print(result_dict['shadow_price'])
     # Energy dispatch
     # print(result.Pn)
+    print(result_dict['Pn'])
     # print(result.Ln)
-    print(result.Gn)
-
+    print(result_dict["Gn"])
+    
     # Settlement
     # print(result.settlement)
 
@@ -301,5 +301,6 @@ def test_decentralized():
     # print(result.social_welfare_h)
 
     # Find the best price
+    # TODO test this somewhere else
     # print(result.find_best_price(15, 'prosumer_1', agent_data, settings)) #user must select hour and agent_id
     print("finished test_decentralized().............................................")

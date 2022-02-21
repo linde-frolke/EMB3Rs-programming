@@ -277,30 +277,23 @@ def test_centralized():
                                'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
                   }
 
-    settings, agent_data, network, result, result_dict = run_longterm_market(user_input)
+    result_dict = run_longterm_market(user_input)
 
     # MAIN RESULTS
     # ADG
-    print(result.ADG)
-
-    print(result.SPM)
+    print(result_dict["ADG"])
+    print(result_dict["SPM"])
 
     # Shadow price per hour
-    print(result.shadow_price)
     print(result_dict['shadow_price'])
     # Energy dispatch
     # print(result.Pn)
     print(result_dict['Pn'])
     # print(result.Ln)
-    print(result.Gn)
-
-    # Settlement
-    # print(result.settlement)
-
-    # Social welfare
-    # print(result.social_welfare_h)
-
+    print(result_dict["Gn"])
+    
     # Find the best price
-    print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
+    # TODO test this somewhere else
+    # print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
 
     print("finished test_decentralized().............................................")
