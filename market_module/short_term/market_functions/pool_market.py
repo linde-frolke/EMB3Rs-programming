@@ -8,7 +8,7 @@ from ...short_term.market_functions.add_energy_budget import add_energy_budget
 from ...short_term.market_functions.add_network import add_network_directions
 
 
-def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings, network=None):
+def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=None):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
     :param name: str
@@ -105,7 +105,7 @@ def make_pool_market(name: str, agent_data: AgentData, settings: MarketSettings,
         raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
     # store result in result object
-    result = ResultData(name, prob, cb, agent_data,
+    result = ResultData(prob, cb, agent_data,
                         settings, network_data=network)
 
     return result

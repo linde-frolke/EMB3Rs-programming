@@ -7,7 +7,7 @@ from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from ...short_term.market_functions.add_energy_budget import add_energy_budget
 
 
-def make_community_market(name: str, agent_data: AgentData, settings: MarketSettings):
+def make_community_market(agent_data: AgentData, settings: MarketSettings):
     """
     Makes the pool market, solves it, and returns a ResultData object with all needed outputs
     :param name: str
@@ -137,6 +137,6 @@ def make_community_market(name: str, agent_data: AgentData, settings: MarketSett
         raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
     # store result in result object
-    result = ResultData(name, prob, cb, agent_data, settings)
+    result = ResultData(prob, cb, agent_data, settings)
 
     return result

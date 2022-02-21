@@ -2,7 +2,6 @@
 script that makes input datastructures, then applies market functions
 """
 import json
-from msilib.schema import Error
 import numpy as np
 import pandas as pd
 import os

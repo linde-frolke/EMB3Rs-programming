@@ -2,11 +2,8 @@
 function that converts TEO and CF inputs to the "input_dict" we were expecting
 """
 import json
-from msilib.schema import Error
 import numpy as np
 import pandas as pd
-import os
-import sys
 import datetime
 
 
@@ -14,7 +11,8 @@ def convert_user_and_module_inputs(input_data):
     dummy = True 
 
     # user_inputs
-    user_input = input_data["input_user"]
+    user_input = input_data["input_user"] ### separate dictionary inside
+
     # extract day month year------------------
     day, month, year = [int(x) for x in user_input["start_datetime"].split("-")]
     as_date = datetime.datetime(year=year, month=month, day=day)
@@ -25,14 +23,11 @@ def convert_user_and_module_inputs(input_data):
     if dummy:
         gis_data = "none"
 
-
     # get CF data
     all_sinks_info = input_data["all_sinks_info"]["all_sinks_info"]["sinks"]
 
     # get TEO data
     teo_output = input_data["teo_output"]
-
-    
 
 
     # convert TEO inputs ----------------------------------------------------------------------------

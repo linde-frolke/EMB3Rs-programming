@@ -3,7 +3,6 @@ test function for long term market, centralized
 """
 
 import os
-from tracemalloc import start
 import numpy as np
 import pandas as pd
 import json
@@ -111,10 +110,10 @@ type(all_sources_info[0])
 # teo_yearly_demand
 
 ## Combine them in 
-agent_ids
-gmax
-lmax 
-cost 
+# agent_ids
+# gmax
+# lmax 
+# cost 
 
 ## how to do util?
 
