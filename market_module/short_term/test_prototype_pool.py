@@ -34,8 +34,8 @@ user_input = {'md': 'pool',
               "chp_pars": 'none', 
               "el_price": 'none',  ## THIS WILL ONLY BE AS USER INPUT!!!
               "start_datetime": "31-01-2002",
-              "util": {"1_2": [40, 42],
-                       "56_2": [45, 50]}
+              "util": {"1_2": [0.40, 0.42],
+                       "56_2": [0.45, 0.50]}
             }
 # extract day month year------------------
 day, month, year = [int(x) for x in user_input["start_datetime"].split("-")]
@@ -176,7 +176,7 @@ input_dict = {
                   'gis_data': gis_data
                   }
 
-settings, agent_data, network, result_dict = run_shortterm_market(input_dict=input_dict)
+result_dict = run_shortterm_market(input_dict=input_dict)
 
 # MAIN RESULTS
 
