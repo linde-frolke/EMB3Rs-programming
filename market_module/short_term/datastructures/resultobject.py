@@ -154,7 +154,7 @@ class ResultData:
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
         if settings.market_design == "pool":
-            self.QoE = pd.DataFrame(["none"])
+            self.QoE = pd.DataFrame({"QoE" : np.nan * np.ones(settings.nr_of_h)})
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "p2p":
             # QoE
@@ -179,7 +179,7 @@ class ResultData:
                     pass
             # self.qoe = np.average(self.QoE) # we only need it for each hour.
         elif settings.market_design == "community":
-            self.QoE = pd.DataFrame(np.nan * np.ones(settings.nr_of_h)) ## TODO implement QoE for community
+            self.QoE = pd.DataFrame({"QoE" : np.nan * np.ones(settings.nr_of_h)}) ## TODO implement QoE for community
             # raise Warning("community shadow price and QoE not implemented yet \n")
 
         # hourly social welfare an array of length settings.nr_of_h, same for all markets
@@ -263,17 +263,15 @@ class ResultData:
         return_dict = {'Gn': self.Gn.to_dict(orient="list"),
                        'Ln': self.Ln.to_dict(orient="list"),
                        'Pn': self.Pn.to_dict(orient="list"),
-                       'QoE': self.QoE.to_dict(orient="list"),
-                       # 'market': self.market,
-                       #'name': self.name,
+                       'QoE': self.QoE.to_dict(orient="list")["QoE"],
                        'optimal': self.optimal,
-                       # 'plot_market_clearing': ,
                        'settlement' : self.settlement.to_dict(orient="list"),
                        'social_welfare_h': self.social_welfare_h.to_dict(orient="list")
                        }
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
             return_dict['shadow_price'] = [self.shadow_price[t].to_dict() for t in range(len(self.shadow_price))]
+        
         elif self.market == "community":
             return_dict['Tnm'] = self.Tnm.to_dict(orient="list")
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient="list")

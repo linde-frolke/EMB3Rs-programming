@@ -6,6 +6,7 @@ for community market with all settings to default.
 """
 
 # import own modules
+from unittest import result
 from ...short_term.market_functions.run_shortterm_market import run_shortterm_market
 
 
@@ -54,12 +55,14 @@ def test_community_autonomy():
     result_dict = run_shortterm_market(input_dict=input_dict)
 
     # MAIN RESULTS
-
     # Shadow price per hour
     print(result_dict['shadow_price'])
 
     # Energy dispatchtest_pooltest_pool
     print(result_dict['Pn'])
+    print(result_dict['Gn'])
+    print(result_dict['Ln'])
+    print(result_dict["optimal"])
 
     # Energy dispatch
     print(result_dict['Tnm'])
@@ -73,14 +76,14 @@ def test_community_autonomy():
     # Quality of Experience (QoE)
     print(result_dict['QoE'])
 
+
     print("finished test_community_autonomy().............................................")
 
 
 def test_community_peakshaving():
     print("running test_community_peakshaving().............................................")
     # TEST COMMUNITY ###############################################################################
-    input_dict = {'sim_name': 'test_community_peakshaving',
-                  'md': 'community',  # other options are  'p2p' or 'community'
+    input_dict = {'md': 'community',  # other options are  'p2p' or 'community'
                   'nr_of_hours': 12,
                   'offer_type': 'simple',
                   'prod_diff': 'noPref',
@@ -89,7 +92,7 @@ def test_community_peakshaving():
                   'el_price': 'none',
                   'agent_ids': ["prosumer_1",
                                 "prosumer_2", "consumer_1", "producer_1"],
-                  'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
+                  #'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'peakShaving',  # objective for community
                   'community_settings': {'g_peak': 10.0**2, 'g_exp': 'none', 'g_imp': 'none'},
                   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
@@ -127,6 +130,9 @@ def test_community_peakshaving():
 
     # Energy dispatchtest_pooltest_pool
     print(result_dict['Pn'])
+    print(result_dict['Gn'])
+    print(result_dict['Ln'])
+    print(result_dict["optimal"])
 
     # Energy dispatch
     print(result_dict['Tnm'])
