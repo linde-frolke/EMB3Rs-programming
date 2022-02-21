@@ -277,7 +277,7 @@ def test_decentralized():
                                'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
                   }
 
-    settings, agent_data, network, result, result_dict = run_longterm_market(user_input)
+    result_dict = run_longterm_market(user_input)
 
     # MAIN RESULTS
     # ADG
