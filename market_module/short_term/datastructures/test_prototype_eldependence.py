@@ -97,4 +97,4 @@ print(result.settlement)
 print(result.social_welfare_h)
 
 # Market Clearing Figure - not implemented for this case
-print(result.plot_market_clearing(0, settings, agent_data, 'pool_0'))  # user must select the hour
+# print(result.plot_market_clearing(0, settings, agent_data, 'pool_0'))  # user must select the hour
