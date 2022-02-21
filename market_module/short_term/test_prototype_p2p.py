@@ -47,9 +47,9 @@ util = {'util': [[40, 42, 35, 25], [45, 50, 40, 0], [55, 36, 45, 0], [44, 34, 43
                  [40, 55, 33, 0],
                  [33, 42, 38, 0], [24, 55, 35, 0], [25, 35, 51, 0], [19, 43, 45, 0], [34, 55, 19, 0]]}
 
-agent_data = AgentData(settings=settings, name=agent_ids['agent_ids'], a_type=agent_types['agent_types'],
-                       gmin=gmin['gmin'], gmax=gmax['gmax'],
-                       lmin=lmin['lmin'], lmax=lmax['lmax'],
+agent_data = AgentData(settings=settings, agent_ids=agent_ids['agent_ids'], # a_type=agent_types['agent_types'],
+                       gmax=gmax['gmax'],
+                       lmax=lmax['lmax'],
                        cost=cost['cost'], util=util['util'],
                        co2=co2_emissions['co2_emissions'], block_offer=block_offer)
 
@@ -65,11 +65,11 @@ network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
 name = "test_" + str(settings.market_design) + "_" + str(settings.offer_type) + "_" + str(settings.product_diff)
 # construct and solve market -----------------------------
 if settings.market_design == "pool":
-    result = make_pool_market(name="test", agent_data=agent_data, settings=settings)
+    result = make_pool_market(agent_data=agent_data, settings=settings)
 elif settings.market_design == "community":
     print("the " + settings.market_design + " market is not implemented yet")
 elif settings.market_design == "p2p":  # P2P should be here
-    result = make_p2p_market(name="test", agent_data=agent_data, settings=settings, network=network)
+    result = make_p2p_market(agent_data=agent_data, settings=settings, network=network)
 else:
     raise ValueError("settings.market_design has to be in [p2p, community, pool]")
 
@@ -89,3 +89,20 @@ print(result.shadow_price)
 
 # Quality of Experience (QoE)
 # print(result.QoE)
+
+
+dicts = result.convert_to_dicts()
+
+dicts["Gn"]
+dicts["settlement"]
+dicts["shadow_price"]
+dicts["Tnm"]
+
+result.Gn.to_dict(orient="list")
+
+result.market
+result.optimal
+
+result.social_welfare_h.to_dict(orient="list")
+
+result.social_welfare_h.values
