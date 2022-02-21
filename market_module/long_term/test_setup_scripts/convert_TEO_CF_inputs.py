@@ -3,6 +3,7 @@ test function for long term market, centralized
 """
 
 import os
+from tracemalloc import start
 import numpy as np
 import pandas as pd
 import json
@@ -23,6 +24,11 @@ teo_output = {"AccumulatedNewCapacity": teo_vals, "AnnualVariableOperatingCost":
 AccumulatedNewCapacity = pd.json_normalize(teo_output["AccumulatedNewCapacity"])
 
 # user inputs ---------------------------
+start_datetime = "31-01-2000"
+
+
+# extract day month year
+day, month, year = [int(x) for x in start_datetime.split("-")]
 year = 2000 # must be one of the years that the TEO simulates for
 year = AccumulatedNewCapacity.YEAR.min()
 

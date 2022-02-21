@@ -80,7 +80,7 @@ def run_shortterm_market(input_dict):
                                         g_imp=input_dict['community_settings']['g_imp'])
 
     # create AgentData object
-    agent_data = AgentData(settings=settings, name=input_dict['agent_ids'], #a_type=input_dict['agent_types'],
+    agent_data = AgentData(settings=settings, agent_ids=input_dict['agent_ids'], #a_type=input_dict['agent_types'],
                            #gmin=input_dict['gmin'], 
                            gmax=input_dict['gmax'],
                            #lmin=input_dict['lmin'], 
@@ -101,13 +101,13 @@ def run_shortterm_market(input_dict):
     # run market
     # construct and solve market -----------------------------
     if settings.market_design == "pool":
-        result = make_pool_market(name="test", agent_data=agent_data, settings=settings, network=network)
+        result = make_pool_market(agent_data=agent_data, settings=settings, network=network)
     elif settings.market_design == "community":
-        result = make_community_market(name="test_comm", agent_data=agent_data, settings=settings)
+        result = make_community_market(agent_data=agent_data, settings=settings)
     elif settings.market_design == "p2p":
-        result = make_p2p_market(name="test", agent_data=agent_data, settings=settings, network=network)
+        result = make_p2p_market(agent_data=agent_data, settings=settings, network=network)
 
     # convert result to dict
     result_dict = result.convert_to_dicts()
 
-    return settings, agent_data, network, result_dict
+    return result_dict

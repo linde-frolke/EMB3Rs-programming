@@ -53,7 +53,7 @@ def test_p2p_losses():
                        'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
                   }
 
-    settings, agent_data, network, result_dict = run_shortterm_market(input_dict=input_dict)
+    result_dict = run_shortterm_market(input_dict=input_dict)
 
     # MAIN RESULTS
 

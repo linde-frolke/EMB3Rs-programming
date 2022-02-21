@@ -109,12 +109,12 @@ class AgentData:
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
 
-    def __init__(self, settings, name, gmax, lmax, cost, util, co2=None,
+    def __init__(self, settings, agent_ids, gmax, lmax, cost, util, co2=None,
                  is_in_community=None, block_offer=None, is_chp=None, chp_pars=None,
                  default_alpha=10.0):
         """
         :param settings: a MarketSettings object. contains the time horizon that is needed here.
-        :param name: an array with agents names, should be strings
+        :param agent_ids: an array with agents names, should be strings
         :param a_type: array of strings. should be one of "producer, "consumer", "prosumer"
         :param gmax: array of size (nr_of_timesteps, nr_of_agents)
         :param lmax: array of size (nr_of_timesteps, nr_of_agents)
@@ -131,8 +131,8 @@ class AgentData:
         """
 
         # set nr of agents, names, and types
-        self.nr_of_agents = len(name)
-        self.agent_name = name
+        self.nr_of_agents = len(agent_ids)
+        self.agent_name = agent_ids
         #self.agent_type = dict(zip(name, a_type))
         # add community info if that is needed
         if settings.market_design == "community":
@@ -140,7 +140,7 @@ class AgentData:
                 raise ValueError("The community market design is selected. In this case, is_in_community is "
                                  "an obligatory input")
             self.agent_is_in_community = pd.DataFrame(np.reshape(is_in_community, (1, self.nr_of_agents)),
-                                                      columns=name)
+                                                      columns=agent_ids)
             self.C = [i for i in range(self.nr_of_agents) if is_in_community[i]]
             self.notC = [i for i in range(self.nr_of_agents) if not is_in_community[i]]
         else:
@@ -151,9 +151,9 @@ class AgentData:
         # add co2 emission info if needed
         if settings.product_diff == "co2Emissions":
             self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)),
-                                             columns=name)  # 1xnr_of_agents dimension
+                                             columns=agent_ids)  # 1xnr_of_agents dimension
         else:
-            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
+            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=agent_ids)
 
         if settings.offer_type == 'block':
             self.block = block_offer
@@ -176,13 +176,13 @@ class AgentData:
         if not np.array(lmin).shape == (settings.nr_of_h, self.nr_of_agents):
             raise ValueError("lmin has to have shape (nr_of_timesteps, nr_of_agents)")
         # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times, min smaller than max, etc.
-        self.gmin = pd.DataFrame(gmin, columns=name)
-        self.gmax = pd.DataFrame(gmax, columns=name)
-        self.lmin = pd.DataFrame(lmin, columns=name)
-        self.lmax = pd.DataFrame(lmax, columns=name)
+        self.gmin = pd.DataFrame(gmin, columns=agent_ids)
+        self.gmax = pd.DataFrame(gmax, columns=agent_ids)
+        self.lmin = pd.DataFrame(lmin, columns=agent_ids)
+        self.lmax = pd.DataFrame(lmax, columns=agent_ids)
 
-        self.cost = pd.DataFrame(cost, columns=name)
-        self.util = pd.DataFrame(util, columns=name)
+        self.cost = pd.DataFrame(cost, columns=agent_ids)
+        self.util = pd.DataFrame(util, columns=agent_ids)
 
         # change the self.cost for agents in is_chp if el_dependent option is True
         if settings.el_dependent:

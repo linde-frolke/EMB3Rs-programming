@@ -13,7 +13,7 @@ from ...short_term.plotting_processing_functions.plot_pool_clearing import prep_
 
 
 class ResultData:
-    def __init__(self, name, prob: cp.problems.problem.Problem,
+    def __init__(self, prob: cp.problems.problem.Problem,
                  cb: ConstraintBuilder,
                  agent_data: AgentData, settings: MarketSettings,
                  network_data=None):
@@ -22,14 +22,12 @@ class ResultData:
         Initialization only extracts necessary values from the optimization
         Functions can be used to compute other quantities or generate plots
 
-        :param name: str
         :param prob: cvxpy problem object
         :param cb: ConstraintBuilder used for cvxpy problem
         :param agent_data: AgentData object
         :param settings: MarketSettings object
         """
         #
-        self.name = name
         self.market = settings.market_design
 
         if prob.status in ["infeasible", "unbounded"]:

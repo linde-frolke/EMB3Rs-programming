@@ -49,7 +49,7 @@ def test_pool():
                   'gis_data': 'none'
                   }
 
-    settings, agent_data, network, result_dict = run_shortterm_market(input_dict=input_dict)
+    result_dict = run_shortterm_market(input_dict=input_dict)
 
     # MAIN RESULTS
 
