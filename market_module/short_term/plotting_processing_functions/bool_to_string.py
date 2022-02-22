@@ -1,7 +1,7 @@
 def bool_to_string(boolean):
     if boolean:
-        x = "true"
+        x = 1
     else:
-        x = "false"
+        x = 0
 
     return x
