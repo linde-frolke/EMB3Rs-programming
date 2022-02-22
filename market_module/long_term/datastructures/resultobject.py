@@ -5,6 +5,7 @@ import statistics as st
 import matplotlib.pyplot as plt
 from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
 from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
+from ...short_term.plotting_processing_functions.bool_to_string import bool_to_string
 import itertools
 
 
@@ -210,9 +211,9 @@ class ResultData:
         return_dict = {'Gn': self.Gn.to_dict(orient='list'),
                        'Ln': self.Ln.to_dict(orient='list'),
                        'Pn': self.Pn.to_dict(orient='list'),
-                       'market': self.market,
+                       #'market': self.market,
                        #'name': self.name,
-                       'optimal': self.optimal,
+                       'optimal': bool_to_string(self.optimal),
                        # 'plot_market_clearing': ,
                        'settlement': self.settlement.to_dict(orient='list'),
                        'agent_operational_cost': self.agent_operational_cost.to_dict(orient='list'),
@@ -222,7 +223,7 @@ class ResultData:
                        'expensive_prod': self.expensive_prod,
                        'QoE': self.QoE.to_dict(orient='list')
                        }
-        if return_dict['market'] == 'centralized':
+        if self.market == 'centralized':
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
         else:

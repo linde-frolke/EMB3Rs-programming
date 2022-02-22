@@ -10,6 +10,7 @@ import pickle
 from ...short_term.datastructures.inputstructs import AgentData, MarketSettings
 from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 from ...short_term.plotting_processing_functions.plot_pool_clearing import prep_plot_market_clearing_pool
+from ...short_term.plotting_processing_functions.bool_to_string import bool_to_string
 
 
 class ResultData:
@@ -264,7 +265,7 @@ class ResultData:
                        'Ln': self.Ln.to_dict(orient="list"),
                        'Pn': self.Pn.to_dict(orient="list"),
                        'QoE': self.QoE.to_dict(orient="list")["QoE"],
-                       'optimal': self.optimal,
+                       'optimal': bool_to_string(self.optimal),
                        'settlement' : self.settlement.to_dict(orient="list"),
                        'social_welfare_h': self.social_welfare_h.to_dict(orient="list")
                        }
