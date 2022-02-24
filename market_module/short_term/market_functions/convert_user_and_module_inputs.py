@@ -74,8 +74,7 @@ def convert_user_and_module_inputs(input_data):
                                 for x in source_names])
 
     # TODO derive from names TEO_equipement whether an source is a CHP
-    is_chp_sinks = [False] * nr_of_sources # [True for x in ... if conditiin] #
-
+    is_chp_sinks = [True if "CHP" in x else False for x in source_names] #
 
 
     # convert CF inputs -----------------------------------------------------------------------------
