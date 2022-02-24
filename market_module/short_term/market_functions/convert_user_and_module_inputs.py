@@ -11,23 +11,23 @@ def convert_user_and_module_inputs(input_data):
     dummy = True 
 
     # user_inputs
-    user_input = input_data["input_user"] ### separate dictionary inside
+    user_input = input_data["platform"] ### separate dictionary inside
 
     # extract day month year------------------
     day, month, year = [int(x) for x in user_input["start_datetime"].split("-")]
     as_date = datetime.datetime(year=year, month=month, day=day)
-    start_hourofyear = as_date.timetuple().tm_yday * 24 
-    end_hourofyear = start_hourofyear + user_input["nr_of_hours"]
+    start_hourofyear = as_date.timetuple().tm_yday * 24   # start index if selecting from entire year of hourly data.
+    end_hourofyear = start_hourofyear + user_input["nr_of_hours"] # end index if selecting from entire year of hourly data.
 
-    # TODO get GIS data ----------
-    if dummy:
-        gis_data = "none"
+    # get GIS data ----------
+    gis_data = input_data["gis-module"]
+    # TODO edit it/ put in right form. check network-direction aware market
 
     # get CF data
-    all_sinks_info = input_data["all_sinks_info"]["all_sinks_info"]["sinks"]
+    all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
 
     # get TEO data
-    teo_output = input_data["teo_output"]
+    teo_output = input_data["teo-module"]
 
 
     # convert TEO inputs ----------------------------------------------------------------------------
@@ -63,13 +63,18 @@ def convert_user_and_module_inputs(input_data):
                     for x in source_names])
     cost_sources = np.reshape(cost_sources, (1, nr_of_sources))
     cost_sources = np.repeat(cost_sources, user_input["nr_of_hours"], axis=0)
-    # TODO get CO2 emissions from TEO 
-    if dummy:
-        co2_em = "none" # np.zeros(())
+    
+    # get CO2 emissions from TEO 
+    AnnualTechnologyEmission = AnnualTechnologyEmission.loc[AnnualTechnologyEmission["EMISSION"] == "CO2"]
+    co2_em_sources  = np.array(
+                                [AnnualTechnologyEmission.loc[(AnnualTechnologyEmission['YEAR'] == year) & 
+                                (AnnualTechnologyEmission['TECHNOLOGY'] == x)].VALUE.to_list()[0] /
+                                ProductionByTechnologyAnnual.loc[(ProductionByTechnologyAnnual['YEAR'] == year) & 
+                                (ProductionByTechnologyAnnual['TECHNOLOGY'] == x)].VALUE.to_list()[0]                 
+                                for x in source_names])
 
-    # TODO get CF data for is_chp?
-    if dummy:
-        is_chp = "none" # np.zeros(())
+    # TODO derive from names TEO_equipement whether an source is a CHP
+    is_chp_sinks = [False] * nr_of_sources # [True for x in ... if conditiin] #
 
 
 
@@ -106,7 +111,8 @@ def convert_user_and_module_inputs(input_data):
     gmax_sinks = np.zeros(np.shape(lmax_sinks))
     cost_sinks = np.zeros(np.shape(lmax_sinks))
     util_sinks = [user_input["util"][x] for x in all_stream_ids]
-
+    co2_em_sinks = np.zeros(np.shape(lmax_sinks))
+    is_chp_sources = [False] * nr_of_sinks # np.zeros(())
 
     ## combine in input_dict as we used to have it
     # make input dict ------------------------
@@ -117,6 +123,7 @@ def convert_user_and_module_inputs(input_data):
     lmax = np.concatenate((gmax_sources, lmax_sinks), axis=1).tolist()
     cost = np.concatenate((cost_sources, cost_sinks), axis=1).tolist()
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
+    co2_em = np.concatenate((co2_em_sources, co2_em_sinks), axis=1).tolist()
 
 
     # construct input_dict
@@ -138,7 +145,7 @@ def convert_user_and_module_inputs(input_data):
                     'co2_emissions': co2_em,  # allowed values are 'none' or array of size (nr_of_agents)
                     'is_in_community': user_input["is_in_community"],  # allowed values are 'none' or boolean array of size (nr_of_agents)
                     'block_offer': user_input["block_offer"],
-                    'is_chp': is_chp, #user_input["is_chp"],  # allowed values are 'none' or a list with ids of agents that are CHPs
+                    'is_chp': user_input["is_chp"],  # allowed values are 'none' or a list with ids of agents that are CHPs
                     'chp_pars': user_input["chp_pars"],
                     'gis_data': gis_data
                     }
