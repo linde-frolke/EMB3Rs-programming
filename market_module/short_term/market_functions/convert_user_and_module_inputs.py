@@ -8,7 +8,7 @@ import datetime
 
 
 def convert_user_and_module_inputs(input_data):
-    dummy = True 
+    # dummy = True 
 
     # user_inputs
     user_input = input_data["platform"] ### separate dictionary inside
@@ -126,6 +126,7 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_em = np.concatenate((co2_em_sources, co2_em_sinks), axis=1).tolist()
 
+    is_chp = is_chp_sources + is_chp_sinks
 
     # construct input_dict
     input_dict = {
@@ -146,7 +147,7 @@ def convert_user_and_module_inputs(input_data):
                     'co2_emissions': co2_em,  # allowed values are 'none' or array of size (nr_of_agents)
                     'is_in_community': user_input["is_in_community"],  # allowed values are 'none' or boolean array of size (nr_of_agents)
                     'block_offer': user_input["block_offer"],
-                    'is_chp': user_input["is_chp"],  # allowed values are 'none' or a list with ids of agents that are CHPs
+                    'is_chp': is_chp,  # allowed values are 'none' or a list with ids of agents that are CHPs
                     'chp_pars': user_input["chp_pars"],
                     'gis_data': gis_output["res_sources_sinks"],
                     'nodes' : nodes,
