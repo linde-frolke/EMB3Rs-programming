@@ -1,6 +1,7 @@
 # inputs format for market module
 # if we receive them differently from other modules, we will convert them to these
 
+from msilib.schema import Error
 import pandas as pd
 import numpy as np
 import heapq
@@ -123,7 +124,7 @@ class AgentData:
         :param co2: optional input. array of size (nr_of_timesteps, nr_of_agents)
         :param is_in_community: optional input. Boolean array of size (1, nr_of_agents).
                     contains True if is in community, False if not.
-        :param block_offer: TODO sergio can you define this variable?
+        :param block_offer: # TODO sergio can you define this variable?
         :param is_chp: list with ids of agents that are CHPs
         :params chp_pars: a dictionary of dictionaries, including parameters for each agents in is_chp.
                                                         {'agent_1' : {'rho' : 1.0, 'r' : 0.15, ...},
@@ -218,13 +219,15 @@ class AgentData:
 
 # network data ---------------------------------------------------------------------------------------------------------
 class Network:
-    def __init__(self, agent_data, gis_data, settings):  # agent_loc,
+    def __init__(self, agent_data, gis_data, settings, nodes, edges):  # agent_loc,
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
-        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m),
-                        total costs
+        :param gis_data: dataframe provided by GIS to us. has columns from_to (tuple), losses_total, length, total_costs
         :param settings: a MarketSettings object
+        :param nodes: a list of node IDs. IDs of nodes where an agent is located are equal to agent ID
+        :param edges: a dataframe including (from, to, installed_capacity  pipe_length surface_type 
+                             total_costs  diameter  losses_w_m   losses_w capacity_limit) for each edge
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
@@ -239,11 +242,9 @@ class Network:
             )
 
         if settings.network_type is not None:
-            # extract node numbers from GIS data
-            nodes = np.array(list(set([item for t in gis_data["From/to"] for item in t])))
             self.N = nodes
             self.nr_of_n = len(self.N)
-            self.P = gis_data["From/to"]  # tuples
+            self.P = [(edges.loc[i, "from"], edges.loc[i, "to"]) for i in range(len(edges))]
             self.nr_of_p = len(self.P)
             # make the A matrix
             A = np.zeros((len(self.N), len(self.P)))
@@ -255,7 +256,7 @@ class Network:
                 A[n2_nr, p_nr] = -1
             self.A = A
             # define location where agents are
-            self.loc_a = self.N  # TODO for now, put this. can be removed later
+            self.loc_a = agent_data.agent_name # agents are located at the nodes with their own name
 
         # define distance and losses between any two agents in a matrix ----------------------------
         if settings.market_design == "p2p" and settings.product_diff != "noPref":
@@ -264,10 +265,10 @@ class Network:
             for i in range(agent_data.nr_of_agents):
                 self.distance[i, i] = 0.0  # distance to self is zero.
                 self.losses[i, i] = 0.0  # losses to self is zero.
-            for row_nr in range(len(gis_data["From/to"].values)):
-                (From, To) = gis_data["From/to"].values[row_nr]
-                self.distance[From, To] = gis_data.Length.iloc[row_nr]
-                self.losses[From, To] = gis_data["Losses total [W]"].iloc[row_nr]
+            for row_nr in range(len(gis_data["from_to"].values)):
+                (From, To) = gis_data["from_to"].values[row_nr]
+                self.distance[From, To] = gis_data.length.iloc[row_nr]
+                self.losses[From, To] = gis_data["losses_total"].iloc[row_nr]
 
             # graph for the Dijkstra's
             graph = {i: {j: np.inf for j in range(0, agent_data.nr_of_agents)} for i in

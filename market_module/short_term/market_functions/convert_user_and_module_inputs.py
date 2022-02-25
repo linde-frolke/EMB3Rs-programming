@@ -20,8 +20,10 @@ def convert_user_and_module_inputs(input_data):
     end_hourofyear = start_hourofyear + user_input["nr_of_hours"] # end index if selecting from entire year of hourly data.
 
     # get GIS data ----------
-    gis_data = input_data["gis-module"]
-    # TODO edit it/ put in right form. check network-direction aware market
+    gis_output = input_data["gis-module"]
+    nodes = [x["osmid"] for x in  gis_output["network_solution_nodes"]] # TODO send this to input_data
+    edges = pd.DataFrame(gis_output["network_solution_edges"])
+    # gis_output["selected_agents"]  # TODO see if I can use this for something
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
@@ -146,7 +148,9 @@ def convert_user_and_module_inputs(input_data):
                     'block_offer': user_input["block_offer"],
                     'is_chp': user_input["is_chp"],  # allowed values are 'none' or a list with ids of agents that are CHPs
                     'chp_pars': user_input["chp_pars"],
-                    'gis_data': gis_data
+                    'gis_data': gis_output["res_sources_sinks"],
+                    'nodes' : nodes,
+                    'edges' : edges
                     }
 
     return input_dict

@@ -3,6 +3,7 @@ function that makes input structures, runs short term market, makes result objec
 the inputs are also in the dictionary format
 """
 import pandas as pd
+from ast import literal_eval
 
 # import own modules
 from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
@@ -24,7 +25,6 @@ def run_shortterm_market(input_dict):
                   'el_price': 'none',
                   'agent_ids': ["prosumer_1",
                             "prosumer_2", "consumer_1", "producer_1"],
-                  #'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'none', # objective for community
                   'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'}, # or values instead
                   'gmax': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], 
@@ -96,7 +96,11 @@ def run_shortterm_market(input_dict):
         gis_data = None
     else:
         gis_data = pd.DataFrame(data=input_dict['gis_data'])
-    network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings)
+        # convert string to tuple
+        gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
+
+    network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings, 
+                      nodes=input_dict["nodes"], edges=input_dict["edges"])
 
     # run market
     # construct and solve market -----------------------------

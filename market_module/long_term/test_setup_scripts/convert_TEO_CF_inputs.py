@@ -6,11 +6,31 @@ import os
 import numpy as np
 import pandas as pd
 import json
+from ast import literal_eval
 
 cwd = os.getcwd()
 
 # import own modules
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
+
+# read gis file
+fn_gis = "/home/linde/Documents/2019PhD/EMB3Rs/module_integration/optimize_network.output.json"
+f = open(fn_gis, "r")
+gis_vals = json.load(f)["output_data"]
+
+gis_vals.keys()
+
+gis_data = gis_vals["res_sources_sinks"]
+gis_vals
+
+df = pd.DataFrame(data=gis_data)
+df["from_to"] = [literal_eval(x) for x in df["from_to"]]
+type(df["from_to"][0])
+
+nodes = [x["osmid"] for x in  gis_vals["network_solution_nodes"]]
+edges = pd.DataFrame(gis_vals["network_solution_edges"])
+
+from_to = [(edges.loc[i, "from"], edges.loc[i, "to"]) for i in range(len(edges))]
 
 # read file --------------
 fn = "/home/linde/Documents/2019PhD/EMB3Rs/module_integration/AccumulatedNewCapacity.json"

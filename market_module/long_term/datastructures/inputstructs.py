@@ -153,24 +153,18 @@ class Network:
         """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
-        :param gis_data: dataframe provided by GIS to us. has columns from/to (tuple), Losses total (W), length (m), total costs
+        :param gis_data: dataframe provided by GIS to us. has columns from_to (tuple), Losses total (W), length (m), total costs
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
-        # TODO get this data from GIS module.
-        # # node numbers
-        # self.N = nodes
-        # self.E = edges
-        # define location where agents are
-        # self.loc_a = agent_loc  # TODO map agent id to node numbers
-
+        
         # define distance and losses between any two agents in a matrix ----------------------------
         self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
         for i in range(agent_data.nr_of_agents):
             self.distance[i, i] = 0.0   # distance to self is zero.
-        for row_nr in range(len(gis_data["From/to"].values)):
-            (From, To) = gis_data["From/to"].values[row_nr]
-            self.distance[From, To] = gis_data.Length.iloc[row_nr]
+        for row_nr in range(len(gis_data["from_to"].values)):
+            (From, To) = gis_data["from_to"].values[row_nr]
+            self.distance[From, To] = gis_data.length.iloc[row_nr]
 
 # =============================================================================
 # Start here
