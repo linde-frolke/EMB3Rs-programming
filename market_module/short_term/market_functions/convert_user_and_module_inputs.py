@@ -8,7 +8,7 @@ import datetime
 
 
 def convert_user_and_module_inputs(input_data):
-    dummy = False 
+    # dummy = False 
 
     # user_inputs
     user_input = input_data["platform"] ### separate dictionary inside
@@ -21,7 +21,7 @@ def convert_user_and_module_inputs(input_data):
 
     # get GIS data ----------
     gis_output = input_data["gis-module"]
-    nodes = [x["osmid"] for x in  gis_output["network_solution_nodes"]] # TODO send this to input_data
+    nodes = [x["osmid"] for x in  gis_output["network_solution_nodes"]] 
     edges = pd.DataFrame(gis_output["network_solution_edges"])
     # gis_output["selected_agents"]  # TODO see if I can use this for something
 
@@ -83,12 +83,12 @@ def convert_user_and_module_inputs(input_data):
     # get some sink info 
     nr_of_sinks = len(all_sinks_info)
     sink_ids = []
-    sink_locs = []
+    #sink_locs = []
     map_sink_streams = []
 
     for i in range(nr_of_sinks):
         sink_ids += [all_sinks_info[i]["sink_id"]]
-        sink_locs += [all_sinks_info[i]["location"]]
+        #sink_locs += [all_sinks_info[i]["location"]]
         map_sink_streams += [[streams["stream_id"] for streams in all_sinks_info[i]["streams"]]]
 
     # get some stream info 
@@ -101,9 +101,9 @@ def convert_user_and_module_inputs(input_data):
     counter = 0 
     for j in range(nr_of_sinks):
         for i in range(len(map_sink_streams[j])):
-            if dummy:
-                all_sinks_info[j]["streams"][i]["hourly_stream_capacity"] = (
-                    all_sinks_info[j]["streams"][i]["hourly_stream_capacity"] * 400*20)[1:8784]
+            # if dummy:
+            #     all_sinks_info[j]["streams"][i]["hourly_stream_capacity"] = (
+            #         all_sinks_info[j]["streams"][i]["hourly_stream_capacity"] * 400*20)[1:8784]
             # 
 
             lmax_sinks[:, counter] = all_sinks_info[j]["streams"][i]["hourly_stream_capacity"][start_hourofyear:end_hourofyear]
@@ -111,21 +111,19 @@ def convert_user_and_module_inputs(input_data):
 
     gmax_sinks = np.zeros(np.shape(lmax_sinks))
     cost_sinks = np.zeros(np.shape(lmax_sinks))
-    util_sinks = [user_input["util"][x] for x in all_stream_ids]
-    co2_em_sinks = np.zeros(np.shape(lmax_sinks))
+    util_sinks = np.array([user_input["util"][x] for x in all_stream_ids]).transpose()
+    co2_em_sinks = np.zeros(nr_of_sinks)
     is_chp_sources = [False] * nr_of_sinks # np.zeros(())
 
     ## combine in input_dict as we used to have it
     # make input dict ------------------------
     # combine source and sink inputs
     agent_ids = list(source_names) + all_stream_ids
-
     gmax = np.concatenate((gmax_sources, gmax_sinks), axis=1).tolist()
-    lmax = np.concatenate((gmax_sources, lmax_sinks), axis=1).tolist()
+    lmax = np.concatenate((lmax_sources, lmax_sinks), axis=1).tolist()
     cost = np.concatenate((cost_sources, cost_sinks), axis=1).tolist()
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
-    co2_em = np.concatenate((co2_em_sources, co2_em_sinks), axis=1).tolist()
-
+    co2_em = co2_em_sources.tolist() + co2_em_sinks.tolist()
     is_chp = is_chp_sources + is_chp_sinks
 
     # construct input_dict
