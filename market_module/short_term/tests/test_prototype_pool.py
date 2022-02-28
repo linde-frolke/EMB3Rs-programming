@@ -46,7 +46,9 @@ def test_pool():
                   'block_offer': 'none',
                   'is_chp': 'none',  # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',
-                  'gis_data': 'none'
+                  'gis_data': 'none',
+                  'nodes' : "none",
+                  'edges' : "none"
                   }
 
     result_dict = run_shortterm_market(input_dict=input_dict)

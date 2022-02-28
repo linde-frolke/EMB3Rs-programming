@@ -1,7 +1,6 @@
 # inputs format for market module
 # if we receive them differently from other modules, we will convert them to these
 
-from msilib.schema import Error
 import pandas as pd
 import numpy as np
 import heapq
@@ -244,7 +243,7 @@ class Network:
         if settings.network_type is not None:
             self.N = nodes
             self.nr_of_n = len(self.N)
-            self.P = [(edges.loc[i, "from"], edges.loc[i, "to"]) for i in range(len(edges))]
+            self.P = edges #[(edges.loc[i, "from"], edges.loc[i, "to"]) for i in range(len(edges))]
             self.nr_of_p = len(self.P)
             # make the A matrix
             A = np.zeros((len(self.N), len(self.P)))

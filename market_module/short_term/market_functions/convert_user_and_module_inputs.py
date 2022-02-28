@@ -8,7 +8,7 @@ import datetime
 
 
 def convert_user_and_module_inputs(input_data):
-    # dummy = True 
+    dummy = False 
 
     # user_inputs
     user_input = input_data["platform"] ### separate dictionary inside

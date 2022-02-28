@@ -51,7 +51,9 @@ def run_shortterm_market(input_dict):
                             # {'From/to': [(0, 1), (1, 2), (1, 3)],
                             #  'Losses total [W]': [22969.228855, 24122.603833, 18138.588662],
                             #  'Length': [1855.232413, 1989.471069, 1446.688900],
-                            #  'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
+                            #  'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
+                  'nodes' : "none", 
+                  "edges" : "none"
                   }
     """
     # convert some of the inputs ----------------------------------

@@ -20,18 +20,18 @@ def test_pool_networkdir():
                   'el_price': 'none',
                   'agent_ids': ["prosumer_1",
                                 "prosumer_2", "consumer_1", "producer_1"],
-                  'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
+                  #'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'none',  # objective for community
                   'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'},
-                  'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+                #   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
+                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
+                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
                   'gmax': [[1, 2, 0, 5], [3, 4, 0, 4], [1, 5, 0, 3], [0, 0, 0, 0], [1, 1, 0, 1],
                            [2, 3, 0, 1], [4, 2, 0, 5], [3, 4, 0, 4], [1, 5, 0, 3],
                            [0, 0, 0, 0], [1, 1, 0, 1], [2, 3, 0, 1]],
-                  'lmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                           [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+                #   'lmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
+                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
+                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
                   'lmax': [[2, 2, 1, 0], [2, 1, 0, 0], [1, 2, 1, 0], [3, 0, 2, 0], [1, 1, 4, 0],
                            [2, 3, 3, 0], [4, 2, 1, 0], [3, 4, 2, 0], [1, 5, 3, 0], [0, 0, 5, 0],
                            [1, 1, 3, 0], [2, 3, 1, 0]],
@@ -46,10 +46,15 @@ def test_pool_networkdir():
                   'block_offer': 'none',
                   'is_chp': 'none',  # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',
-                  'gis_data': {'From/to': [(0, 1), (1, 2), (1, 3)],
-                               'Losses total [W]': [22969.228855, 24122.603833, 18138.588662],
-                               'Length': [1855.232413, 1989.471069, 1446.688900],
-                               'Total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
+                   'gis_data':
+                      {'from_to': ['(0, 1)', '(1, 2)', '(1, 3)'],
+                       'losses_total': [22969.228855, 24122.603833, 18138.588662],
+                       'length': [1855.232413, 1989.471069, 1446.688900],
+                       'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
+                  'nodes' : ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"],
+                  'edges' : [("producer_1","consumer_1"), ("producer_1","prosumer_1"),
+                             ("prosumer_1","prosumer_2"), ]
+                             # TODO check for no cycles
                   }
 
     result_dict = run_shortterm_market(input_dict=input_dict)

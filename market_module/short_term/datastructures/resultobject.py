@@ -84,7 +84,8 @@ class ResultData:
                                 nodal_prices[t, n] = cb.get_constraint(str_="def_nodal_P" + str(t) + "_" +
                                                                             str(network_data.N[n])).dual_value
                         # shadow_price = np.array((settings.nr_of_h, agent_data.nr_of_agents))
-                        shadow_price = nodal_prices[:, network_data.loc_a]
+                        mapping = [network_data.N.index(x) for x in network_data.loc_a]
+                        shadow_price = nodal_prices[:, mapping]
                         self.shadow_price = pd.DataFrame(
                             shadow_price, columns=agent_data.agent_name)
                     if settings.network_type == "size":  # in this case we have nodal prices
