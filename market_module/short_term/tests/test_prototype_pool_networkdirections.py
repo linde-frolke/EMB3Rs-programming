@@ -53,7 +53,7 @@ def test_pool_networkdir():
                        'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
                   'nodes' : ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"],
                   'edges' : [("producer_1","consumer_1"), ("producer_1","prosumer_1"),
-                             ("prosumer_1","prosumer_2"), ]
+                             ("prosumer_1","prosumer_2")]
                              # TODO check for no cycles
                   }
 
