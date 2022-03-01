@@ -7,7 +7,7 @@ for pool market with all settings to default.
 from audioop import avg
 from lib2to3.pytree import convert
 from ...short_term.market_functions.run_shortterm_market import run_shortterm_market
-from market_module.short_term.market_functions.convert_user_and_module_inputs import convert_user_and_module_inputs
+from ...short_term.market_functions.convert_user_and_module_inputs import convert_user_and_module_inputs
 import numpy as np
 import pandas as pd
 import json
