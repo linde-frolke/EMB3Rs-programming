@@ -6,7 +6,7 @@ test function for long term market, centralized
 from audioop import avg
 from lib2to3.pytree import convert
 from ...long_term.market_functions.run_longterm_market import run_longterm_market
-from market_module.long_term.market_functions.convert_user_and_module_inputs import convert_user_and_module_inputs
+from ...long_term.market_functions.convert_user_and_module_inputs import convert_user_and_module_inputs
 import numpy as np
 import pandas as pd
 import json

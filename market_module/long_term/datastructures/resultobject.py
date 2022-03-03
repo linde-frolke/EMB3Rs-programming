@@ -221,7 +221,7 @@ class ResultData:
                        'SPM': self.SPM.transpose().to_dict()['SPM'],
                        'ADG': self.ADG.transpose().to_dict()['ADG'],
                        'expensive_prod': self.expensive_prod,
-                       'QoE': self.QoE.to_dict(orient='list')
+                       'QoE': list(self.QoE)
                        }
         if self.market == 'centralized':
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
