@@ -9,12 +9,12 @@ import sys
 import datetime
 
 # import own modules
-from ...market_module.short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
-from ...market_module.short_term.market_functions.pool_market import make_pool_market
-from ...market_module.short_term.market_functions.p2p_market import make_p2p_market
+from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...short_term.market_functions.pool_market import make_pool_market
+from ...short_term.market_functions.p2p_market import make_p2p_market
 
 # import own modules
-from market_module.short_term.market_functions.run_shortterm_market import run_shortterm_market
+from ...short_term.market_functions.run_shortterm_market import run_shortterm_market
 
 dummy = True
 

@@ -11,7 +11,7 @@ from ast import literal_eval
 cwd = os.getcwd()
 
 # import own modules
-from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
+from ....market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
 # read gis file
 fn_gis = "/home/linde/Documents/2019PhD/EMB3Rs/module_integration/optimize_network.output.json"
