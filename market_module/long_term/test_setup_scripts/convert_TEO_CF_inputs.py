@@ -229,10 +229,10 @@ lmax
 
 
 strms = [{"sink_id": "aaaa" + str(i), 
-            "streams" : {
+            "streams" : [{
                 "stream_id": input_dict["agent_ids"][i],
                 "hourly_stream_capacity" : lmax[input_dict["agent_ids"][i]]
-            } } for i in range(len(input_dict["agent_ids"])-1)]
+            } for i in range(len(input_dict["agent_ids"])-1)] }]
 
 strms
 
@@ -252,7 +252,7 @@ gmax
 producers = (input_dict["agent_ids"])[:2] + input_dict["agent_ids"][3:4]
 
 AccNewCap = [{'NAME': 'AccumulatedNewCapacity', 
-    'VALUE': max(gmax[producers[i]]),
+    'VALUE': mean(gmax[producers[i]]),
     'TECHNOLOGY': producers[i], 
     'YEAR': '2002'} for i in range(len(producers))]
 
