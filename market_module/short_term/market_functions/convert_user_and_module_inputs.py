@@ -76,7 +76,7 @@ def convert_user_and_module_inputs(input_data):
                                 for x in source_names])
 
     # TODO derive from names TEO_equipement whether an source is a CHP
-    is_chp_sinks = [True if "CHP" in x else False for x in source_names] #
+    is_chp_sources = [True if "CHP" in x else False for x in source_names] #
 
 
     # convert CF inputs -----------------------------------------------------------------------------
@@ -113,7 +113,7 @@ def convert_user_and_module_inputs(input_data):
     cost_sinks = np.zeros(np.shape(lmax_sinks))
     util_sinks = np.array([user_input["util"][x] for x in all_stream_ids]).transpose()
     co2_em_sinks = np.zeros(nr_of_sinks)
-    is_chp_sources = [False] * nr_of_sinks # np.zeros(())
+    is_chp_sinks = [False] * nr_of_sinks # np.zeros(())
 
     ## combine in input_dict as we used to have it
     # make input dict ------------------------
