@@ -8,6 +8,8 @@ from .short_term.tests.test_prototype_pool_networkdirections import test_pool_ne
 from .short_term.tests.test_community import test_community_autonomy, test_community_peakshaving
 from .long_term.tests.test_prototype_centralized import test_centralized
 from .long_term.tests.test_prototype_decentralized import test_decentralized
+from .long_term.Test_example.test_prototype_centralized_case_study_2months import test_centralized_2months
+from .long_term.Test_example.test_prototype_decentralized_case_study_2months import test_decentralized_2months
 
 # Write Here all the available tests you want to run
 availableTests = {
@@ -20,7 +22,9 @@ availableTests = {
     "test:shortterm:community:autonomy": test_community_autonomy,
     "test:shortterm:community:peakshaving": test_community_peakshaving,
     "test:longterm:centralized": test_centralized,
-    "test:longterm:decentralized": test_decentralized
+    "test:longterm:decentralized": test_decentralized, 
+    # "test:longterm:centralized:2months": test_centralized_2months, 
+    "test:longterm:decentralized:2months": test_decentralized_2months
 }
 
 

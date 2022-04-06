@@ -13,7 +13,7 @@ import json
 import datetime
 
 
-def test_centralized_2months():
+def test_decentralized_2months():
     print("start test_centralized().............................................")
     # TEST CENTRALIZED #######################################################################################
     # DATA
@@ -4224,7 +4224,7 @@ def test_centralized_2months():
 
 
 # setup inputs --------------------------------------------
-    input_dict = {'md': 'centralized',
+    input_dict = {'md': 'decentralized',
                   'horizon_basis': 'months',
                   'data_profile': 'daily',
                   'recurrence': 2,
