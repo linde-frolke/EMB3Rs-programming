@@ -60,9 +60,9 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
         cb.add_constraint(Tnm[t] == Snm[t] - Bnm[t], str_="def_S_B_t" + str(t))
         # cannot sell more than I generate
-        # cb.add_constraint(cp.sum(Snm[t], axis=1) <= Gn[t, :], str_="S_ub_t" + str(t))
+        cb.add_constraint(cp.sum(Snm[t], axis=1) == Gn[t, :], str_="S_ub_t" + str(t))
         # cannot buy more than my load
-        # cb.add_constraint(cp.sum(Bnm[t], axis=1) <= Ln[t, :], str_="S_ub_t" + str(t))
+        cb.add_constraint(cp.sum(Bnm[t], axis=1) == Ln[t, :], str_="S_ub_t" + str(t))
 
     # constraints ----------------------------------
     # define relation between generation, load, and power injection

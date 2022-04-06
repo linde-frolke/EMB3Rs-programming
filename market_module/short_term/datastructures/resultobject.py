@@ -203,7 +203,7 @@ class ResultData:
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
-                        aux.append(abs(self.shadow_price[t].loc[agent, agent2]) * self.Tnm[t].loc[agent, agent2]
+                        aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
                                    )
                     self.settlement[agent][t] = sum(aux)
 
