@@ -12,7 +12,7 @@ import itertools
 class ResultData:
     def __init__(self, prob: cp.problems.problem.Problem,
                  cb: ConstraintBuilder,
-                 agent_data: AgentData, settings: MarketSettings):
+                 agent_data: AgentData, settings: MarketSettings, Pn_t, Ln_t, Gn_t, shadow_price_t, Tnm_t=None):
         """
         Object to store relevant outputs from a solved market problem.
         Initialization only extracts necessary values from the optimization
@@ -26,6 +26,7 @@ class ResultData:
         """
         #
         #self.name = name
+
         self.market = settings.market_design
 
         if prob.status in ["infeasible", "unbounded"]:
@@ -38,43 +39,27 @@ class ResultData:
             variables = prob.variables()
             varnames = [prob.variables()[i].name()
                         for i in range(len(prob.variables()))]
-            self.Pn = pd.DataFrame(variables[varnames.index(
-                "Pn")].value, columns=agent_data.agent_name)
-            self.Ln = pd.DataFrame(variables[varnames.index(
-                "Ln")].value, columns=agent_data.agent_name)
-            self.Gn = pd.DataFrame(variables[varnames.index(
-                "Gn")].value, columns=agent_data.agent_name)
+            self.Pn = Pn_t
+            self.Ln = Ln_t
+            self.Gn = Gn_t
 
             if settings.market_design == "decentralized":
                 # extract trade variable - a square dataframe for each time index
-                self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
-                                         columns=agent_data.agent_name, index=agent_data.agent_name)
-                            for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
+                self.Tnm = Tnm_t
             else:
                 self.Tnm = None
+            #print(self.Tnm[0])
 
             # get values related to duals  ----------------------------------------
             if settings.market_design == "centralized":
-                self.shadow_price = cb.get_constraint(
-                    str_="powerbalance").dual_value
+                #self.shadow_price = cb.get_constraint(
+                    #str_="powerbalance").dual_value
                 self.shadow_price = pd.DataFrame(
-                    self.shadow_price, columns=["uniform price"])
+                    shadow_price_t, columns=["uniform price"])
 
             elif settings.market_design == "decentralized":
 
-                self.shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
-                                     for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
-
-                for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size):
-                    for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                        # if not i == j:
-                        if j >= i:
-                            constr_name = "reciprocity_t" + \
-                                          str(t) + str(i) + str(j)
-                            self.shadow_price[t].iloc[i, j] = cb.get_constraint(
-                                str_=constr_name).dual_value
-                            self.shadow_price[t].iloc[j, i] = - \
-                                self.shadow_price[t].iloc[i, j]
+                self.shadow_price = shadow_price_t
 
             # initialize empty slots for uncomputed result quantities
             self.ADG = None
