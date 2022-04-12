@@ -21,11 +21,11 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
     Gn_t = pd.DataFrame(0.0, index=np.arange(agent_data.day_range*settings.recurrence*agent_data.data_size), columns=agent_data.agent_name)
     shadow_price_t = [pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
     Tnm_t=[pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
-    Bnm_t=[pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
-    Snm_t=[pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
 
+    # simplifying simulation time
+    t=agent_data.day_range*settings.recurrence*agent_data.data_size
 
-    for n_iter in range(0, agent_data.day_range*settings.recurrence*agent_data.data_size):
+    for n_iter in range(0, t):
         # collect named constraints in cb
         cb = ConstraintBuilder()
         # prepare parameters

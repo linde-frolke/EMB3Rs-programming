@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="58c8ac62-d38f-44a8-beab-743584a744db" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/Test_example/test_prototype_centralized_case_study_2months.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/Test_example/test_prototype_centralized_case_study_2months.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/Test_example/test_prototype_decentralized_case_study_2months.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/Test_example/test_prototype_decentralized_case_study_2months.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" afterDir="false" />
     </list>
@@ -68,6 +65,9 @@
       <module name="EMB3Rs-programming" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
       <option name="IS_MODULE_SDK" value="false" />
