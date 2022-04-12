@@ -23,7 +23,7 @@ availableTests = {
     "test:shortterm:community:peakshaving": test_community_peakshaving,
     "test:longterm:centralized": test_centralized,
     "test:longterm:decentralized": test_decentralized, 
-    # "test:longterm:centralized:2months": test_centralized_2months, 
+    "test:longterm:centralized:2months": test_centralized_2months, 
     "test:longterm:decentralized:2months": test_decentralized_2months
 }
 
