@@ -70,8 +70,8 @@ def run_shortterm_market(input_dict):
             input_dict['community_settings'][str_] = None
 
     # create Settings object ---------------------------------------
-    settings = MarketSettings(nr_of_hours=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
-                              prod_diff=input_dict['prod_diff'], market_design=input_dict['md'],
+    settings = MarketSettings(nr_of_h=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
+                              product_diff=input_dict['prod_diff'], market_design=input_dict['md'],
                               network_type=input_dict['network'], el_dependent=el_dependent,
                               el_price=input_dict['el_price'])
 

@@ -18,7 +18,7 @@ class MarketSettings(BaseModel):
     nr_of_h : int  # nr of time steps to run the market for
     market_design : str # market design
     offer_type : str # offer type is either "simple", "block", "energyBudget".
-    prod_diff : str = "noPref" # product differentiation. Only has an effect if market design = p2p
+    product_diff : str = "noPref" # product differentiation. Only has an effect if market design = p2p
     el_dependent : bool # should CHP bids be depending on electricity price?
     el_price : np.ndarray = Field(default=None) # a vector with electricity prices. is None by default. 
     network_type : str = None  # whether to include network, and if so, how. Default is None
@@ -82,11 +82,11 @@ class MarketSettings(BaseModel):
         if v not in options_offer_type:
             raise ValueError("offer_type should be one of " + str(options_offer_type))
         return v
-    @validator("prod_diff")
+    @validator("product_diff")
     def prof_diff_valid(cls, v):
-        options_prod_diff = ["noPref", "co2Emissions", "networkDistance", "losses"]
-        if v not in options_prod_diff:
-            raise ValueError('prod_diff should be one of ' + str(options_prod_diff))
+        options_product_diff = ["noPref", "co2Emissions", "networkDistance", "losses"]
+        if v not in options_product_diff:
+            raise ValueError('product_diff should be one of ' + str(options_product_diff))
         return v
     @validator("market_design")
     def market_design_valid(cls, v):
@@ -114,11 +114,11 @@ class MarketSettings(BaseModel):
                 raise ValueError("If you want network-awareness, offer_type must be 'simple'")
             if not values["market_design"] == "pool":
                 raise ValueError("network-awareness is only implemented for pool, not for p2p and community markets")
-    @validator("prod_diff")
-    def prod_diff_only_with_p2p(cls, v, values):
+    @validator("product_diff")
+    def product_diff_only_with_p2p(cls, v, values):
         # exclude bad combination of inputs
         if values["market_design"] != "p2p" and v != "noPref":
-            raise ValueError('prod_diff can only be something else than "noPref" if market_design == "p2p')
+            raise ValueError('product_diff can only be something else than "noPref" if market_design == "p2p')
         
 
 # agents information --------------------------------------------------------------------------------------------------
