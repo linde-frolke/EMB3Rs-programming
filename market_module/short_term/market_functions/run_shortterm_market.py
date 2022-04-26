@@ -65,7 +65,7 @@ def run_shortterm_market(input_dict):
     if input_dict["el_dependent"] == "true":
         el_dependent = True
 
-    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars']:
+    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars', 'objective']:
         if input_dict[str_] == 'none':
             input_dict[str_] = None
 
@@ -78,15 +78,18 @@ def run_shortterm_market(input_dict):
         settings = MarketSettings(nr_of_h=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
                                 product_diff=input_dict['prod_diff'], market_design=input_dict['md'],
                                 network_type=input_dict['network'], el_dependent=el_dependent,
-                                el_price=input_dict['el_price'])
+                                el_price=input_dict['el_price'], community_objective=input_dict["objective"], 
+                                gamma_peak=input_dict["community_settings"]["g_peak"],
+                                gamma_imp=input_dict["community_settings"]["g_imp"], 
+                                gamma_exp=input_dict["community_settings"]["g_exp"])
     except ModuleValidationException as msg:
         raise print(msg)
 
-    if settings.market_design == "community":
-        settings.add_community_settings(input_dict['objective'],
-                                        g_peak=input_dict['community_settings']['g_peak'],
-                                        g_exp=input_dict['community_settings']['g_exp'],
-                                        g_imp=input_dict['community_settings']['g_imp'])
+    # if settings.market_design == "community":
+    #     settings.add_community_settings(input_dict['objective'],
+    #                                     g_peak=input_dict['community_settings']['g_peak'],
+    #                                     g_exp=input_dict['community_settings']['g_exp'],
+    #                                     g_imp=input_dict['community_settings']['g_imp'])
 
     # create AgentData object
     agent_data = AgentData(settings=settings, agent_ids=input_dict['agent_ids'], #a_type=input_dict['agent_types'],

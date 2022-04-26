@@ -3,8 +3,8 @@
 import pandas as pd
 import numpy as np
 import heapq
-from typing import List, Any
-from pydantic import BaseModel, validator, Field
+from typing import List, Any, Union
+from pydantic import BaseModel, validator, Field, constr
 
 # general settings object ---------------------------------------------------------------------------------------------
 class MarketSettings(BaseModel):
@@ -26,10 +26,10 @@ class MarketSettings(BaseModel):
     # filled in by init
     timestamps : Any = Field(default=None)
     elPrice : Any = Field(default=None)
-    community_objective : float = None
-    gamma_peak : float= None
-    gamma_imp : float = None
-    gamma_exp : float = None
+    gamma_peak : Union[None, float]
+    community_objective : Union[None, str] # constr(regex=r'(autonomy|peakShaving)$')]
+    gamma_exp : Union[None, float]
+    gamma_imp : Union[None, float]
 
     def __init__(self, **data) -> None:
         """
@@ -41,34 +41,10 @@ class MarketSettings(BaseModel):
         # here we initiate the entries that are computed from inputs
         self.timestamps = np.arange(self.nr_of_h)
 
-        if self. el_dependent:
+        if self.el_dependent:
             self.elPrice = pd.DataFrame(self.el_price, columns=["elprice"])
         else:
             self.elPrice = None
-
-    def add_community_settings(self, objective, g_peak, g_exp, g_imp):
-        """ the parameters are optional inputs"""
-        # add the options for community to the settings
-        options_objective = ["autonomy", "peakShaving"]
-        if objective not in options_objective:
-            raise ValueError("objective should be one of" + str(options_objective))
-        self.community_objective = objective
-
-        # set values of gammas
-        if g_peak is None:
-            self.gamma_peak = 10.0 ** 2
-        else:
-            self.gamma_peak = g_peak
-        if g_exp is None:
-            self.gamma_exp = -4 * 10.0 ** 1
-        else:
-            if self.gamma_exp >= 0.0:
-                raise ValueError("export penalty must be nonpositive")
-            self.gamma_exp = g_exp
-        if g_imp is None:
-            self.gamma_imp = 5 * 10.0 ** 1
-        else:
-            self.gamma_imp = g_imp
 
     @validator("nr_of_h")
     def nr_of_hours_check(cls, v):
@@ -114,11 +90,56 @@ class MarketSettings(BaseModel):
                 raise ValueError("If you want network-awareness, offer_type must be 'simple'")
             if not values["market_design"] == "pool":
                 raise ValueError("network-awareness is only implemented for pool, not for p2p and community markets")
+        return v
     @validator("product_diff")
     def product_diff_only_with_p2p(cls, v, values):
         # exclude bad combination of inputs
         if values["market_design"] != "p2p" and v != "noPref":
             raise ValueError('product_diff can only be something else than "noPref" if market_design == "p2p')
+        return v
+    @validator("community_objective")
+    def community_inputs_must_be_given(cls, v, values):
+        if values["market_design"] == "community" and v is None:
+            raise ValueError("Community_objective is mandatory input if the community market design is selected")
+        return v 
+    @validator("community_objective")
+    def community_objective_valid(cls, v, values):
+        options_objective = ["autonomy", "peakShaving"]
+        if values["market_design"] == "community" and v not in options_objective:
+            raise ValueError("community objective should be one of" + str(options_objective))
+        return v
+    @validator("gamma_imp")
+    def gamma_imp_validity_check(cls, v, values):
+        if values["market_design"] == "community":
+            if v is None:
+                raise ValueError("gamma_imp is mandatory input if the community market design is selected")
+            else:
+                if v < 0:
+                    raise ValueError("gamma_imp must be positive")
+                else:
+                    if abs(v) < abs(values["gamma_exp"]):
+                        raise ValueError("In absolute value, gamma_imp should be greater than gamma_exp")
+        return v
+    @validator("gamma_exp")
+    def gamma_exp_validity_check(cls, v, values):
+        if values["market_design"] == "community":
+            if v is None:
+                raise ValueError("gamma_exp is mandatory input if the community market design is selected")
+            else:
+                if v > 0:
+                    raise ValueError("gamma_exp must be negative")
+        return v
+    @validator("community_objective")
+    def g_peak_validity_check(cls, v, values):
+        if values["market_design"] == "community" and v == "autonomy":
+            if values["gamma_peak"] is None:
+                raise ValueError("g_peak is mandatory input if the community market design" +\
+                                 "with autonomy objective is selected")
+            else:
+                if values["gamma_peak"]  < 0:
+                    raise ValueError("g_peak must be positive")
+        return v
+    
         
 
 # agents information --------------------------------------------------------------------------------------------------
