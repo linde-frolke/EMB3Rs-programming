@@ -2,8 +2,12 @@
 function that makes input structures, runs short term market, makes result object, and returns dictionary outputs
 the inputs are also in the dictionary format
 """
+from xml.dom import ValidationErr
 import pandas as pd
 from ast import literal_eval
+from ...cases.exceptions.module_runtime_exception import ModuleRuntimeException
+from ...cases.exceptions.module_validation_exception import ModuleValidationException
+
 
 # import own modules
 from ...short_term.datastructures.inputstructs import AgentData, MarketSettings, Network
@@ -70,10 +74,13 @@ def run_shortterm_market(input_dict):
             input_dict['community_settings'][str_] = None
 
     # create Settings object ---------------------------------------
-    settings = MarketSettings(nr_of_h=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
-                              product_diff=input_dict['prod_diff'], market_design=input_dict['md'],
-                              network_type=input_dict['network'], el_dependent=el_dependent,
-                              el_price=input_dict['el_price'])
+    try: 
+        settings = MarketSettings(nr_of_h=input_dict['nr_of_hours'], offer_type=input_dict['offer_type'],
+                                product_diff=input_dict['prod_diff'], market_design=input_dict['md'],
+                                network_type=input_dict['network'], el_dependent=el_dependent,
+                                el_price=input_dict['el_price'])
+    except ModuleValidationException as msg:
+        raise print(msg)
 
     if settings.market_design == "community":
         settings.add_community_settings(input_dict['objective'],
