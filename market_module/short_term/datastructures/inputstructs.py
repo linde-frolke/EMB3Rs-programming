@@ -1,79 +1,50 @@
 # inputs format for market module
-# if we receive them differently from other modules, we will convert them to these
 
 import pandas as pd
 import numpy as np
 import heapq
-
+from typing import List, Any
+from pydantic import BaseModel, validator, Field
 
 # general settings object ---------------------------------------------------------------------------------------------
-class MarketSettings:
+class MarketSettings(BaseModel):
     """
     Object to store market settings.
     On creation, it checks whether settings are valid
     """
+    class Config:
+        arbitrary_types_allowed = True
+    
+    nr_of_h : int  # nr of time steps to run the market for
+    market_design : str # market design
+    offer_type : str # offer type is either "simple", "block", "energyBudget".
+    prod_diff : str = "noPref" # product differentiation. Only has an effect if market design = p2p
+    el_dependent : bool # should CHP bids be depending on electricity price?
+    el_price : np.ndarray = Field(default=None) # a vector with electricity prices. is None by default. 
+    network_type : str = None  # whether to include network, and if so, how. Default is None
+    # entries to be filled in by other functions
+    # filled in by init
+    timestamps : Any = Field(default=None)
+    elPrice : Any = Field(default=None)
+    community_objective : float = None
+    gamma_peak : float= None
+    gamma_imp : float = None
+    gamma_exp : float = None
 
-    def __init__(self, nr_of_hours, offer_type: str, prod_diff: str,
-                 market_design: str, network_type=None, el_dependent=False, el_price=None):
+    def __init__(self, **data) -> None:
         """
         create MarketSettings object if all inputs are correct
-        :param nr_of_hours: Integer between 1 and ... ?
-        :param offer_type:
-        :param prod_diff:
-        TODO explain all inputs
         """
+        # pydantic __init__ syntax
+        super().__init__(**data)
+        
+        # here we initiate the entries that are computed from inputs
+        self.timestamps = np.arange(self.nr_of_h)
 
-        max_time_steps = 48  # max 48 hours.
-        if not ((type(nr_of_hours) == int) and (1 <= nr_of_hours <= max_time_steps)):
-            raise ValueError("nr_of_hours should be an integer between 1 and " + str(max_time_steps))
-        self.nr_of_h = nr_of_hours
-        self.timestamps = np.arange(nr_of_hours)
-        # check if input is correct.
-        options_offer_type = ["simple", "block", "energyBudget"]
-        if offer_type not in options_offer_type:
-            raise ValueError("offer_type should be one of ['simple', 'block', 'energyBudget']")
-        self.offer_type = offer_type
-        # check if input is correct
-        options_prod_diff = ["noPref", "co2Emissions", "networkDistance", "losses"]
-        if prod_diff not in options_prod_diff:
-            raise ValueError('prod_diff should be one of ' + str(options_prod_diff))
-        self.product_diff = prod_diff
-        # check if input is correct
-        options_market_design = ["pool", "p2p", "community"]
-        if market_design not in options_market_design:
-            raise ValueError('market_design should be one of ' + str(options_market_design))
-        self.market_design = market_design
-        # exclude bad combination of inputs
-        if self.market_design != "p2p" and prod_diff != "noPref":
-            raise ValueError('prod_diff can only be something else than "noPref" if market_design == "p2p')
-        # check inputs for electricity dependence. Can be combined with all 3 market types
-        self.el_dependent = el_dependent
-        if el_dependent:
-            if el_price is None:
-                raise ValueError('el_price must be given if el_dependent == True')
-            elif not len(el_price) == nr_of_hours:
-                raise ValueError('el_price must be given for each hour')
-            self.elPrice = pd.DataFrame(el_price, columns=["elprice"])
+        if self. el_dependent:
+            self.elPrice = pd.DataFrame(self.el_price, columns=["elprice"])
         else:
             self.elPrice = None
-
-        # entries to be filled in by other functions
-        self.community_objective = None
-        self.gamma_peak = None
-        self.gamma_imp = None
-        self.gamma_exp = None
-
-        # check network type settings
-        if network_type is not None:
-            options_network_type = ["direction"]
-            if network_type not in options_network_type:
-                raise ValueError("network_type should be None or one of " + str(options_network_type))
-            if not offer_type == "simple":
-                raise ValueError("If you want network-awareness, offer_type must be 'simple'")
-            if not market_design == "pool":
-                raise NotImplementedError("network-aware is not implemented for p2p and community markets")
-        # save network type
-        self.network_type = network_type
 
     def add_community_settings(self, objective, g_peak, g_exp, g_imp):
         """ the parameters are optional inputs"""
@@ -99,6 +70,56 @@ class MarketSettings:
         else:
             self.gamma_imp = g_imp
 
+    @validator("nr_of_h")
+    def nr_of_hours_check(cls, v):
+        max_time_steps = 48  # max 48 hours.
+        if not ((type(v) == int) and (1 <= v <= max_time_steps)):
+            raise ValueError("nr_of_hours should be an integer between 1 and " + str(max_time_steps))
+        return v
+    @validator("offer_type")
+    def offer_type_valid(cls, v):
+        options_offer_type = ["simple", "block", "energyBudget"]
+        if v not in options_offer_type:
+            raise ValueError("offer_type should be one of " + str(options_offer_type))
+        return v
+    @validator("prod_diff")
+    def prof_diff_valid(cls, v):
+        options_prod_diff = ["noPref", "co2Emissions", "networkDistance", "losses"]
+        if v not in options_prod_diff:
+            raise ValueError('prod_diff should be one of ' + str(options_prod_diff))
+        return v
+    @validator("market_design")
+    def market_design_valid(cls, v):
+        # check if input is correct
+        options_market_design = ["pool", "p2p", "community"]
+        if v not in options_market_design:
+            raise ValueError('market_design should be one of ' + str(options_market_design))
+        return v
+    @validator("el_dependent")
+    def el_price_if_needed(cls, v, values):
+        # check inputs for electricity dependence. Can be combined with all 3 market types
+        if v:
+            if values["el_price"] is None:
+                raise ValueError('el_price must be given if el_dependent == True')
+            elif not len(values["el_price"]) == values["nr_of_hours"]:
+                raise ValueError('el_price must be given for each hour')
+        return v
+    @validator("network_type")
+    def network_type_valid(cls, v, values):
+        if v is not None:
+            options_network_type = ["direction"]
+            if v not in options_network_type:
+                raise ValueError("network_type should be None or one of " + str(options_network_type))
+            if not values["offer_type"] == "simple":
+                raise ValueError("If you want network-awareness, offer_type must be 'simple'")
+            if not values["market_design"] == "pool":
+                raise ValueError("network-awareness is only implemented for pool, not for p2p and community markets")
+    @validator("prod_diff")
+    def prod_diff_only_with_p2p(cls, v, values):
+        # exclude bad combination of inputs
+        if values["market_design"] != "p2p" and v != "noPref":
+            raise ValueError('prod_diff can only be something else than "noPref" if market_design == "p2p')
+        
 
 # agents information --------------------------------------------------------------------------------------------------
 class AgentData:
