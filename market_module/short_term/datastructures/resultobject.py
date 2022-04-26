@@ -269,6 +269,7 @@ class ResultData:
                        'optimal': bool_to_string(self.optimal),
                        'settlement' : self.settlement.to_dict(orient="list"),
                        'social_welfare_h': self.social_welfare_h.to_dict(orient="list")
+                       # TODO "agent_operational_cost " should be added
                        }
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
