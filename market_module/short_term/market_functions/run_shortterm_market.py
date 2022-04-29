@@ -92,15 +92,14 @@ def run_shortterm_market(input_dict):
     #                                     g_imp=input_dict['community_settings']['g_imp'])
 
     # create AgentData object
-    agent_data = AgentData(settings=settings, agent_ids=input_dict['agent_ids'], #a_type=input_dict['agent_types'],
-                           #gmin=input_dict['gmin'], 
+    agent_data = AgentData(settings=settings,
+                         agent_name=input_dict['agent_ids'],
                            gmax=input_dict['gmax'],
-                           #lmin=input_dict['lmin'], 
                            lmax=input_dict['lmax'],
                            cost=input_dict['cost'], util=input_dict['util'],
                            co2=input_dict['co2_emissions'],
                            is_in_community=input_dict['is_in_community'],
-                           block_offer=input_dict['block_offer'], is_chp=input_dict['is_chp'],
+                           block=input_dict['block_offer'], is_chp=input_dict['is_chp'],
                            chp_pars=input_dict['chp_pars'], default_alpha=10.0
                            )
     # create Network object

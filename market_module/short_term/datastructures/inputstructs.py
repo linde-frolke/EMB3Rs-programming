@@ -3,8 +3,10 @@
 import pandas as pd
 import numpy as np
 import heapq
-from typing import List, Any, Union
-from pydantic import BaseModel, validator, Field, constr
+from typing import List, Any, Union, Dict
+from pydantic import BaseModel, validator, Field, constr, conint
+
+from market_module.cases.exceptions.module_validation_exception import ModuleValidationException #, confloat
 
 # general settings object ---------------------------------------------------------------------------------------------
 class MarketSettings(BaseModel):
@@ -15,12 +17,12 @@ class MarketSettings(BaseModel):
     class Config:
         arbitrary_types_allowed = True
     
-    nr_of_h : int  # nr of time steps to run the market for
-    market_design : str # market design
-    offer_type : str # offer type is either "simple", "block", "energyBudget".
-    product_diff : str = "noPref" # product differentiation. Only has an effect if market design = p2p
+    nr_of_h : conint(strict=True)  # nr of time steps to run the market for
+    market_design : constr(strict=True) # market design
+    offer_type : constr(strict=True) # offer type is either "simple", "block", "energyBudget".
+    product_diff : constr(strict=True) = "noPref" # product differentiation. Only has an effect if market design = p2p
+    el_price : Union[None, np.ndarray] = Field(default=None) # a vector with electricity prices. is None by default. 
     el_dependent : bool # should CHP bids be depending on electricity price?
-    el_price : np.ndarray = Field(default=None) # a vector with electricity prices. is None by default. 
     network_type : str = None  # whether to include network, and if so, how. Default is None
     # entries to be filled in by other functions
     # filled in by init
@@ -64,6 +66,15 @@ class MarketSettings(BaseModel):
         if v not in options_product_diff:
             raise ValueError('product_diff should be one of ' + str(options_product_diff))
         return v
+    @validator("product_diff")
+    def product_diff_only_with_p2p(cls, v, values):
+        # exclude bad combination of inputs
+        try:
+            if values["market_design"] != "p2p" and v != "noPref":
+                raise ValueError('product_diff can only be something else than "noPref" if market_design == "p2p')
+        except:
+            raise ValueError("market design input was invalid, I cannot run this test")
+        return v
     @validator("market_design")
     def market_design_valid(cls, v):
         # check if input is correct
@@ -90,12 +101,6 @@ class MarketSettings(BaseModel):
                 raise ValueError("If you want network-awareness, offer_type must be 'simple'")
             if not values["market_design"] == "pool":
                 raise ValueError("network-awareness is only implemented for pool, not for p2p and community markets")
-        return v
-    @validator("product_diff")
-    def product_diff_only_with_p2p(cls, v, values):
-        # exclude bad combination of inputs
-        if values["market_design"] != "p2p" and v != "noPref":
-            raise ValueError('product_diff can only be something else than "noPref" if market_design == "p2p')
         return v
     @validator("community_objective")
     def community_inputs_must_be_given(cls, v, values):
@@ -143,119 +148,199 @@ class MarketSettings(BaseModel):
         
 
 # agents information --------------------------------------------------------------------------------------------------
-class AgentData:
+class AgentData(BaseModel):
     """
-    Object that stores all agent related data
-    Contains an entry for each different input.
-    If the input is constant in time, it is a dataframe with agent ID as column name, and the input as row
-    If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
+    Object that stores all agent related data/inputs needed for the market
+    :param settings: a MarketSettings object. contains the time horizon that is needed here.
+    :param agent_name: an array with agents names, should be strings
+    :param gmax: array of size (nr_of_timesteps, nr_of_agents)
+    :param lmax: array of size (nr_of_timesteps, nr_of_agents)
+    :param cost:
+    :param util:
+    :param co2: optional input. array of size (nr_of_timesteps, nr_of_agents)
+    :param is_in_community: optional input. Boolean array of size (1, nr_of_agents).
+                contains True if is in community, False if not.
+    :param block_offer: # 
+    :param is_chp: list with ids of agents that are CHPs
+    :params chp_pars: a dictionary of dictionaries, including parameters for each agents in is_chp.
+                                                    {'agent_1' : {'rho' : 1.0, 'r' : 0.15, ...},
+                                                        'agent_2' : {'rho' : 0.8, 'r' : 0.10, ...} }
     """
+    # only needed for constructing validation
+    settings : MarketSettings
+    # real needed entries
+    agent_name : List
+    gmax : List 
+    lmax : List
+    cost : List 
+    util : List 
+    co2 : Union[None, List] = None 
+    is_in_community : Union[None, List] = None
+    block : Union[None, List] = None
+    is_chp : Union[None, List] = None # list of agent names 
+    chp_pars : Union[None, Dict] = None
+    default_alpha : float = 10.0
+    # to be filled in init.
+    nr_of_agents : Any
+    agent_is_in_community : Any 
+    C : Any
+    notC : Any
+    gmin : Any
+    lmin : Any  
 
-    def __init__(self, settings, agent_ids, gmax, lmax, cost, util, co2=None,
-                 is_in_community=None, block_offer=None, is_chp=None, chp_pars=None,
-                 default_alpha=10.0):
-        """
-        :param settings: a MarketSettings object. contains the time horizon that is needed here.
-        :param agent_ids: an array with agents names, should be strings
-        :param a_type: array of strings. should be one of "producer, "consumer", "prosumer"
-        :param gmax: array of size (nr_of_timesteps, nr_of_agents)
-        :param lmax: array of size (nr_of_timesteps, nr_of_agents)
-        :param cost:
-        :param util:
-        :param co2: optional input. array of size (nr_of_timesteps, nr_of_agents)
-        :param is_in_community: optional input. Boolean array of size (1, nr_of_agents).
-                    contains True if is in community, False if not.
-        :param block_offer: # TODO sergio can you define this variable?
-        :param is_chp: list with ids of agents that are CHPs
-        :params chp_pars: a dictionary of dictionaries, including parameters for each agents in is_chp.
-                                                        {'agent_1' : {'rho' : 1.0, 'r' : 0.15, ...},
-                                                         'agent_2' : {'rho' : 0.8, 'r' : 0.10, ...} }
-        """
+    def __init__(self, **data) -> None:
+        # pydantic __init__ syntax
+        super().__init__(**data)
 
         # set nr of agents, names, and types
-        self.nr_of_agents = len(agent_ids)
-        self.agent_name = agent_ids
-        #self.agent_type = dict(zip(name, a_type))
+        self.nr_of_agents = len(self.agent_name)
+        
         # add community info if that is needed
-        if settings.market_design == "community":
-            if is_in_community is None:
-                raise ValueError("The community market design is selected. In this case, is_in_community is "
-                                 "an obligatory input")
-            self.agent_is_in_community = pd.DataFrame(np.reshape(is_in_community, (1, self.nr_of_agents)),
-                                                      columns=agent_ids)
-            self.C = [i for i in range(self.nr_of_agents) if is_in_community[i]]
-            self.notC = [i for i in range(self.nr_of_agents) if not is_in_community[i]]
+        if self.settings.market_design == "community":
+            self.agent_is_in_community = pd.DataFrame(np.reshape(self.is_in_community, (1, self.nr_of_agents)),
+                                                      columns=self.agent_name)
+            self.C = [i for i in range(self.nr_of_agents) if self.is_in_community[i]]
+            self.notC = [i for i in range(self.nr_of_agents) if not self.is_in_community[i]]
         else:
             self.agent_is_in_community = None
             self.C = None
             self.notC = None
 
         # add co2 emission info if needed
-        if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)),
-                                             columns=agent_ids)  # 1xnr_of_agents dimension
-        else:
-            self.co2_emission = None  # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=agent_ids)
-
-        if settings.offer_type == 'block':
-            self.block = block_offer
-        else:
-            self.block = None
+        if self.settings.product_diff == "co2Emissions":
+            self.co2_emission = pd.DataFrame(np.reshape(self.co2, (1, self.nr_of_agents)),
+                                             columns=self.agent_name)  # 1xnr_of_agents dimension
 
         # time dependent data -------------------------------------------------
-        if settings.nr_of_h == 1:
-            lmin = np.zeros((1, self.nr_of_agents))
-            gmin = np.zeros((1, self.nr_of_agents))
-            lmax = np.reshape(lmax, (1, self.nr_of_agents))
-            gmax = np.reshape(gmax, (1, self.nr_of_agents))
-            cost = np.reshape(cost, (1, self.nr_of_agents))
-            util = np.reshape(util, (1, self.nr_of_agents))
+        if self.settings.nr_of_h == 1:
+            self.lmin = np.zeros((1, self.nr_of_agents))
+            self.gmin = np.zeros((1, self.nr_of_agents))
+            self.lmax = np.reshape(self.lmax, (1, self.nr_of_agents))
+            self.gmax = np.reshape(self.gmax, (1, self.nr_of_agents))
+            self.cost = np.reshape(self.cost, (1, self.nr_of_agents))
+            self.util = np.reshape(self.util, (1, self.nr_of_agents))
         else:
             # set lmin and gmin to zero.
-            lmin = np.zeros((settings.nr_of_h, self.nr_of_agents))
-            gmin = np.zeros((settings.nr_of_h, self.nr_of_agents))
-        # check size of inputs
-        if not np.array(lmin).shape == (settings.nr_of_h, self.nr_of_agents):
-            raise ValueError("lmin has to have shape (nr_of_timesteps, nr_of_agents)")
-        # TODO check that prodcers have lmax = 0, consumers have gmax = 0 for all times, min smaller than max, etc.
-        self.gmin = pd.DataFrame(gmin, columns=agent_ids)
-        self.gmax = pd.DataFrame(gmax, columns=agent_ids)
-        self.lmin = pd.DataFrame(lmin, columns=agent_ids)
-        self.lmax = pd.DataFrame(lmax, columns=agent_ids)
+            lmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
+            gmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
+        
+        # create the dataframes
+        self.gmin = pd.DataFrame(self.gmin, columns=self.agent_name)
+        self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
+        self.lmin = pd.DataFrame(self.lmin, columns=self.agent_name)
+        self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
 
-        self.cost = pd.DataFrame(cost, columns=agent_ids)
-        self.util = pd.DataFrame(util, columns=agent_ids)
+        self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
+        self.util = pd.DataFrame(self.util, columns=self.agent_name)
 
         # change the self.cost for agents in is_chp if el_dependent option is True
-        if settings.el_dependent:
-            if is_chp is None:
-                raise ValueError("if el_dependent is chosen, the input is_chp must be given")
-            if chp_pars is None:
-                raise ValueError("if el_dependent is chosen, the input chp_pars must be given")
-            # make sure that cph_params.keys() is a subset of is_chp
-            if not set(list(chp_pars.keys())).issubset(is_chp):
-                raise ValueError("some keys in chp_pars do not belong to the set is_chp")
+        if self.settings.el_dependent:
             # organize the CHP parameters in a dataframe
-            self.chp_params = pd.DataFrame.from_dict(chp_pars)
-            # defaults for CHP:
-            defaults = pd.DataFrame({"col": {"alpha": default_alpha, "r": 0.45, "rho_H": 0.9, "rho_E": 0.25}})
-            for i in range(len(is_chp)):
-                if is_chp[i] not in chp_pars.keys():
-                    self.chp_params[is_chp[i]] = defaults
+            chp_params = pd.DataFrame.from_dict(self.chp_pars)
+            # set defaults for CHP:
+            defaults = pd.DataFrame({"col": {"alpha": self.default_alpha, "r": 0.45, "rho_H": 0.9, "rho_E": 0.25}})
+            for i in range(len(self.is_chp)):
+                if self.is_chp[i] not in self.chp_pars.keys():
+                    chp_params[self.is_chp[i]] = defaults
+            # replace it with the new
+            self.chp_pars = chp_params
+            
             # compute the hourly cost bid for each chp
-            for i in range(len(is_chp)):
-                criterion = self.chp_params.loc["alpha", is_chp[i]] * self.chp_params.loc["rho_E", is_chp[i]]
-                for t in range(settings.nr_of_h):
-                    if settings.elPrice.iloc[t, 0] <= criterion:
-                        self.cost.loc[t, is_chp[i]] = self.chp_params.loc["alpha", is_chp[i]] * (
-                                    self.chp_params.loc["rho_E", is_chp[i]] * self.chp_params.loc["r", is_chp[i]] +
-                                    self.chp_params.loc["rho_H", is_chp[i]]) - settings.elPrice.iloc[t, 0] * \
-                                                      self.chp_params.loc["r", is_chp[i]]
+            for i in range(len(self.is_chp)):
+                criterion = chp_params.loc["alpha", self.is_chp[i]] * chp_params.loc["rho_E", self.is_chp[i]]
+                for t in range(self.settings.nr_of_h):
+                    if self.settings.elPrice.iloc[t, 0] <= criterion:
+                        self.cost.loc[t, self.is_chp[i]] = chp_params.loc["alpha", self.is_chp[i]] * (
+                                    chp_params.loc["rho_E", self.is_chp[i]] * chp_params.loc["r", self.is_chp[i]] +
+                                    chp_params.loc["rho_H", self.is_chp[i]]) - self.settings.elPrice.iloc[t, 0] * \
+                                                      chp_params.loc["r", self.is_chp[i]]
                     else:
-                        self.cost.loc[t, is_chp[i]] = settings.elPrice.iloc[t, 0] * (
-                                self.chp_params.loc["rho_H", is_chp[i]] / self.chp_params.loc["rho_E", is_chp[i]])
-        else:
-            self.chp_params = None
+                        self.cost.loc[t, self.is_chp[i]] = self.settings.elPrice.iloc[t, 0] * (
+                                chp_params.loc["rho_H", self.is_chp[i]] / chp_params.loc["rho_E", self.is_chp[i]])
+    
+    @validator("gmax")
+    def gmax_nrofh_lists(cls, v, values):
+        if len(v) != values["settings"].nr_of_h:
+            raise ValueError("gmax should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
+        return v
+    @validator("gmax")
+    def gmax_nrofagents_lists(cls, v, values):
+        sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
+        if not all(sublist_length_correct):
+            raise ValueError("Each sublist in gmax sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("lmax")
+    def lmax_nrofh_lists(cls, v, values):
+        print(values["settings"].nr_of_h)
+        if len(v) != values["settings"].nr_of_h:
+            raise ValueError("lmax should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
+        return v
+    @validator("lmax")
+    def lmax_nrofagents_lists(cls, v, values):
+        sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
+        if not all(sublist_length_correct):
+            raise ValueError("Each sublist in lmax sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("cost")
+    def cost_nrofh_lists(cls, v, values):
+        print(values["settings"].nr_of_h)
+        if len(v) != values["settings"].nr_of_h:
+            raise ValueError("cost should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
+        return v
+    @validator("cost")
+    def cost_nrofagents_lists(cls, v, values):
+        sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
+        if not all(sublist_length_correct):
+            raise ValueError("Each sublist in cost sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("util")
+    def util_nrofh_lists(cls, v, values):
+        print(values["settings"].nr_of_h)
+        if len(v) != values["settings"].nr_of_h:
+            raise ValueError("util should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
+        return v
+    @validator("util")
+    def util_nrofagents_lists(cls, v, values):
+        sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
+        if not all(sublist_length_correct):
+            raise ValueError("Each sublist in util sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("is_in_community")
+    def community_parameters_given(cls, v, values):
+        if v is None and values["settings"].market_design == "community":
+            raise ValueError("If the community market design is selected, is_in_community is "
+                                 "an obligatory input")
+        return v
+    @validator("co2")
+    def co2_given_if_needed(cls, v, values):
+        if values["settings"].product_diff == "co2Emissions":
+            if v is None:
+                raise ValueError("co2 intensity for agents is a mandatory input since you selected" +\
+                                    "product_diff = co2Emissions")
+            else:
+                if not len(v) == values["nr_of_agents"]:
+                    raise ValueError("'co2' has to be a list of size nr_of_agents=" + str(values["nr_of_agents"]))
+        return v
+    @validator("is_chp")
+    def is_chp_given_and_correct_if_needed(cls, v, values):
+        if values["settings"].el_dependent:
+            if v is None:
+                raise ValueError("if el_dependent is chosen, the input is_chp is mandatory")
+            elif not all([v[i] in values["agent_name"] for i in range(len(v))]):
+                raise ValueError("the strings in 'is_chp' have to be present in 'agent_names'")
+        return v
+    @validator("chp_pars")
+    def chp_pars_given_if_needed(cls, v, values):
+        if v is None and values["settings"].el_dependent:
+            raise ValueError("if el_dependent is chosen, the input chp_pars is mandatory")
+        return v
+    @validator("chp_pars")
+    def chp_pars_keys_must_be_chps(cls, v, values):
+        # make sure that cph_params.keys() is a subset of is_chp
+        if values["settings"].el_dependent:
+            if not set(list(v.keys())).issubset(values["is_chp"]):
+                raise ValueError("some keys in chp_pars do not belong to the set is_chp")
+        return v
 
 
 # network data ---------------------------------------------------------------------------------------------------------
