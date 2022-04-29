@@ -5,13 +5,19 @@ from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, 
 from ...long_term.market_functions.centralized_market import make_centralized_market
 from ...long_term.market_functions.decentralized_market import make_decentralized_market
 
+from ...cases.exceptions.module_runtime_exception import ModuleRuntimeException
+from ...cases.exceptions.module_validation_exception import ModuleValidationException
+
 
 def run_longterm_market(input_dict):
     # create input structures
-    settings = MarketSettings(prod_diff=input_dict['prod_diff_option'], market_design=input_dict['md'],
-                              horizon_b=input_dict['horizon_basis'],
-                              recurr=input_dict['recurrence'], data_prof=input_dict['data_profile'],
-                              ydr=input_dict['yearly_demand_rate'])
+    try:
+        settings = MarketSettings(product_diff=input_dict['prod_diff_option'], market_design=input_dict['md'],
+                                  horizon_basis=input_dict['horizon_basis'],
+                                  recurrence=input_dict['recurrence'], data_profile=input_dict['data_profile'],
+                                  ydr=input_dict['yearly_demand_rate'])
+    except ModuleValidationException as msg:
+        raise print(msg)
 
     agent_data = AgentData(settings=settings, name=input_dict['agent_ids'],
                            #a_type=input_dict['agent_types'],

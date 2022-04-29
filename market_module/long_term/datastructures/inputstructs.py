@@ -4,149 +4,270 @@
 import pandas as pd
 import numpy as np
 import heapq
+from typing import List, Any, Union
+from pydantic import BaseModel, validator, conint, conlist, Field, constr
 
 
 # general settings object ---------------------------------------------------------------------------------------------
-class MarketSettings:
+class MarketSettings(BaseModel):
     """
     Object to store market settings.
     On creation, it checks whether settings are valid
     """
-    def __init__(self,  prod_diff: str,
-                 market_design: str, horizon_b: str, recurr, ydr, data_prof):
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    product_diff: str = "noPref" # product differentiation. Only has an effect if market design = p2p
+    market_design: str  # market design
+    horizon_basis: str # horizon basis
+    recurrence: conint(strict=True) # Recurrence
+    ydr: float = 0.05 #yearly demand rate - 0.05 is the default value
+    data_profile: str #data profile
+    # to be filled by init
+    day_range: Any
+    data_size: Any
+
+    def __init__(self, **data) -> None:
         """
         create MarketSettings object if all inputs are correct
-        :param offer_type:
-        :param prod_diff:
         """
+        # pydantic __init__ syntax
+        super().__init__(**data)
 
-        # check if input is correct
-        options_prod_diff = ["noPref", "co2Emissions", "networkDistance"]
-        if prod_diff not in options_prod_diff:
-            raise ValueError('prod_diff should be one of ' + str(options_prod_diff))
-        self.product_diff = prod_diff
+        if self.horizon_basis == 'weeks':
+            self.day_range = 7
+        if self.horizon_basis == 'months':
+            self.day_range = 30
+        if self.horizon_basis == 'years':
+            self.day_range = 365
+        # converting data profile to scalar
+        if self.data_profile == 'hourly':
+            self.data_size = 24
+        if self.data_profile == 'daily':
+            self.data_size = 1
+
+
+    @validator("product_diff")
+    def product_diff_valid(cls, v):
+        options_product_diff = ["noPref", "co2Emissions", "networkDistance"]
+        if v not in options_product_diff:
+            raise ValueError("product_diff should be one of " + str(options_product_diff))
+        return v
+
+    @validator("market_design")
+    def market_design_valid(cls, v):
         # check if input is correct
         options_market_design = ["centralized", "decentralized"]
-        if market_design not in options_market_design:
+        if v not in options_market_design:
             raise ValueError('market_design should be one of ' + str(options_market_design))
-        self.market_design = market_design
+        return v
+
+    @validator("horizon_basis")
+    def horizon_basis_valid(cls, v):
+        # check if input is correct
         options_horizon_basis = ['weeks', 'months', 'years']
-        if horizon_b not in options_horizon_basis:
-            raise ValueError('Horizon basis should be one of ' + str(options_horizon_basis))
-        self.horizon_basis = horizon_b
-        if not ((type(recurr) == int )):
-            raise ValueError("Recurrence should be an integer")
-        self.recurrence = recurr
-        self.ydr=ydr
+        if v not in options_horizon_basis:
+            raise ValueError('horizon_basis should be one of ' + str(options_horizon_basis))
+        return v
+
+    @validator("recurrence")
+    def recurrence_valid(cls, v, values):
+        # check if input is correct
+        if not ((type(v)) == int):
+            raise ValueError('recurrence should be an integer')
+        if (values['horizon_basis'] == 'weeks') and v > 52:
+            raise ValueError('If horizon_basis is weeks, then recurrence should be less than 53')
+        if (values['horizon_basis'] == 'months') and v > 12:
+            raise ValueError('If horizon_basis is months, then recurrence should be less than 13')
+        if (values['horizon_basis'] == 'years') and v > 20:
+            raise ValueError('If horizon_basis is years, then recurrence should be less than 21')
+        return v
+
+    @validator("ydr")
+    def ydr_valid(cls, v):
+        # check if input is correct
+        if (v > 1) or (v < -1):
+            raise ValueError('ydr should be within the range [-1,1]')
+        return v
+
+    @validator("data_profile")
+    def data_profile_valid(cls, v):
+        # check if input is correct
         options_data_profile=['hourly', 'daily']
-        if data_prof not in options_data_profile:
-            raise ValueError('Data profile should be one of ' + str(options_data_profile))
-        self.data_profile = data_prof
+        if v not in options_data_profile:
+            raise ValueError('data_profile should be one of ' + str(options_data_profile))
+        return v
 
 
-# agents information --------------------------------------------------------------------------------------------------
-class AgentData:
+class AgentData(BaseModel):
     """
     Object that stores all agent related data
     Contains an entry for each different input.
     If the input is constant in time, it is a dataframe with agent ID as column name, and the input as row
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
-    def __init__(self, settings, name, gmax, lmax, cost, util, co2=None):
+    settings: MarketSettings
+    name: list
+    gmax: list
+    lmax: list
+    cost: list
+    util: list
+    co2: Union[None, List] = None
+    #to be filled in init
+    nr_of_agents : Any
+    co2_emission : Any
+    agent_name : Any
+    lmin_zeros : Any
+    gmin_zeros : Any
+    gmin : Any
+    lmin : Any
+    day_range: Any
+    data_size: Any
+
+    def __init__(self, **data) -> None:
+        """
+        create AgentData object if all inputs are correct
+        """
+        # pydantic __init__ syntax
+        super().__init__(**data)
+
+        #Just to avoid changing centralized_market and resultobject
+        self.day_range=self.settings.day_range
+        self.data_size=self.settings.data_size
+
         # set nr of agents, names, and types
-        self.nr_of_agents = len(name)
+        self.nr_of_agents = len(self.name)
         # TODO print("todo make sure no ID is identical")
-        self.agent_name = name
-        #self.agent_type = dict(zip(name, a_type))
+        self.agent_name = self.name
         # add co2 emission info if needed
-        if settings.product_diff == "co2Emissions":
-            self.co2_emission = pd.DataFrame(np.reshape(co2, (1, self.nr_of_agents)), columns=name) #1xnr_of_agents dimension
+        if self.settings.product_diff == "co2Emissions":
+            self.co2_emission = pd.DataFrame(np.reshape(self.co2, (1, self.nr_of_agents)), columns=self.agent_name) #1xnr_of_agents dimension
         else:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
-        #converting horizon_basis to scalar
-        if settings.horizon_basis == 'weeks':
-            self.day_range = 7
-        elif settings.horizon_basis == 'months':
-            self.day_range = 30
-        else:
-            self.day_range = 365   
-        
-        #converting data profile to scalar
-        if settings.data_profile == 'hourly':
-            self.data_size = 24
-        else:
-            self.data_size = 1
-       #horizon basis time boundaries
-        if settings.horizon_basis == 'weeks' or settings.horizon_basis == 'months':                                     
-            if settings.horizon_basis == 'weeks' and settings.recurrence > 52:
-                raise ValueError('For horizon basis weeks, recurrence must not exceed 52')
-            if settings.horizon_basis == 'months' and settings.recurrence > 12:
-                raise ValueError('For horizon basis weeks, recurrence must not exceed 12')
 
-            #These are parameters now
+        #These are parameters now
 
-            lmin = np.zeros((self.day_range * settings.recurrence * self.data_size, self.nr_of_agents))
-            gmin = np.zeros((self.day_range * settings.recurrence * self.data_size, self.nr_of_agents))
-            self.gmin = pd.DataFrame(gmin, columns=name)
-            self.lmin = pd.DataFrame(lmin, columns=name)
+        self.lmin_zeros = np.zeros((self.settings.day_range * self.settings.recurrence * self.settings.data_size, self.nr_of_agents))
+        self.gmin_zeros = np.zeros((self.settings.day_range * self.settings.recurrence * self.settings.data_size, self.nr_of_agents))
 
-             #checking data dimensions
-            if len(gmin) + len(gmax) + len(lmin) + len(lmax) + len(cost) + len(util) != 6*self.day_range*settings.recurrence*self.data_size:
-                raise ValueError('Data dimensions should be {:d}'.format(self.day_range*settings.recurrence*self.data_size))
-            
+        self.gmin = pd.DataFrame(self.gmin_zeros, columns=self.agent_name)
+        self.lmin = pd.DataFrame(self.lmin_zeros, columns=self.agent_name)
 
-            self.gmax = pd.DataFrame(gmax, columns=name)
-            self.lmax = pd.DataFrame(lmax, columns=name)
-    
-            self.cost = pd.DataFrame(cost, columns=name)
-            self.util = pd.DataFrame(util, columns=name)
-            
-        #Increasing data size if >8760 is required
-        elif settings.horizon_basis == 'years':
-            if settings.recurrence>20:
-                raise ValueError('For horizon basis years, recurrence must not exceed 20')    
-            if len(gmin) + len(gmax) + len(lmin) + len(lmax) + len(cost) + len(util) != 6*self.day_range*self.data_size:
-                raise ValueError('Data dimensions should be {:d}'.format(self.day_range*self.data_size))
-            
+        self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
+        self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
 
-            lmax = self.yearly_demand_rate(lmax, settings) #demand increase
-            gmax = self.replicate_data(gmax, settings)
-            
-            cost = self.replicate_data(cost, settings)
-            util = self.replicate_data(util, settings)
- 
-        # time dependent data -------------------------------------------------
-            self.gmax = pd.DataFrame(gmax, columns=name)
-            self.lmax = pd.DataFrame(lmax, columns=name)
-    
-            self.cost = pd.DataFrame(cost, columns=name)
-            self.util = pd.DataFrame(util, columns=name)
- 
-# =============================================================================
-#     def cumulative_sum(self, nested_list, settings):
-#         #defining cumulative sums over weeks, months or years        
-#         x=np.zeros([settings.recurrence,self.nr_of_agents])
-#         for i in range(0,self.nr_of_agents):
-#             for k,j in enumerate(range(0,self.day_range*settings.recurrence*24,self.day_range*24)):
-#                 x[k][i]=sum(nested_list[j:j+self.day_range*24,i])  
-#         return x
-# =============================================================================
-    #Increases demand rate over years
-    def yearly_demand_rate(self, nested_list, settings):
-        self.aux_list=nested_list
-        for i in range(0,100000000):
-            self.aux_list=np.r_[self.aux_list, nested_list*(1+(settings.ydr*(i+1)))]
-            if len(self.aux_list) >= self.day_range*settings.recurrence*self.data_size:
-                break
-        return self.aux_list
-    
-    def replicate_data(self, nested_list, settings):
-        self.aux_list=nested_list
-        for i in range(0,100000000):
-            self.aux_list=np.r_[self.aux_list, nested_list]
-            if len(self.aux_list) >= self.day_range*settings.recurrence*self.data_size:
-                break
-        return self.aux_list
+        self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
+        self.util = pd.DataFrame(self.util, columns=self.agent_name)
+
+    def check_dimension(input_list):
+        aux = []
+        new = []
+        for iter in range(len(input_)):
+            aux.append(len(input_[iter]))
+        for dim in aux:
+            if dim not in new:
+                new.append(dim)
+        return new
+
+    @validator("name") #checking list dimensions
+    def name_valid(cls, v):
+        if isinstance(v[0], list) == True:
+            raise ValueError('Agent IDs should be one dimensional list')
+        return v
+
+    @validator('gmax')
+    def gmax_valid(cls, v, values):
+        ## TODO find a way to make this a function and work inside validators
+        aux=[]
+        new=[]
+        for iter in range(len(v)):
+            aux.append(len(v[iter]))
+        for dim in aux:
+            if dim not in new:
+                new.append(dim)
+        ##
+
+        if (len(new) != 1 or new[0] != len(values['name'])) or (
+        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
+            raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
+                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
+                len(values['name'])))
+        return v
+
+    @validator('lmax')
+    def lmax_valid(cls, v, values):
+        aux=[]
+        new=[]
+        for iter in range(len(v)):
+            aux.append(len(v[iter]))
+        for dim in aux:
+            if dim not in new:
+                new.append(dim)
+
+        if (not len(v[0]) == len(values['name'])) or (
+        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
+            raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
+                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
+                len(values['name'])))
+        return v
+
+    @validator('cost')
+    def cost_valid(cls, v, values):
+        aux=[]
+        new=[]
+        for iter in range(len(v)):
+            aux.append(len(v[iter]))
+        for dim in aux:
+            if dim not in new:
+                new.append(dim)
+
+        if (not len(v[0]) == len(values['name'])) or (
+        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
+            raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
+                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
+                len(values['name'])))
+        return v
+
+    @validator('util')
+    def util_valid(cls, v, values):
+        aux=[]
+        new=[]
+        for iter in range(len(v)):
+            aux.append(len(v[iter]))
+        for dim in aux:
+            if dim not in new:
+                new.append(dim)
+
+        if (not len(v[0]) == len(values['name'])) or (
+        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
+            raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
+                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
+                len(values['name'])))
+        return v
+
+
+    @validator("co2")
+    def co2_valid(cls, v, values):
+        if values["settings"].product_diff == "co2Emissions":
+            if v is None:
+                raise ValueError("co2 intensity for agents is a mandatory input since you selected" + \
+                                 "product_diff = co2Emissions")
+            else:
+                if not len(v) == len(values["name"]):
+                    raise ValueError("'co2' has to be a list of size nr_of_agents=" + str(len(values["name"])))
+        return v
+
+        # def check_dimension(input_list):
+        #     aux=[]
+        #     new=[]
+        #     for iter in range(len(input_list)):
+        #         aux.append(len(input_list[iter]))
+        #     for dim in aux:
+        #         if dim not in new:
+        #             new.append(dim)
+        #     return new
+
 # network data ---------------------------------------------------------------------------------------------------------
 class Network:
     def __init__(self, agent_data, gis_data): # agent_loc,
