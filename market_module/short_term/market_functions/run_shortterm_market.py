@@ -65,7 +65,7 @@ def run_shortterm_market(input_dict):
     if input_dict["el_dependent"] == "true":
         el_dependent = True
 
-    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars', 'objective']:
+    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars', 'objective', 'nodes', 'edges']:
         if input_dict[str_] == 'none':
             input_dict[str_] = None
 
@@ -111,7 +111,7 @@ def run_shortterm_market(input_dict):
         gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
 
     network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings, 
-                      nodes=input_dict["nodes"], edges=input_dict["edges"])
+                      N=input_dict["nodes"], P=input_dict["edges"])
 
     # run market
     # construct and solve market -----------------------------

@@ -108,9 +108,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         # construct preference matrix
         # TODO could move this to AgentData structure
         if settings.product_diff == "co2Emissions":
-            emissions_p = agent_data.co2_emission / \
-                sum(agent_data.co2_emission.T[0])  # percentage
-            emissions_p = np.tile(emissions_p, (len(agent_data.agent_name), 1))
+            emissions_p = np.tile(agent_data.emissions_percentage, (len(agent_data.agent_name), 1))
             for t in settings.timestamps:
                 co2_penalty = cp.sum(cp.multiply(
                     np.array(emissions_p), Snm[t]))

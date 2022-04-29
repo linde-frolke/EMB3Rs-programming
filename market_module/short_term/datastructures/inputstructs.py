@@ -344,33 +344,40 @@ class AgentData(BaseModel):
 
 
 # network data ---------------------------------------------------------------------------------------------------------
-class Network:
-    def __init__(self, agent_data, gis_data, settings, nodes, edges):  # agent_loc,
-        """
+class Network(BaseModel):
+    """
         :param agent_data: AgentData object.
         :param agent_loc: dictionary mapping agent ids to node numbers
         :param gis_data: dataframe provided by GIS to us. has columns from_to (tuple), losses_total, length, total_costs
         :param settings: a MarketSettings object
-        :param nodes: a list of node IDs. IDs of nodes where an agent is located are equal to agent ID
-        :param edges: a dataframe including (from, to, installed_capacity  pipe_length surface_type 
+        :param N: a list of node IDs. IDs of nodes where an agent is located are equal to agent ID
+        :param P: a dataframe including (from, to, installed_capacity  pipe_length surface_type 
                              total_costs  diameter  losses_w_m   losses_w capacity_limit) for each edge
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
+    # 
+    settings : MarketSettings
+    agent_data : AgentData
+    gis_data : Union[None, pd.DataFrame]
+    N : Union[List, None]
+    P : Union[List, None]
+    # to fill for network
+    nr_of_n : Any = None
+    nr_of_p : Any = None
+    A : Any = None 
+    loc_a : Any= None
+    # to fill for p2p
+    all_distance_percentage : Any = None
+    all_losses_percentage : Any = None
+    emissions_percentage : Any = None
 
-        if settings.network_type is not None and gis_data is None:
-            raise ValueError(
-                "gis_data has to be given if network_type is not None"
-            )
-        if settings.market_design == "p2p" and settings.product_diff != "noPref" and gis_data is None:
-            raise ValueError(
-                "gis_data has to be given for p2p market with preferences"
-            )
+    def __init__(self, **data) -> None:
+        # pydantic __init__ syntax
+        super().__init__(**data)
 
-        if settings.network_type is not None:
-            self.N = nodes
+        if self.settings.network_type is not None:  
             self.nr_of_n = len(self.N)
-            self.P = edges #[(edges.loc[i, "from"], edges.loc[i, "to"]) for i in range(len(edges))]
             self.nr_of_p = len(self.P)
             # make the A matrix
             A = np.zeros((len(self.N), len(self.P)))
@@ -382,66 +389,88 @@ class Network:
                 A[n2_nr, p_nr] = -1
             self.A = A
             # define location where agents are
-            self.loc_a = agent_data.agent_name # agents are located at the nodes with their own name
+            self.loc_a = self.agent_data.agent_name # agents are located at the nodes with their own name
 
         # define distance and losses between any two agents in a matrix ----------------------------
-        if settings.market_design == "p2p" and settings.product_diff != "noPref":
-            self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
-            self.losses = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
-            for i in range(agent_data.nr_of_agents):
-                self.distance[i, i] = 0.0  # distance to self is zero.
-                self.losses[i, i] = 0.0  # losses to self is zero.
-            for row_nr in range(len(gis_data["from_to"].values)):
-                (From, To) = gis_data["from_to"].values[row_nr]
-                self.distance[From, To] = gis_data.length.iloc[row_nr]
-                self.losses[From, To] = gis_data["losses_total"].iloc[row_nr]
+        if self.settings.market_design == "p2p" and self.settings.product_diff != "noPref":
+            distance = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
+            losses = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
+            for i in range(self.agent_data.nr_of_agents):
+                distance[i, i] = 0.0  # distance to self is zero.
+                losses[i, i] = 0.0  # losses to self is zero.
+            for row_nr in range(len(self.gis_data["from_to"].values)):
+                (From, To) = self.gis_data["from_to"].values[row_nr]
+                distance[From, To] = self.gis_data.length.iloc[row_nr]
+                losses[From, To] = self.gis_data["losses_total"].iloc[row_nr]
 
             # graph for the Dijkstra's
-            graph = {i: {j: np.inf for j in range(0, agent_data.nr_of_agents)} for i in
-                    range(0, agent_data.nr_of_agents)}
+            graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
+                    range(0, self.agent_data.nr_of_agents)}
             total_dist = []  # total network distance
 
-            for j in range(0, agent_data.nr_of_agents):
-                for i in range(0, agent_data.nr_of_agents):
-                    if self.distance[i][j] != 0 and self.distance[i][j] != np.inf:
+            for j in range(0, self.agent_data.nr_of_agents):
+                for i in range(0, self.agent_data.nr_of_agents):
+                    if distance[i][j] != 0 and distance[i][j] != np.inf:
                         # symmetric matrix
-                        graph[i][j] = self.distance[i][j]
-                        graph[j][i] = self.distance[i][j]
-                        total_dist.append(self.distance[i][j])
+                        graph[i][j] = distance[i][j]
+                        graph[j][i] = distance[i][j]
+                        total_dist.append(distance[i][j])
 
             # Matrix with the distance between all the agents
-            self.all_distance = np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))  # might need this later
-            for i in range(0, agent_data.nr_of_agents):
+            self.all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+            for i in range(0, self.agent_data.nr_of_agents):
                 aux = []
                 aux = self.calculate_distances(graph, i)
-                for j in range(0, agent_data.nr_of_agents):
+                for j in range(0, self.agent_data.nr_of_agents):
                     self.all_distance[i][j] = aux[j]
             # network usage in percentage for each trade Pnm
             self.all_distance_percentage = self.all_distance / sum(total_dist)
 
             # LOSSES
             # graph for the Dijkstra's
-            graph = {i: {j: np.inf for j in range(0, agent_data.nr_of_agents)} for i in
-                    range(0, agent_data.nr_of_agents)}
+            graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
+                    range(0, self.agent_data.nr_of_agents)}
             total_losses = []  # total network losses
 
-            for j in range(0, agent_data.nr_of_agents):
-                for i in range(0, agent_data.nr_of_agents):
-                    if self.losses[i][j] != 0 and self.losses[i][j] != np.inf:
+            for j in range(0, self.agent_data.nr_of_agents):
+                for i in range(0, self.agent_data.nr_of_agents):
+                    if losses[i][j] != 0 and losses[i][j] != np.inf:
                         # symmetric matrix
-                        graph[i][j] = self.losses[i][j]
-                        graph[j][i] = self.losses[i][j]
-                        total_losses.append(self.losses[i][j])
+                        graph[i][j] = losses[i][j]
+                        graph[j][i] = losses[i][j]
+                        total_losses.append(losses[i][j])
 
             # Matrix with the losses between all the agents
-            self.all_losses = np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))  # might need this later
-            for i in range(0, agent_data.nr_of_agents):
+            all_losses = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+            for i in range(0, self.agent_data.nr_of_agents):
                 aux = []
                 aux = self.calculate_distances(graph, i)  # calculating losses shortest path
-                for j in range(0, agent_data.nr_of_agents):
-                    self.all_losses[i][j] = aux[j]
+                for j in range(0, self.agent_data.nr_of_agents):
+                    all_losses[i][j] = aux[j]
             # network usage in percentage for each trade Pnm
-            self.all_losses_percentage = self.all_losses / sum(total_losses)
+            self.all_losses_percentage = all_losses / sum(total_losses)
+            # emissions percentage
+            if self.settings.product_diff == "co2Emissions":
+                self.emissions_percentage = self.co2_emission / sum(self.co2_emission.T[0])  # percentage
+    
+    @validator("N")
+    def N_given_if_network(cls, v, values):
+        if values["settings"].network_type is not None and v is None:
+            raise ValueError("'N' has to be given if network_type is not None")
+        return v 
+    @validator("P")
+    def P_given_if_network(cls, v, values):
+        if values["settings"].network_type is not None and v is None:
+            raise ValueError("'P' has to be given if network_type is not None")
+        return v 
+    @validator("gis_data")
+    def gis_data_mandatory_if_p2p_and_loss_or_distance(cls, v, values):
+        if values["settings"].market_design == "p2p" and (
+            values["settings"].product_diff in ["networkDistance", "losses"]) and v is None:
+            raise ValueError(
+                "gis_data has to be given for p2p market with 'networkDistance'- or 'losses'-based preferences"
+            )
+        return v
     
     # DISTANCE
     # Dijkstra's shortest path
