@@ -268,99 +268,101 @@ class AgentData(BaseModel):
         #             new.append(dim)
         #     return new
 
+
 # network data ---------------------------------------------------------------------------------------------------------
-class Network:
-    def __init__(self, agent_data, gis_data): # agent_loc,
+class Network(BaseModel):
+
+    agent_data : AgentData
+    gis_data : Any
+    distance: Any
+    all_distance: Any
+    all_distance_percentage: Any
+
+    """
+    :param agent_data: AgentData object.
+    :param gis_data: dataframe provided by GIS to us. has columns from_to (tuple), Losses total (W), length (m), total costs
+    :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
+    distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
+    """
+    def __init__(self, **data) -> None:
         """
-        :param agent_data: AgentData object.
-        :param agent_loc: dictionary mapping agent ids to node numbers
-        :param gis_data: dataframe provided by GIS to us. has columns from_to (tuple), Losses total (W), length (m), total costs
-        :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
-        distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
+        create Network object if all inputs are correct
         """
-        
+        # pydantic __init__ syntax
+        super().__init__(**data)
+
         # define distance and losses between any two agents in a matrix ----------------------------
-        self.distance = np.inf * np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents))
-        for i in range(agent_data.nr_of_agents):
-            self.distance[i, i] = 0.0   # distance to self is zero.
-        for row_nr in range(len(gis_data["from_to"].values)):
-            (From, To) = gis_data["from_to"].values[row_nr]
-            self.distance[From, To] = gis_data.length.iloc[row_nr]
+        self.distance = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
+        for i in range(self.agent_data.nr_of_agents):
+            self.distance[i, i] = 0.0  # distance to self is zero.
+        for row_nr in range(len(self.gis_data["from_to"].values)):
+            (From, To) = self.gis_data["from_to"].values[row_nr]
+            self.distance[From, To] = self.gis_data['length'].iloc[row_nr]
 
-# =============================================================================
-# Start here
-# =============================================================================
-        #DISTANCE
-        #Dijkstra's shortest path        
-        def calculate_distances(graph, starting_vertex):
-            distances = {vertex: float('infinity') for vertex in graph}
-            distances[starting_vertex] = 0
-        
-            pq = [(0, starting_vertex)]
-            while len(pq) > 0:
-                current_distance, current_vertex = heapq.heappop(pq)
-        
-                # Nodes can get added to the priority queue multiple times. We only
-                # process a vertex the first time we remove it from the priority queue.
-                if current_distance > distances[current_vertex]:
-                    continue
-        
-                for neighbor, weight in graph[current_vertex].items():
-                    distance = current_distance + weight
-        
-                    # Only consider this new path if it's better than any path we've
-                    # already found.
-                    if distance < distances[neighbor]:
-                        distances[neighbor] = distance
-                        heapq.heappush(pq, (distance, neighbor))
-            return distances
-        #graph for the Dijkstra's
-        graph={i:{j:np.inf for j in range(0,(agent_data.nr_of_agents))} for i in range(0,(agent_data.nr_of_agents))}
-        total_dist=[] #total network distance
-        
-        for j in range(0,(agent_data.nr_of_agents)): 
-            for i in range(0,(agent_data.nr_of_agents)):
-                if self.distance[i][j]!=0 and self.distance[i][j]!=np.inf:
-                    #symmetric matrix
-                    graph[i][j]=self.distance[i][j]
-                    graph[j][i]=self.distance[i][j]
-                    total_dist.append(self.distance[i][j])
-         
-        #Matrix with the distance between all the agents    
-        self.all_distance=np.ones((agent_data.nr_of_agents, agent_data.nr_of_agents)) #might need this later
-        for i in range(0,(agent_data.nr_of_agents)):
-            aux=[]
-            aux=calculate_distances(graph,i)
-            for j in range(0,(agent_data.nr_of_agents)):
-                self.all_distance[i][j]=aux[j]
-        #network usage in percentage for each trade Pnm        
-        self.all_distance_percentage=self.all_distance/sum(total_dist)
+            # Dijkstra's shortest path
+            def calculate_distances(graph, starting_vertex):
+                distances = {vertex: float('infinity') for vertex in graph}
+                distances[starting_vertex] = 0
 
+                pq = [(0, starting_vertex)]
+                while len(pq) > 0:
+                    current_distance, current_vertex = heapq.heappop(pq)
 
+                    # Nodes can get added to the priority queue multiple times. We only
+                    # process a vertex the first time we remove it from the priority queue.
+                    if current_distance > distances[current_vertex]:
+                        continue
 
+                    for neighbor, weight in graph[current_vertex].items():
+                        distance = current_distance + weight
 
+                        # Only consider this new path if it's better than any path we've
+                        # already found.
+                        if distance < distances[neighbor]:
+                            distances[neighbor] = distance
+                            heapq.heappush(pq, (distance, neighbor))
+                return distances
 
+            # graph for the Dijkstra's
+            graph = {i: {j: np.inf for j in range(0, (self.agent_data.nr_of_agents))} for i in
+                     range(0, (self.agent_data.nr_of_agents))}
+            total_dist = []  # total network distance
 
+            for j in range(0, (self.agent_data.nr_of_agents)):
+                for i in range(0, (self.agent_data.nr_of_agents)):
+                    if self.distance[i][j] != 0 and self.distance[i][j] != np.inf:
+                        # symmetric matrix
+                        graph[i][j] = self.distance[i][j]
+                        graph[j][i] = self.distance[i][j]
+                        total_dist.append(self.distance[i][j])
 
+            # Matrix with the distance between all the agents
+            self.all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+            for i in range(0, (self.agent_data.nr_of_agents)):
+                aux = []
+                aux = calculate_distances(graph, i)
+                for j in range(0, (self.agent_data.nr_of_agents)):
+                    self.all_distance[i][j] = aux[j]
+            # network usage in percentage for each trade Pnm
+            self.all_distance_percentage = self.all_distance / sum(total_dist)
 
+    @validator('gis_data')
+    def gis_data_mandatory_if_p2p_and_loss_or_distance(cls, v, values):
+        if values["agent_data"].settings.market_design == "decentralized" and (
+                values["agent_data"].settings.product_diff in ["networkDistance"]) and v is None:
+            raise ValueError(
+                "gis_data has to be given for p2p market with 'networkDistance' based preference"
+             )
 
+        if 'length' not in v.keys() and values["agent_data"].settings.market_design == "decentralized" and (
+                values["agent_data"].settings.product_diff in ["networkDistance"]):
+            raise ValueError('gis_data is not including length between peers.')
 
+        if 'from_to' not in v.keys() and values["agent_data"].settings.market_design == "decentralized" and (
+                values["agent_data"].settings.product_diff in ["networkDistance"]):
+            raise ValueError('gis_data is not including from_to data.')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        for keys in v.keys():
+           if type(v[keys]) != pd.core.series.Series:
+               raise ValueError('gis_data dict values should be panda series.')
+        return v

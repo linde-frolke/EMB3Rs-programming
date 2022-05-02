@@ -1,6 +1,6 @@
-from market_module.long_term.datastructures.inputstructs import MarketSettings, AgentData
-
-settings=MarketSettings(product_diff='co2Emissions', market_design="centralized", horizon_basis="months",
+from market_module.long_term.datastructures.inputstructs import MarketSettings, AgentData, Network
+import pandas as pd
+settings=MarketSettings(product_diff='networkDistance', market_design="decentralized", horizon_basis="months",
                         recurrence=2, ydr=0.2, data_profile='daily')
 
 
@@ -248,4 +248,12 @@ agent_data=AgentData(settings=settings, name=["prosumer_1", "prosumer_2", "consu
                      co2=[1, 1.1, 0, 1.8] )
 
 
-#print((agent_data.name))
+
+gis_data={'from_to': [(0, 1), (1, 2), (1, 3)],
+                               'losses_total': [22969.228855, 24122.603833, 18138.588662],
+                               'length': [1855.232413, 1989.471069, 1446.688900],
+                               'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
+
+gis_data = pd.DataFrame(data=gis_data)
+network = Network(agent_data=agent_data, gis_data=gis_data)
+
