@@ -25,7 +25,7 @@ def test_community_autonomy():
                                 "prosumer_2", "consumer_1", "producer_1"],
                   'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'autonomy',  # objective for community
-                  'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'},
+                  'community_settings': {'g_peak': 'none', 'g_exp': -4 * 10.0 ** 1, 'g_imp': 5 * 10.0 ** 1},
                 #   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                 #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                 #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
@@ -100,7 +100,7 @@ def test_community_peakshaving():
                                 "prosumer_2", "consumer_1", "producer_1"],
                   #'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'peakShaving',  # objective for community
-                  'community_settings': {'g_peak': 10.0**2, 'g_exp': 'none', 'g_imp': 'none'},
+                  'community_settings': {'g_peak': 10.0**2, 'g_exp': -4 * 10.0 ** 1, 'g_imp': 5 * 10.0 ** 1},
                   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
                            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
@@ -124,11 +124,7 @@ def test_community_peakshaving():
                   'block_offer': 'none',
                   'is_chp': 'none',  # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',
-                   'gis_data':
-                      {'from_to': ['(0, 1)', '(1, 2)', '(1, 3)'],
-                       'losses_total': [22969.228855, 24122.603833, 18138.588662],
-                       'length': [1855.232413, 1989.471069, 1446.688900],
-                       'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
+                   'gis_data': "none",
                   'nodes' : "none",
                   'edges' : "none"
                   }

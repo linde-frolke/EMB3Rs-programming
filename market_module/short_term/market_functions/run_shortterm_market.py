@@ -65,9 +65,15 @@ def run_shortterm_market(input_dict):
     if input_dict["el_dependent"] == "true":
         el_dependent = True
 
-    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 'chp_pars', 'objective', 'nodes', 'edges']:
+    for str_ in ['network', 'el_price', 'block_offer', 'is_chp', 
+                 'chp_pars', 'objective', 'nodes', 'co2_emissions', 'is_in_community']:
         if input_dict[str_] == 'none':
             input_dict[str_] = None
+    
+    for str_ in ["edges"]:
+        if type(input_dict[str_]) == str: 
+            if input_dict[str_] == 'none':
+                input_dict[str_] = None
 
     for str_ in ['g_peak', 'g_exp', 'g_imp']:
         if input_dict['community_settings'][str_] == 'none':
@@ -81,7 +87,7 @@ def run_shortterm_market(input_dict):
                                 el_price=input_dict['el_price'], community_objective=input_dict["objective"], 
                                 gamma_peak=input_dict["community_settings"]["g_peak"],
                                 gamma_imp=input_dict["community_settings"]["g_imp"], 
-                                gamma_exp=input_dict["community_settings"]["g_exp"])
+                                gamma_exp=input_dict["community_settings"]["g_exp"])  
     except ModuleValidationException as msg:
         raise print(msg)
 
@@ -92,8 +98,9 @@ def run_shortterm_market(input_dict):
     #                                     g_imp=input_dict['community_settings']['g_imp'])
 
     # create AgentData object
-    agent_data = AgentData(settings=settings,
-                         agent_name=input_dict['agent_ids'],
+    try:
+        agent_data = AgentData(settings=settings,
+                           agent_name=input_dict['agent_ids'],
                            gmax=input_dict['gmax'],
                            lmax=input_dict['lmax'],
                            cost=input_dict['cost'], util=input_dict['util'],
@@ -102,6 +109,8 @@ def run_shortterm_market(input_dict):
                            block=input_dict['block_offer'], is_chp=input_dict['is_chp'],
                            chp_pars=input_dict['chp_pars'], default_alpha=10.0
                            )
+    except ModuleValidationException as msg:
+        raise print(msg)
     # create Network object
     if input_dict['gis_data'] == "none":
         gis_data = None
@@ -110,8 +119,11 @@ def run_shortterm_market(input_dict):
         # convert string to tuple
         gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
 
-    network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings, 
+    try: 
+        network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings, 
                       N=input_dict["nodes"], P=input_dict["edges"])
+    except ModuleValidationException as msg:
+            raise print(msg)
 
     # run market
     # construct and solve market -----------------------------

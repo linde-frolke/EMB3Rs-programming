@@ -46,11 +46,7 @@ def test_pool_networkdir():
                   'block_offer': 'none',
                   'is_chp': 'none',  # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',
-                   'gis_data':
-                      {'from_to': ['(0, 1)', '(1, 2)', '(1, 3)'],
-                       'losses_total': [22969.228855, 24122.603833, 18138.588662],
-                       'length': [1855.232413, 1989.471069, 1446.688900],
-                       'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
+                   'gis_data': "none",
                   'nodes' : ["prosumer_1", "prosumer_2", "consumer_1", "producer_1"],
                   'edges' : [("producer_1","consumer_1"), ("producer_1","prosumer_1"),
                              ("prosumer_1","prosumer_2")]

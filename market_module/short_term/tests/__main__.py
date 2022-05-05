@@ -12,5 +12,3 @@ test_pool()
 test_pool_networkdir()
 test_community_autonomy()
 test_community_peakshaving()
-
-# print("Linde")
