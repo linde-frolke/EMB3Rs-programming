@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="58c8ac62-d38f-44a8-beab-743584a744db" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_pydantic.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_pydantic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +60,7 @@
       <recent name="$PROJECT_DIR$/market_module/short_term/tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.test_pydantic">
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="EMB3Rs-programming" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -124,27 +124,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_prototype_p2p_co2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="EMB3Rs-programming" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/market_module/short_term" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/market_module/short_term/test_prototype_p2p_co2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="test_prototype_pool_networkdirections" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="EMB3Rs-programming" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -166,11 +145,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test_pydantic" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="EMB3Rs-programming" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/market_module/long_term/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/market_module/long_term/tests/test_pydantic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test_pydantic" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.test_prototype_decentralized" />
-        <item itemvalue="Python.test_prototype_centralized" />
         <item itemvalue="Python.test_prototype_centralized" />
         <item itemvalue="Python.test_prototype_centralized" />
       </list>
