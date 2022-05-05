@@ -136,10 +136,10 @@ class MarketSettings(BaseModel):
         return v
     @validator("community_objective")
     def g_peak_validity_check(cls, v, values):
-        if values["market_design"] == "community" and v == "autonomy":
+        if values["market_design"] == "community" and v == "peakShaving":
             if values["gamma_peak"] is None:
                 raise ValueError("g_peak is mandatory input if the community market design" +\
-                                 "with autonomy objective is selected")
+                                 "with peak shaving objective is selected")
             else:
                 if values["gamma_peak"]  < 0:
                     raise ValueError("g_peak must be positive")
@@ -176,11 +176,12 @@ class AgentData(BaseModel):
     util : List 
     co2 : Union[None, List] = None 
     is_in_community : Union[None, List] = None
-    block : Union[None, List] = None
+    block : Union[None, Dict] = None
     is_chp : Union[None, List] = None # list of agent names 
     chp_pars : Union[None, Dict] = None
     default_alpha : float = 10.0
     # to be filled in init.
+    co2_emission : Any
     nr_of_agents : Any
     agent_is_in_community : Any 
     C : Any
@@ -194,7 +195,6 @@ class AgentData(BaseModel):
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.agent_name)
-        self.agent_name = np.array(self.agent_name)
         
         # add community info if that is needed
         if self.settings.market_design == "community":
@@ -222,8 +222,8 @@ class AgentData(BaseModel):
             self.util = np.reshape(self.util, (1, self.nr_of_agents))
         else:
             # set lmin and gmin to zero.
-            lmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
-            gmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
+            self.lmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
+            self.gmin = np.zeros((self.settings.nr_of_h, self.nr_of_agents))
         
         # create the dataframes
         self.gmin = pd.DataFrame(self.gmin, columns=self.agent_name)
@@ -276,7 +276,6 @@ class AgentData(BaseModel):
         return v
     @validator("lmax")
     def lmax_nrofh_lists(cls, v, values):
-        print(values["settings"].nr_of_h)
         if len(v) != values["settings"].nr_of_h:
             raise ValueError("lmax should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
         return v
@@ -288,7 +287,6 @@ class AgentData(BaseModel):
         return v
     @validator("cost")
     def cost_nrofh_lists(cls, v, values):
-        print(values["settings"].nr_of_h)
         if len(v) != values["settings"].nr_of_h:
             raise ValueError("cost should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
         return v
@@ -300,7 +298,6 @@ class AgentData(BaseModel):
         return v
     @validator("util")
     def util_nrofh_lists(cls, v, values):
-        print(values["settings"].nr_of_h)
         if len(v) != values["settings"].nr_of_h:
             raise ValueError("util should be a list of nr_of_h=" + str(values["settings"].nr_of_h) + " lists. ")
         return v
@@ -323,8 +320,9 @@ class AgentData(BaseModel):
                 raise ValueError("co2 intensity for agents is a mandatory input since you selected" +\
                                     "product_diff = co2Emissions")
             else:
-                if not len(v) == values["nr_of_agents"]:
-                    raise ValueError("'co2' has to be a list of size nr_of_agents=" + str(values["nr_of_agents"]))
+                if not len(v) == len(values["agent_name"]):
+                    raise ValueError("'co2' has to be a list of size nr_of_agents=" +\
+                         str(len(values["agent_name"])))
         return v
     @validator("is_chp")
     def is_chp_given_and_correct_if_needed(cls, v, values):
@@ -399,68 +397,72 @@ class Network(BaseModel):
             self.loc_a = self.agent_data.agent_name # agents are located at the nodes with their own name
 
         # define distance and losses between any two agents in a matrix ----------------------------
-        if self.settings.market_design == "p2p" and self.settings.product_diff != "noPref":
-            distance = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
-            losses = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
-            for i in range(self.agent_data.nr_of_agents):
-                distance[i, i] = 0.0  # distance to self is zero.
-                losses[i, i] = 0.0  # losses to self is zero.
-            for row_nr in range(len(self.gis_data["from_to"].values)):
-                (From, To) = self.gis_data["from_to"].values[row_nr]
-                from_ind = np.where(self.agent_data.agent_name == From)[0][0]
-                to_ind = np.where(self.agent_data.agent_name == To)[0][0]
-                distance[from_ind, to_ind] = self.gis_data["length"].iloc[row_nr]
-                losses[from_ind, to_ind] = self.gis_data["losses_total"].iloc[row_nr]
-
-            # graph for the Dijkstra's
-            graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
-                    range(0, self.agent_data.nr_of_agents)}
-            total_dist = []  # total network distance
-
-            for j in range(0, self.agent_data.nr_of_agents):
-                for i in range(0, self.agent_data.nr_of_agents):
-                    if distance[i][j] != 0 and distance[i][j] != np.inf:
-                        # symmetric matrix
-                        graph[i][j] = distance[i][j]
-                        graph[j][i] = distance[i][j]
-                        total_dist.append(distance[i][j])
-
-            # Matrix with the distance between all the agents
-            all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
-            for i in range(0, self.agent_data.nr_of_agents):
-                aux = []
-                aux = self.calculate_distances(graph, i)
-                for j in range(0, self.agent_data.nr_of_agents):
-                    all_distance[i][j] = aux[j]
-            # network usage in percentage for each trade Pnm
-            self.all_distance_percentage = all_distance / sum(total_dist)
-
-            # LOSSES
-            # graph for the Dijkstra's
-            graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
-                    range(0, self.agent_data.nr_of_agents)}
-            total_losses = []  # total network losses
-
-            for j in range(0, self.agent_data.nr_of_agents):
-                for i in range(0, self.agent_data.nr_of_agents):
-                    if losses[i][j] != 0 and losses[i][j] != np.inf:
-                        # symmetric matrix
-                        graph[i][j] = losses[i][j]
-                        graph[j][i] = losses[i][j]
-                        total_losses.append(losses[i][j])
-
-            # Matrix with the losses between all the agents
-            all_losses = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
-            for i in range(0, self.agent_data.nr_of_agents):
-                aux = []
-                aux = self.calculate_distances(graph, i)  # calculating losses shortest path
-                for j in range(0, self.agent_data.nr_of_agents):
-                    all_losses[i][j] = aux[j]
-            # network usage in percentage for each trade Pnm
-            self.all_losses_percentage = all_losses / sum(total_losses)
-            # emissions percentage
+        if self.settings.market_design == "p2p":
+            # emissions percentage:
             if self.settings.product_diff == "co2Emissions":
-                self.emissions_percentage = self.co2_emission / sum(self.co2_emission.T[0])  # percentage
+                self.emissions_percentage = self.agent_data.co2_emission / sum(self.agent_data.co2_emission.T[0])  # percentage
+            # if preferences based on losses or networkdistance is selected, we need to compute those:
+            elif self.settings.product_diff in ["losses", "networkDistance"]:
+                distance = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
+                losses = np.inf * np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))
+                for i in range(self.agent_data.nr_of_agents):
+                    distance[i, i] = 0.0  # distance to self is zero.
+                    losses[i, i] = 0.0  # losses to self is zero.
+                for row_nr in range(len(self.gis_data["from_to"].values)):
+                    (From, To) = self.gis_data["from_to"].values[row_nr]
+                    print(From)
+                    from_ind = self.agent_data.agent_name.index(From)
+                    to_ind = self.agent_data.agent_name.index(To)
+                    distance[from_ind, to_ind] = self.gis_data["length"].iloc[row_nr]
+                    losses[from_ind, to_ind] = self.gis_data["losses_total"].iloc[row_nr]
+
+                # graph for the Dijkstra's
+                graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
+                        range(0, self.agent_data.nr_of_agents)}
+                total_dist = []  # total network distance
+
+                for j in range(0, self.agent_data.nr_of_agents):
+                    for i in range(0, self.agent_data.nr_of_agents):
+                        if distance[i][j] != 0 and distance[i][j] != np.inf:
+                            # symmetric matrix
+                            graph[i][j] = distance[i][j]
+                            graph[j][i] = distance[i][j]
+                            total_dist.append(distance[i][j])
+
+                # Matrix with the distance between all the agents
+                all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+                for i in range(0, self.agent_data.nr_of_agents):
+                    aux = []
+                    aux = self.calculate_distances(graph, i)
+                    for j in range(0, self.agent_data.nr_of_agents):
+                        all_distance[i][j] = aux[j]
+                # network usage in percentage for each trade Pnm
+                self.all_distance_percentage = all_distance / sum(total_dist)
+
+                # LOSSES
+                # graph for the Dijkstra's
+                graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
+                        range(0, self.agent_data.nr_of_agents)}
+                total_losses = []  # total network losses
+
+                for j in range(0, self.agent_data.nr_of_agents):
+                    for i in range(0, self.agent_data.nr_of_agents):
+                        if losses[i][j] != 0 and losses[i][j] != np.inf:
+                            # symmetric matrix
+                            graph[i][j] = losses[i][j]
+                            graph[j][i] = losses[i][j]
+                            total_losses.append(losses[i][j])
+
+                # Matrix with the losses between all the agents
+                all_losses = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+                for i in range(0, self.agent_data.nr_of_agents):
+                    aux = []
+                    aux = self.calculate_distances(graph, i)  # calculating losses shortest path
+                    for j in range(0, self.agent_data.nr_of_agents):
+                        all_losses[i][j] = aux[j]
+                # network usage in percentage for each trade Pnm
+                self.all_losses_percentage = all_losses / sum(total_losses)
+            
     
     @validator("N")
     def N_given_if_network(cls, v, values):
@@ -475,25 +477,19 @@ class Network(BaseModel):
     @validator("gis_data")
     def gis_data_mandatory_if_p2p_and_loss_or_distance(cls, v, values):
         if values["settings"].market_design == "p2p" and (
-            values["settings"].product_diff in ["networkDistance", "losses"]) and v is None:
-            raise ValueError(
+            values["settings"].product_diff in ["networkDistance", "losses"]):
+            if v is None:
+                raise ValueError(
                 "gis_data has to be given for p2p market with 'networkDistance'- or 'losses'-based preferences"
-            )
-        return v
-    @validator("gis_data")
-    def check_gis_data_column_names(cls, v, values):
-        if v is not None:
-            if not set(v.columns) == set(['from_to', 'losses_total', 'length', 'total_costs']):
-                raise ValueError("the column names of gis_data are incorrect. They should be " +\
-                    "['from_to', 'losses_total', 'length', 'total_costs']")
-        return v
-    @validator("gis_data")
-    def gis_from_to_must_be_agent_names(cls, v, values):
-        if v is not None:
-            fromto_ids_set = set(np.array([item for t in v.from_to for item in t]))
-            if not fromto_ids_set.issubset(set(values["agent_data"].agent_name)):
-                raise ValueError("the tuples in the column gis_data.from_to must only " +\
-                    "contain agent names. You entered one or more invalid agent ID there.")
+                )
+            else:
+                if not set(v.columns) == set(['from_to', 'losses_total', 'length', 'total_costs']):
+                    raise ValueError("the column names of gis_data are incorrect. They should be " +\
+                        "['from_to', 'losses_total', 'length', 'total_costs']")
+                fromto_ids_set = set(np.array([item for t in v.from_to for item in t]))
+                if not fromto_ids_set.issubset(set(values["agent_data"].agent_name)):
+                    raise ValueError("the tuples in the column gis_data.from_to must only " +\
+                        "contain agent names. You entered one or more invalid agent IDs there.")
         return v
 
     
