@@ -194,6 +194,7 @@ class AgentData(BaseModel):
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.agent_name)
+        self.agent_name = np.array(self.agent_name)
         
         # add community info if that is needed
         if self.settings.market_design == "community":
@@ -257,7 +258,11 @@ class AgentData(BaseModel):
                     else:
                         self.cost.loc[t, self.is_chp[i]] = self.settings.elPrice.iloc[t, 0] * (
                                 chp_params.loc["rho_H", self.is_chp[i]] / chp_params.loc["rho_E", self.is_chp[i]])
-    
+    @validator("agent_name")
+    def agent_ids_unique(cls, v):
+        if not len(set(v)) == len(v):
+            raise ValueError("agent_name must contain unique agent ids -- no two ids may be the same")
+        return v
     @validator("gmax")
     def gmax_nrofh_lists(cls, v, values):
         if len(v) != values["settings"].nr_of_h:
@@ -356,6 +361,8 @@ class Network(BaseModel):
         :output: a Network object with 2 properties: distance and losses (both n by n np.array). distance[1,3] is the
         distance from agent 1 to agent 3. has np.inf if cannot reach the agent.
         """
+    class Config:
+        arbitrary_types_allowed = True
     # 
     settings : MarketSettings
     agent_data : AgentData
@@ -419,14 +426,14 @@ class Network(BaseModel):
                         total_dist.append(distance[i][j])
 
             # Matrix with the distance between all the agents
-            self.all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
+            all_distance = np.ones((self.agent_data.nr_of_agents, self.agent_data.nr_of_agents))  # might need this later
             for i in range(0, self.agent_data.nr_of_agents):
                 aux = []
                 aux = self.calculate_distances(graph, i)
                 for j in range(0, self.agent_data.nr_of_agents):
-                    self.all_distance[i][j] = aux[j]
+                    all_distance[i][j] = aux[j]
             # network usage in percentage for each trade Pnm
-            self.all_distance_percentage = self.all_distance / sum(total_dist)
+            self.all_distance_percentage = all_distance / sum(total_dist)
 
             # LOSSES
             # graph for the Dijkstra's
@@ -473,6 +480,22 @@ class Network(BaseModel):
                 "gis_data has to be given for p2p market with 'networkDistance'- or 'losses'-based preferences"
             )
         return v
+    @validator("gis_data")
+    def check_gis_data_column_names(cls, v, values):
+        if v is not None:
+            if not set(v.columns) == set(['from_to', 'losses_total', 'length', 'total_costs']):
+                raise ValueError("the column names of gis_data are incorrect. They should be " +\
+                    "['from_to', 'losses_total', 'length', 'total_costs']")
+        return v
+    @validator("gis_data")
+    def gis_from_to_must_be_agent_names(cls, v, values):
+        if v is not None:
+            fromto_ids_set = set(np.array([item for t in v.from_to for item in t]))
+            if not fromto_ids_set.issubset(set(values["agent_data"].agent_name)):
+                raise ValueError("the tuples in the column gis_data.from_to must only " +\
+                    "contain agent names. You entered one or more invalid agent ID there.")
+        return v
+
     
     # DISTANCE
     # Dijkstra's shortest path
