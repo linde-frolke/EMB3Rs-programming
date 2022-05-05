@@ -400,8 +400,10 @@ class Network(BaseModel):
                 losses[i, i] = 0.0  # losses to self is zero.
             for row_nr in range(len(self.gis_data["from_to"].values)):
                 (From, To) = self.gis_data["from_to"].values[row_nr]
-                distance[From, To] = self.gis_data.length.iloc[row_nr]
-                losses[From, To] = self.gis_data["losses_total"].iloc[row_nr]
+                from_ind = np.where(self.agent_data.agent_name == From)[0][0]
+                to_ind = np.where(self.agent_data.agent_name == To)[0][0]
+                distance[from_ind, to_ind] = self.gis_data["length"].iloc[row_nr]
+                losses[from_ind, to_ind] = self.gis_data["losses_total"].iloc[row_nr]
 
             # graph for the Dijkstra's
             graph = {i: {j: np.inf for j in range(0, self.agent_data.nr_of_agents)} for i in
