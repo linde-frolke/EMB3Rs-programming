@@ -23,6 +23,8 @@ def convert_user_and_module_inputs(input_data):
     gis_output = input_data["gis-module"]
     nodes = [x["osmid"] for x in  gis_output["network_solution_nodes"]] 
     edges = pd.DataFrame(gis_output["network_solution_edges"])
+    # convert to list of tuples 
+    edges = [(edges["from"].iloc[i], edges["to"].iloc[i]) for i in range(len(edges["from"]))]
     # gis_output["selected_agents"]  # TODO see if I can use this for something
 
     # get CF data
