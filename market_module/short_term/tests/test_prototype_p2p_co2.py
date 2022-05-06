@@ -24,7 +24,6 @@ def test_p2p_co2():
                   'el_price': 'none',
                   'agent_ids': ["prosumer_1",
                                 "prosumer_2", "consumer_1", "producer_1"],
-                  'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
                   'objective': 'none',  # objective for community
                   'community_settings': {'g_peak': 'none', 'g_exp': 'none', 'g_imp': 'none'},
                   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
@@ -51,7 +50,7 @@ def test_p2p_co2():
                   'is_chp': 'none',  # allowed values are 'none' or a list with ids of agents that are CHPs
                   'chp_pars': 'none',
                    'gis_data':
-                      {'from_to': ['(0, 1)', '(1, 2)', '(1, 3)'],
+                      {'from_to': ['("prosumer_1", "prosumer_2")', '("prosumer_2", "consumer_1")', '("prosumer_2", "producer_1")'],
                        'losses_total': [22969.228855, 24122.603833, 18138.588662],
                        'length': [1855.232413, 1989.471069, 1446.688900],
                        'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]},
