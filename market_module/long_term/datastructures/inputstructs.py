@@ -80,8 +80,8 @@ class MarketSettings(BaseModel):
             raise ValueError('If horizon_basis is weeks, then recurrence should be less than 53')
         if (values['horizon_basis'] == 'months') and v > 12:
             raise ValueError('If horizon_basis is months, then recurrence should be less than 13')
-        if (values['horizon_basis'] == 'years') and v > 20:
-            raise ValueError('If horizon_basis is years, then recurrence should be less than 21')
+        if (values['horizon_basis'] == 'years') and v > 10:
+            raise ValueError('If horizon_basis is years, then recurrence should be less than 11')
         return v
 
     @validator("ydr")
