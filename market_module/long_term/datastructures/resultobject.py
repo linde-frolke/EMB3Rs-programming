@@ -81,9 +81,9 @@ class ResultData:
         elif settings.market_design == "decentralized":
             # QoE
             self.QoE = pd.DataFrame(index=range(
-                agent_data.day_range * settings.recurrence * agent_data.data_size), columns=["QoE"])
+                settings.diff), columns=["QoE"])
 
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 lambda_j = []
                 for a1 in agent_data.agent_name:
                     for a2 in agent_data.agent_name:
@@ -105,8 +105,8 @@ class ResultData:
 
         # hourly social welfare an array of length agent_data.day_range*settings.recurrence*agent_data.data_size
         self.social_welfare_h = pd.DataFrame(index=range(
-            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=["Social Welfare"])
-        for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            settings.diff), columns=["Social Welfare"])
+        for t in range(0, settings.diff):
             total_cost = np.sum(np.multiply(
                 agent_data.cost.T[t], self.Gn.T[t]))
             total_util = np.sum(np.multiply(
@@ -116,9 +116,9 @@ class ResultData:
 
         # Settlement
         self.settlement = pd.DataFrame(index=range(
-            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=agent_data.agent_name)
+            settings.diff), columns=agent_data.agent_name)
         if settings.market_design == "decentralized":
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 for agent in agent_data.agent_name:
                     aux = []
                     for agent2 in agent_data.agent_name:
@@ -127,15 +127,15 @@ class ResultData:
                     self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "centralized":
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 for agent in agent_data.agent_name:
                     self.settlement[agent][t] = self.shadow_price['uniform price'][t] * (self.Gn[agent][t] -
                                                                                          self.Ln[agent][t])
 
         # agent_operational_cost
         self.agent_operational_cost = pd.DataFrame(index=range(
-            agent_data.day_range * settings.recurrence * agent_data.data_size), columns=agent_data.agent_name)
-        for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            settings.diff), columns=agent_data.agent_name)
+        for t in range(0, settings.diff):
             for agent in agent_data.agent_name:
                     self.agent_operational_cost[agent][t]=agent_data.cost[agent][t]*self.Gn[agent][t] - agent_data.util[agent][t]*self.Ln[agent][t]
 
@@ -143,7 +143,7 @@ class ResultData:
         prod_pros = []
         for agent in agent_data.agent_name:
             aux = []
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 aux.append(agent_data.gmax[agent][t] - agent_data.lmax[agent][t])
             if max(aux) > 0 and agent not in prod_pros:
                 prod_pros.append(agent)
@@ -152,7 +152,7 @@ class ResultData:
         self.ADG = pd.DataFrame(index=['ADG'], columns=prod_pros)
         for agent in prod_pros:
             aux = []
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 if agent_data.gmax[agent][t] == 0:
                     aux.append(1)  # if source production is zero
                 else:
@@ -163,7 +163,7 @@ class ResultData:
         self.SPM = pd.DataFrame(index=['SPM'], columns=prod_pros)
         for agent in prod_pros:
             aux = []
-            for t in range(0, agent_data.day_range * settings.recurrence * agent_data.data_size):
+            for t in range(0, settings.diff):
                 if agent_data.gmax[agent][t] == 0:
                     aux.append(0)
                 else:
@@ -178,7 +178,7 @@ class ResultData:
         if settings.market_design == "decentralized":
             raise ValueError(
                 "Find the best price option is only available in centralized market")
-        elif period >= agent_data.day_range * settings.recurrence * agent_data.data_size:
+        elif period >= settings.diff:
             raise ValueError(
                 'Please select a period within the simulation time range')
         else:

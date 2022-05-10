@@ -16,14 +16,14 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
     :param settings:
     :return: ResultData object.
     """
-    Pn_t = pd.DataFrame(0.0, index=np.arange(agent_data.day_range*settings.recurrence*agent_data.data_size), columns=agent_data.agent_name)
-    Ln_t = pd.DataFrame(0.0, index=np.arange(agent_data.day_range*settings.recurrence*agent_data.data_size), columns=agent_data.agent_name)
-    Gn_t = pd.DataFrame(0.0, index=np.arange(agent_data.day_range*settings.recurrence*agent_data.data_size), columns=agent_data.agent_name)
-    shadow_price_t = [pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
-    Tnm_t=[pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(agent_data.day_range * settings.recurrence * agent_data.data_size)]
+    Pn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
+    Ln_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
+    Gn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
+    shadow_price_t = [pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(settings.diff)]
+    Tnm_t=[pd.DataFrame(0.0, index=agent_data.agent_name, columns=agent_data.agent_name) for t in range(settings.diff)]
 
     # simplifying simulation time
-    t=agent_data.day_range*settings.recurrence*agent_data.data_size
+    t=settings.diff
 
     for n_iter in range(0, t):
         # collect named constraints in cb

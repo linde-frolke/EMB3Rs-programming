@@ -6,6 +6,9 @@ import numpy as np
 import heapq
 from typing import List, Any, Union
 from pydantic import BaseModel, validator, conint, conlist, Field, constr
+import datetime
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 # general settings object ---------------------------------------------------------------------------------------------
@@ -24,9 +27,12 @@ class MarketSettings(BaseModel):
     recurrence: conint(strict=True) # Recurrence
     ydr: float = 0.05 #yearly demand rate - 0.05 is the default value
     data_profile: str #data profile
+    start_datetime: Any
     # to be filled by init
     day_range: Any
     data_size: Any
+    diff: Any
+
 
     def __init__(self, **data) -> None:
         """
@@ -47,6 +53,23 @@ class MarketSettings(BaseModel):
         if self.data_profile == 'daily':
             self.data_size = 1
 
+        #Date related
+        date_format = '%d-%m-%Y'
+        start_date = datetime.strptime(self.start_datetime, date_format)
+        if self.horizon_basis == 'weeks':
+            end_date = start_date + relativedelta(weeks=self.recurrence)
+        if self.horizon_basis == 'months':
+            end_date = start_date + relativedelta(months=self.recurrence)
+        if self.horizon_basis == 'years':
+            end_date = start_date + relativedelta(years=self.recurrence)
+
+        if self.data_profile == 'hourly':
+            self.diff = end_date - start_date  # difference
+            self.diff = int(self.diff.total_seconds()/3600) #difference in hours
+
+        if self.data_profile == 'daily':
+            self.diff = end_date - start_date  # difference
+            self.diff = int(self.diff.total_seconds()/3600/24) #difference in days
 
     @validator("product_diff")
     def product_diff_valid(cls, v):
@@ -132,9 +155,11 @@ class AgentData(BaseModel):
         # pydantic __init__ syntax
         super().__init__(**data)
 
-        #Just to avoid changing centralized_market and resultobject
-        self.day_range=self.settings.day_range
-        self.data_size=self.settings.data_size
+
+
+        # #Just to avoid changing centralized_market and resultobject
+        # self.day_range=self.settings.day_range
+        # self.data_size=self.settings.data_size
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.name)
@@ -146,25 +171,40 @@ class AgentData(BaseModel):
         else:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
-        #These are parameters now
+        #If user provides hourly data, but wants a daily simulation
+        if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
+            self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
+            self.lmax = pd.DataFrame(self.cumulative_sum(np.array(self.lmax), self.settings), columns=self.agent_name)
 
-        self.lmin_zeros = np.zeros((self.settings.day_range * self.settings.recurrence * self.settings.data_size, self.nr_of_agents))
-        self.gmin_zeros = np.zeros((self.settings.day_range * self.settings.recurrence * self.settings.data_size, self.nr_of_agents))
+            self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
+            self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
 
+
+        else:
+            self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
+            self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
+
+            self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
+            self.util = pd.DataFrame(self.util, columns=self.agent_name)
+
+        # These are parameters now
+        self.lmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))
+        self.gmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))
         self.gmin = pd.DataFrame(self.gmin_zeros, columns=self.agent_name)
         self.lmin = pd.DataFrame(self.lmin_zeros, columns=self.agent_name)
 
-        self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
-        self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
-
-        self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
-        self.util = pd.DataFrame(self.util, columns=self.agent_name)
+    def cumulative_sum(self, nested_array, settings):
+        x=np.zeros([self.settings.diff,self.nr_of_agents])
+        for i in range(0,self.nr_of_agents):
+            for k,j in enumerate(range(0,self.settings.diff*24,24)):
+                x[k][i]=sum(nested_array[j:j+24,i])
+        return x
 
     def check_dimension(input_list):
-        aux = []
-        new = []
-        for iter in range(len(input_)):
-            aux.append(len(input_[iter]))
+        aux=[]
+        new=[]
+        for iter in range(len(input_list)):
+            aux.append(len(input_list[iter]))
         for dim in aux:
             if dim not in new:
                 new.append(dim)
@@ -178,72 +218,67 @@ class AgentData(BaseModel):
 
     @validator('gmax')
     def gmax_valid(cls, v, values):
-        ## TODO find a way to make this a function and work inside validators
-        aux=[]
-        new=[]
-        for iter in range(len(v)):
-            aux.append(len(v[iter]))
-        for dim in aux:
-            if dim not in new:
-                new.append(dim)
-        ##
 
-        if (len(new) != 1 or new[0] != len(values['name'])) or (
-        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
-            raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
-                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
-                len(values['name'])))
+        if values['settings'].data_profile == 'hourly':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            not len(v) == values['settings'].diff):
+                raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name'])))
+
+        elif values['settings'].data_profile == 'daily':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+                raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name']), values['settings'].diff*24,
+                    len(values['name'])))
         return v
 
     @validator('lmax')
     def lmax_valid(cls, v, values):
-        aux=[]
-        new=[]
-        for iter in range(len(v)):
-            aux.append(len(v[iter]))
-        for dim in aux:
-            if dim not in new:
-                new.append(dim)
+        if values['settings'].data_profile == 'hourly':
+            if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            not len(v) == values['settings'].diff):
+                raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name'])))
 
-        if (not len(v[0]) == len(values['name'])) or (
-        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
-            raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
-                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
-                len(values['name'])))
+        elif values['settings'].data_profile == 'daily':
+            if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+                raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name']), values['settings'].diff*24,
+                    len(values['name'])))
         return v
 
     @validator('cost')
     def cost_valid(cls, v, values):
-        aux=[]
-        new=[]
-        for iter in range(len(v)):
-            aux.append(len(v[iter]))
-        for dim in aux:
-            if dim not in new:
-                new.append(dim)
+        if values['settings'].data_profile == 'hourly':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            not len(v) == values['settings'].diff):
+                raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name'])))
 
-        if (not len(v[0]) == len(values['name'])) or (
-        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
-            raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
-                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
-                len(values['name'])))
+        elif values['settings'].data_profile == 'daily':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+                raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name']), values['settings'].diff*24,
+                    len(values['name'])))
         return v
 
     @validator('util')
     def util_valid(cls, v, values):
-        aux=[]
-        new=[]
-        for iter in range(len(v)):
-            aux.append(len(v[iter]))
-        for dim in aux:
-            if dim not in new:
-                new.append(dim)
+        if values['settings'].data_profile == 'hourly':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            not len(v) == values['settings'].diff):
+                raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name'])))
 
-        if (not len(v[0]) == len(values['name'])) or (
-        not len(v) == values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size):
-            raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(
-                values['settings'].recurrence * values['settings'].day_range * values['settings'].data_size,
-                len(values['name'])))
+        elif values['settings'].data_profile == 'daily':
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+                raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+                    len(values['name']), values['settings'].diff*24,
+                    len(values['name'])))
         return v
 
 
@@ -257,16 +292,6 @@ class AgentData(BaseModel):
                 if not len(v) == len(values["name"]):
                     raise ValueError("'co2' has to be a list of size nr_of_agents=" + str(len(values["name"])))
         return v
-
-        # def check_dimension(input_list):
-        #     aux=[]
-        #     new=[]
-        #     for iter in range(len(input_list)):
-        #         aux.append(len(input_list[iter]))
-        #     for dim in aux:
-        #         if dim not in new:
-        #             new.append(dim)
-        #     return new
 
 
 # network data ---------------------------------------------------------------------------------------------------------

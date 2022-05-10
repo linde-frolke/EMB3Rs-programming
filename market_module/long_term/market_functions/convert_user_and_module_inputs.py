@@ -5,6 +5,8 @@ import json
 import numpy as np
 import pandas as pd
 import datetime
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def convert_user_and_module_inputs(input_data):
@@ -13,24 +15,31 @@ def convert_user_and_module_inputs(input_data):
     # user_inputs
     user_input = input_data["platform"] ### separate dictionary inside
 
-    #Converting horizon_basis, data_profile and recurrence to integer
+
+    #Date related
+    date_format = '%d-%m-%Y'
+    start_date = datetime.strptime(user_input["start_datetime"], date_format)
     if user_input['horizon_basis'] == 'weeks':
-        day_range = 7
-    elif user_input['horizon_basis'] == 'months':
-        day_range = 30
-    elif user_input['horizon_basis'] == 'years':
-        day_range = 365
+        end_date = start_date + relativedelta(weeks=user_input["recurrence"])
+    if user_input['horizon_basis'] == 'months':
+        end_date = start_date + relativedelta(months=user_input["recurrence"])
+    if user_input['horizon_basis'] == 'years':
+        end_date = start_date + relativedelta(years=user_input["recurrence"])
 
     if user_input['data_profile'] == 'hourly':
-        data_size = 24
-    elif user_input['data_profile'] == 'daily':
-        data_size = 1
+        diff = end_date - start_date  # difference
+        diff = int(diff.total_seconds()/3600) #difference in hours
 
-    nr_of_hours = data_size*user_input['recurrence']*day_range
+    if user_input['data_profile'] == 'daily':
+        diff = end_date - start_date  # difference
+        diff = int(diff.total_seconds()/3600/24) #difference in days
 
-    # extract day month year------------------
+    nr_of_hours = diff
+
+
+    # # extract day month year------------------
     day, month, year = [int(x) for x in user_input["start_datetime"].split("-")]
-    as_date = datetime.datetime(year=year, month=month, day=day)
+    as_date = datetime(year=year, month=month, day=day)
     start_hourofyear = as_date.timetuple().tm_yday * 24   # start index if selecting from entire year of hourly data.
     end_hourofyear = start_hourofyear + nr_of_hours # end index if selecting from entire year of hourly data.
 
@@ -150,6 +159,7 @@ def convert_user_and_module_inputs(input_data):
                     'lmax': lmax,
                     'cost': cost,
                     'util': util,
+                    'start_datetime': "31-01-2002",
                     'co2_emissions': co2_em,  # allowed values are 'none' or array of size (nr_of_agents)
                     'gis_data': gis_output["res_sources_sinks"],
                     'nodes': nodes,

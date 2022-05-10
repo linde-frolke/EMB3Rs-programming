@@ -11,8 +11,8 @@ from ...long_term.market_functions.convert_user_and_module_inputs import convert
 import numpy as np
 import pandas as pd
 import json
-import datetime
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 # TEST DECENTRALIZED #######################################################################################
 def test_decentralized():
@@ -76,8 +76,7 @@ def test_decentralized():
             [7.82710967, 5.33423141, 6.52431907, 1.58232403],
             [7.37920491, 4.65306114, 6.55197453, 6.52944581],
             [6.303906, 7.44278536, 7.83629157, 5.11304249],
-            [3.79373684, 7.05380275, 4.40950976, 1.57972342],
-            [4.90674599, 5.66711117, 6.34650697, 5.29065072]]}
+            [3.79373684, 7.05380275, 4.40950976, 1.57972342]]}
 
     lmax = {'lmax': [[2.4935019, 1.4944589, 1.88135898, 2.20944796],
                      [2.57555433, 2.244752, 1.0236515, 2.3565902],
@@ -137,8 +136,7 @@ def test_decentralized():
                      [2.95925997, 2.14628351, 1.7505885, 2.62118416],
                      [1.3012746, 1.94387832, 2.39310903, 2.90257741],
                      [1.64599568, 2.42560511, 1.53962999, 1.49195857],
-                     [2.45845157, 1.28750951, 2.03827484, 2.27514878],
-                     [1.61609424, 1.30107699, 1.90794572, 2.64288107]]}
+                     [2.45845157, 1.28750951, 2.03827484, 2.27514878]]}
 
     cost = {'cost': [[21.80873631, 23.09678187, 21.66155811, 25.47176384],
             [25.40583445, 24.66546694, 21.90671238, 24.00665486],
@@ -198,8 +196,7 @@ def test_decentralized():
             [21.04322262, 23.8871697, 29.23535424, 20.50328705],
             [23.68748248, 23.45123254, 26.20962184, 20.22210683],
             [20.93499212, 22.76174482, 23.63959004, 26.64799975],
-            [20.2919086, 22.55427727, 21.30184169, 23.12631751],
-            [22.09914997, 23.47055928, 29.85231492, 28.86468223]]}
+            [20.2919086, 22.55427727, 21.30184169, 23.12631751]]}
     util = {'util': [[27.05626488, 34.49762427, 33.04094703, 29.97261182],
             [34.99270544, 31.55004364, 30.55612451, 31.73060776],
             [30.75104538, 34.75574184, 31.02038489, 26.02361977],
@@ -258,8 +255,7 @@ def test_decentralized():
             [26.18820514, 25.0317703, 28.92629726, 31.71186597],
             [28.95729177, 29.15832557, 28.43488318, 34.04208405],
             [32.35630316, 28.96845555, 25.3567505, 26.57077046],
-            [28.16806745, 31.99506071, 31.98591712, 34.1815143],
-            [34.25644764, 28.8701482, 25.72129159, 34.92952105]]}
+            [28.16806745, 31.99506071, 31.98591712, 34.1815143]]}
 
     # setup inputs --------------------------------------------
     input_dict = {'md': 'decentralized',
@@ -278,6 +274,7 @@ def test_decentralized():
                   'lmax': lmax['lmax'],
                   'cost': cost['cost'],
                   'util': util['util'],
+                  'start_datetime': "31-01-2002",
                   'gis_data': {'from_to': [(0, 1), (1, 2), (1, 3)],
                                'losses_total': [22969.228855, 24122.603833, 18138.588662],
                                'length': [1855.232413, 1989.471069, 1446.688900],
@@ -337,26 +334,31 @@ def test_decentralized():
         "util": util
     }
 
-    # Converting horizon_basis, data_profile and recurrence to integer
+    #Date related
+    date_format = '%d-%m-%Y'
+    start_date = datetime.strptime(input_data['platform']["start_datetime"], date_format)
     if input_data['platform']['horizon_basis'] == 'weeks':
-        day_range = 7
-    elif input_data['platform']['horizon_basis'] == 'months':
-        day_range = 30
-    elif input_data['platform']['horizon_basis'] == 'years':
-        day_range = 365
+        end_date = start_date + relativedelta(weeks=input_data['platform']['recurrence'])
+    if input_data['platform']['horizon_basis'] == 'months':
+        end_date = start_date + relativedelta(months=input_data['platform']['recurrence'])
+    if input_data['platform']['horizon_basis'] == 'years':
+        end_date = start_date + relativedelta(years=input_data['platform']['recurrence'])
 
     if input_data['platform']['data_profile'] == 'hourly':
-        data_size = 24
-    elif input_data['platform']['data_profile'] == 'daily':
-        data_size = 1
+        diff = end_date - start_date  # difference
+        diff = int(diff.total_seconds()/3600) #difference in hours
 
-    nr_of_hours = data_size * input_data['platform']['recurrence'] * day_range
+    if input_data['platform']['data_profile'] == 'daily':
+        diff = end_date - start_date  # difference
+        diff = int(diff.total_seconds()/3600/24) #difference in days
+
+    nr_of_hours = diff
 
 
 
     # extract day month year
     day, month, year = [int(x) for x in input_data["platform"]["start_datetime"].split("-")]
-    as_date = datetime.datetime(year=year, month=month, day=day)
+    as_date = datetime(year=year, month=month, day=day)
     start_hourofyear = as_date.timetuple().tm_yday * 24  # start index if selecting from entire year of hourly data.
     end_hourofyear = start_hourofyear + nr_of_hours  # end index if selecting from entire year of hourly data.
 
