@@ -7,14 +7,7 @@
     <list default="true" id="58c8ac62-d38f-44a8-beab-743584a744db" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_decentralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_decentralized.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_pydantic.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_pydantic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

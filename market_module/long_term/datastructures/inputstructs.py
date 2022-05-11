@@ -171,6 +171,14 @@ class AgentData(BaseModel):
         else:
             self.co2_emission = None # pd.DataFrame(np.ones((1, self.nr_of_agents))*np.nan, columns=name)
 
+        #If data is provided for 1 year, but user wants to simulate more than 1 year: gmax, cost and util will be replicated; lmax will replicate based on ydr
+        if self.settings.horizon_basis == 'years' and self.settings.recurrence > 1 and 365 <= len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) <= 366:
+            self.gmax = pd.DataFrame(self.replicate_data(np.array(self.gmax), self.settings), columns=self.agent_name)
+            self.lmax = pd.DataFrame(self.yearly_demand_rate(np.array(self.lmax), self.settings), columns=self.agent_name)
+
+            self.cost = pd.DataFrame(self.replicate_data(np.array(self.cost), self.settings), columns=self.agent_name)
+            self.util = pd.DataFrame(self.replicate_data(np.array(self.util), self.settings), columns=self.agent_name)
+
         #If user provides hourly data, but wants a daily simulation
         if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
             self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
@@ -178,8 +186,6 @@ class AgentData(BaseModel):
 
             self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
             self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
-
-
         else:
             self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
             self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
@@ -210,6 +216,23 @@ class AgentData(BaseModel):
                 new.append(dim)
         return new
 
+    def replicate_data(self, nested_list, settings):
+        aux_list=nested_list
+        for i in range(0,settings.recurrence+1):
+            aux_list=np.r_[aux_list, nested_list]
+            if len(aux_list) >= self.settings.diff:
+                break
+        return aux_list[0:self.settings.diff]
+
+    #Increases demand rate over years
+    def yearly_demand_rate(self, nested_list, settings):
+        aux_list=nested_list
+        for i in range(0,settings.recurrence+1):
+            aux_list=np.r_[aux_list, nested_list*(1+(settings.ydr*(i+1)))]
+            if len(aux_list) >= self.settings.diff:
+                break
+        return aux_list[0:self.settings.diff]
+
     @validator("name") #checking list dimensions
     def name_valid(cls, v):
         if isinstance(v[0], list) == True:
@@ -218,67 +241,103 @@ class AgentData(BaseModel):
 
     @validator('gmax')
     def gmax_valid(cls, v, values):
-
-        if values['settings'].data_profile == 'hourly':
+        if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             not len(v) == values['settings'].diff):
                 raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily':
+        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
                 raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name']), values['settings'].diff*24,
                     len(values['name'])))
+
+        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+                raise ValueError(
+                    'gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+                        values['settings'].diff,
+                        len(values['name']), values['settings'].diff * 24,
+                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
     @validator('lmax')
     def lmax_valid(cls, v, values):
-        if values['settings'].data_profile == 'hourly':
+        if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             not len(v) == values['settings'].diff):
                 raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily':
+        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
                 raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name']), values['settings'].diff*24,
                     len(values['name'])))
+
+        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+                raise ValueError(
+                    'lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+                        values['settings'].diff,
+                        len(values['name']), values['settings'].diff * 24,
+                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
+
         return v
 
     @validator('cost')
     def cost_valid(cls, v, values):
-        if values['settings'].data_profile == 'hourly':
+        if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             not len(v) == values['settings'].diff):
                 raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily':
+        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
                 raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name']), values['settings'].diff*24,
                     len(values['name'])))
+
+        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+                raise ValueError(
+                    'cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+                        values['settings'].diff,
+                        len(values['name']), values['settings'].diff * 24,
+                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
     @validator('util')
     def util_valid(cls, v, values):
-        if values['settings'].data_profile == 'hourly':
+        if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             not len(v) == values['settings'].diff):
                 raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily':
+        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
             if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
             len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
                 raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name']), values['settings'].diff*24,
                     len(values['name'])))
+
+        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+                raise ValueError(
+                    'util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+                        values['settings'].diff,
+                        len(values['name']), values['settings'].diff * 24,
+                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
 
