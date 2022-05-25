@@ -88,7 +88,7 @@ class MarketSettings(BaseModel):
         if v:
             if values["el_price"] is None:
                 raise ValueError('el_price must be given if el_dependent == True')
-            elif not len(values["el_price"]) == values["nr_of_hours"]:
+            elif not len(values["el_price"]) == values["nr_of_h"]:
                 raise ValueError('el_price must be given for each hour')
         return v
     @validator("network_type")
