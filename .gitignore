@@ -1,4 +1,6 @@
 pool_0.png
 
 __pycache__
-*.pyc
+*.pycmarket_module/short_term/tests/dummy_platform_data_short_term_pool.json
+market_module/short_term/tests/makeDataForDavid.py
+market_module/short_term/tests/dummy_platform_data_short_term_pool.json
