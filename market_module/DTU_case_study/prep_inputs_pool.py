@@ -1,6 +1,12 @@
 # Case study -- pool 
+import os
+print(os.getcwd())
+
 from market_module.DTU_case_study.load_case_study_inputs import load_data_from_files
+#from load_case_study_inputs import load_data_from_files
+
 from market_module.short_term.market_functions.run_shortterm_market import run_shortterm_market
+#from market_functions.run_shortterm_market import run_shortterm_market
 import numpy as np
 
 # settings

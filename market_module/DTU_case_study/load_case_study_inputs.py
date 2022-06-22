@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def load_data_from_files():
-    data_folder = "/home/linde/Documents/2019PhD/EMB3Rs/WP4_case_study/data/"
+    data_folder = "C:/Users/hyung/Documents/Desktop/Student Job/Data/"
 
     df_grid_price = pd.read_csv(data_folder + 'copenhagen_2019_DH_grid_price.csv')
 
@@ -17,3 +17,4 @@ def load_data_from_files():
 
     ## create supermarket profile given ambient temperature
     return df_grid_price, df_el_price, df_cons_profiles, df_sm_computations
+
