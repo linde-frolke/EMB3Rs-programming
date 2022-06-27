@@ -1,19 +1,14 @@
 from market_module.short_term.market_functions.run_shortterm_market import run_shortterm_market
-
 import numpy as np
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-#from pyvis.network import Network
 import random
-import unicodedata
-
-#from market_module.DTU_case_study.plotting import plotting
 from market_module.DTU_case_study.load_data import load_data, load_network
 
 # settings
-model_name = 'base_el_dep'
+model_name = 'p2p_base'
 tot_h = 24*365
 nr_h = 24
 grid_max_import_kWh_h = 10**5
@@ -47,7 +42,6 @@ g_max = np.zeros((tot_h,nr_agents))
 g_max[:,agent_ids.index('sm_1')] = max_sm_avaliable
 g_max[:,agent_ids.index('grid_1')] = max_consum
 
-
 # maximum capacity of demands, lmax
 l_max = np.zeros((tot_h,nr_agents))
 l_min = np.zeros((tot_h,nr_agents))
@@ -75,9 +69,10 @@ util_cost[nr_grid:] = max_grid
 # maximum price of generator from cost_chp
 utility = np.tile(util_cost,(tot_h,1))
 
+
+# Create gis_data input
 # Form Network Graph Data
 buildingNames = [id[0] for id in buildingID.values]
-
 
 # Define the paper nodes
 paper = []
@@ -108,7 +103,7 @@ for i,agent in enumerate(agent_ids):
         loc_dict[node_sm.pop(0)] = agent
         continue
     
-    # put the left consumers into end nodes
+    # put the rest of the consumers into end nodes
     if buildingIds:
         loc_dict[buildingIds.pop(0)] = agent
         continue
@@ -120,30 +115,63 @@ for i,agent in enumerate(agent_ids):
         loc_dict[node] = agent
 
 # Define pipe lengths and nodes
+nodes_name_data, buildingID, pipe_length, pipe_dir = load_network()
+
 pool_pipe_length = pd.DataFrame(pipe_length['Pipe_length'])
 from_node = []
+from_num = []
 to_node = []
+to_num = []
+
 for i,row in pipe_length.iterrows():
+    from_num.append(int(row['up_str_node']))
+    to_num.append(int(row['dw_str_node']))
     from_node.append(loc_dict[int(row['up_str_node'])])
     to_node.append(loc_dict[int(row['dw_str_node'])])
 
 pool_pipe_length['up_str_node'] = from_node
+pool_pipe_length['up_str_num'] = from_num
 pool_pipe_length['dw_str_node'] = to_node
+pool_pipe_length['dw_str_num'] = to_num
 
-# Nodes
-nodes = list(loc_dict.values())
+'''
+'gis_data': 'none'  # or dictionary of format: 
+                            # {'from_to': [(0, 1), (1, 2), (1, 3)],
+                            #  'losses_total': [22969.228855, 24122.603833, 18138.588662],
+                            #  'length': [1855.232413, 1989.471069, 1446.688900],
+                            #  'total_costs': [1.848387e+06, 1.934302e+06, 1.488082e+06]}
+'''
+#from_to
+from_to = [f'({from_},{to_})' for from_,to_ in zip(from_num,to_num)]
 
-# Edges
-edges = [(up_,dw_) for up_,dw_ in pool_pipe_length.loc[:,'up_str_node':'dw_str_node'].values]
+#length
+length_dict = {}
 
-# Lengths
-lengths = pool_pipe_length.loc[:,'Pipe_length'].values.tolist()
-# Network Data - gis_data
-# network data
-#gis_data = {'from_to': edges,
-#            'Losses total [W]': list(np.ones(len(edges))),
-#            'Length': lengths,
-#            'Total_costs': list(np.ones(len(edges)))}
+for from_,to_ in zip(from_node,to_node):
+    length_dict[f'({from_},{to_})'] = pool_pipe_length[(pool_pipe_length['up_str_node'] == from_) 
+    & (pool_pipe_length['dw_str_node'] == to_)]['Pipe_length'].values[0]
+
+lengths = list(length_dict.values())
+
+# losss_total 
+losses_total = np.ones(len(from_to))
+
+# total_costs
+total_costs = np.ones(len(from_to))
+
+gis_data = {}
+gis_data['from_to'] = from_to
+gis_data['losses_total'] = losses_total
+gis_data['length'] = lengths
+gis_data['total_costs'] = total_costs
+
+#for loop, optimizies it for every 24 hours
+# g_max,l_max,l_min,cost,utility has to be for every 24
+# index it so it skips 24 index after first iteration in loop
+start_date = consumption_data.index.date[0]
+end_date = consumption_data.index.date[-1]+timedelta(days=1)
+one_year_idx = pd.date_range(start=start_date,end=end_date,freq='D')[:-1]
+time_range = pd.date_range(start=start_date,end=end_date,freq='H')[:-1]
 
 # monthly average
 uniform_price_year = []
@@ -156,13 +184,6 @@ settlement_year = []
 Gn_revenue_year = []
 Ln_revenue_year = []
 
-#for loop, optimizies it for every 24 hours
-# g_max,l_max,l_min,cost,utility has to be for every 24
-# index it so it skips 24 index after first iteration in loop
-start_date = consumption_data.index.date[0]
-end_date = consumption_data.index.date[-1]+timedelta(days=1)
-one_year_idx = pd.date_range(start=start_date,end=end_date,freq='D')[:1]
-time_range = pd.date_range(start=start_date,end=end_date,freq='H')[:-1]
 
 for i,date in enumerate(one_year_idx,1):
 	print('-'*80)
@@ -177,11 +198,11 @@ for i,date in enumerate(one_year_idx,1):
 	utility_list = utility[24*(i-1):24*i,:].tolist()
 
 	input_dict = {
-		'md': 'pool',  # other options are  'p2p' or 'community'
+		'md': 'p2p',  # other options are  'p2p' or 'community'
 		'nr_of_hours': nr_h,
 		'offer_type': 'simple',
 		'prod_diff': 'noPref',
-		'network': 'direction',
+		'network': 'none',
 		'el_dependent': 'false',
 		'el_price': 'none', # not list but array 
 		'agent_ids': agent_ids,
@@ -196,14 +217,14 @@ for i,date in enumerate(one_year_idx,1):
 		'block_offer': 'none', 
 		'is_chp': 'none', 
 		'chp_pars': 'none',  
-		'gis_data': 'none',  
-		'nodes': nodes, 
-		'edges': edges,
+		'gis_data': gis_data,  
+		'nodes': 'none', 
+		'edges': 'none',
 		}
 
 	results = run_shortterm_market(input_dict=input_dict)
-
-	uniform_price = pd.DataFrame(results['shadow_price'])
+'''
+	uniform_price = pd.DataFrame(results['shadow_price']['uniform price'])
 
 	Pn = pd.DataFrame.from_dict(results['Pn'])
 	Gn = pd.DataFrame.from_dict(results['Gn'])
@@ -223,46 +244,4 @@ for i,date in enumerate(one_year_idx,1):
 	settlement_year.append(settlement)
 	Gn_revenue_year.append(Gn_revenue)
 	Ln_revenue_year.append(Ln_revenue)
-
-
-model_name = 'Network'
-path = 'C://Users//hyung//Documents//GitHub//EMB3Rs-programming//market_module//DTU_case_study//Data//'
-
-df_uniform_price = pd.concat(uniform_price_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Pn_year = pd.concat(Pn_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Gn_year = pd.concat(Gn_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Ln_year = pd.concat(Ln_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_sw_year = pd.concat(sw_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_settlement_year = pd.concat(settlement_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Gn_rev_year = pd.concat(Gn_revenue_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Ln_rev_year = pd.concat(Ln_revenue_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-
-
-# Monthly Averages
-df_uniform_price_mavg = pd.concat(uniform_price_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Pn_year_mavg = pd.concat(Pn_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Gn_year_mavg = pd.concat(Gn_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Ln_year_mavg = pd.concat(Ln_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_sw_year_mavg = pd.concat(sw_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_settlement_year_mavg = pd.concat(settlement_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Gn_rev_year_mavg = pd.concat(Gn_revenue_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Ln_rev_year_mavg = pd.concat(Ln_revenue_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-
-# Export to CSV
-df_uniform_price.to_csv(path+f'df_uniform_price{model_name}.csv')
-df_Pn_year.to_csv(path+f'df_Pn_year{model_name}.csv')
-df_Gn_year.to_csv(path+f'df_Gn_year{model_name}.csv')
-df_Ln_year.to_csv(path+f'df_Ln_year{model_name}.csv')
-df_sw_year.to_csv(path+f'df_sw_year{model_name}.csv')
-df_settlement_year.to_csv(path+f'df_settlement_year{model_name}.csv')
-df_Gn_rev_year.to_csv(path+f'df_Gn_rev_year{model_name}.csv')
-df_Ln_rev_year.to_csv(path+f'df_Ln_rev_year{model_name}.csv')
-
-df_uniform_price_mavg.to_csv(path+f'df_uniform_price_mavg{model_name}.csv')
-df_Pn_year_mavg.to_csv(path+f'df_Pn_year_mavg{model_name}.csv')
-df_Gn_year_mavg.to_csv(path+f'df_Gn_year_mavg{model_name}.csv')
-df_Ln_year_mavg.to_csv(path+f'df_Ln_year_mavg{model_name}.csv')
-df_sw_year_mavg.to_csv(path+f'df_sw_year_mavg{model_name}.csv')
-df_settlement_year_mavg.to_csv(path+f'df_settlement_year_mavg{model_name}.csv')
-df_Gn_rev_year_mavg.to_csv(path+f'df_Gn_rev_year_mavg{model_name}.csv')
-df_Ln_rev_year_mavg.to_csv(path+f'df_Ln_rev_year_mavg{model_name}.csv')
+'''
