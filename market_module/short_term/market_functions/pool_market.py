@@ -93,7 +93,10 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
     # common for all offer types ------------------------------------------------
     # define the problem and solve it.
     prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-    result_ = prob.solve(solver=cp.SCIP)
+    if settings.offer_type == "block":
+        result_ = prob.solve(solver=cp.SCIP)
+    else:
+        result_ = prob.solve(solver=cp.GUROBI)
     print("problem status: %s" % prob.status)
 
     # throw an error if the problem is not solved.
