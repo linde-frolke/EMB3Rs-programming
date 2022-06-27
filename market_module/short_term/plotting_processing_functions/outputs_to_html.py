@@ -10,14 +10,15 @@ def output_to_html(output_dict):
         )
     return html 
 
-def output_to_plot(output_dict, ylab):
+def output_to_plot(output_dict, ylab, legend=True):
     df = pd.DataFrame(output_dict)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.plot(df.index, df, label=df.columns)
     ax.set_xlabel("hour number")
     ax.set_ylabel(ylab)
-    ax.legend()
+    if legend:
+        ax.legend()
     # plt.tight_layout()
     fig_html = mpld3.fig_to_html(fig)
 

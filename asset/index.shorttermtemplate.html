@@ -25,7 +25,9 @@
   <img src="https://www.emb3rs.eu/wp-content/uploads/2019/12/EMB3Rs_horizontal-Logo.png" class="img">
   <!-- Change after this -->
   <h1>Outputs Short Term Market</h1>
-  
+  <h2>Optimality</h2>
+    {{message_optimality}}
+
   <h2>Tables of output variables</h2>
   <div class="accordion" id="accordionExample">
     <div class="card">
@@ -70,6 +72,34 @@
         </div>
       </div>
     </div>
+    <div class="card">
+        <div class="card-header" id="headingFour">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+          <div class="card-body">
+            {{df_sp}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFive">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+          <div class="card-body">
+            {{df_sw}}
+          </div>
+        </div>
+      </div>
   </div>
 
   <h2>Plots of output variables</h2>
@@ -116,6 +146,34 @@
         </div>
       </div>
     </div>
+    <div class="card">
+        <div class="card-header" id="headingFourB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFourB" aria-expanded="false" aria-controls="collapseFourB">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFourB" class="collapse" aria-labelledby="headingFourB" data-parent="#accordionExample">
+          <div class="card-body">
+            {{plt_sp}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFiveB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFiveB" aria-expanded="false" aria-controls="collapseFiveB">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFiveB" class="collapse" aria-labelledby="headingFiveB" data-parent="#accordionExample">
+          <div class="card-body">
+            {{plt_sw}}
+          </div>
+        </div>
+      </div>
   </div>
   <!-- Change Before this -->
 </body>

@@ -55,15 +55,22 @@ result_dict = run_shortterm_market(input_dict=input_dict)
 
 
 ## convert outputs to html to put in report
+if result_dict["optimal"]:
+    mess = "The optimization was solved successfully, i.e. an optimal solution to the optimization was found. \n"
+else:
+    mess = "No optimal solution was found. Therefore, the outputs in this report are empty or 0.  \n"
 
-df_Gn, df_Ln, df_Pn, df_set = [output_to_html(result_dict[x]) for x in 
-                                    ["Gn", "Ln", "Pn", "settlement"]]
+df_Gn, df_Ln, df_Pn, df_set, df_sp, df_sw = [output_to_html(result_dict[x]) for x in 
+                                    ["Gn", "Ln", "Pn", "settlement", "shadow_price", "social_welfare_h"]]
 
 # make plots
 ylab = {"Gn" : "generation", "Ln" : "load", "Pn" : "net power injection", 
-        "settlement" : "settlement"}
+        "settlement" : "settlement", "shadow_price" : "market clearing price", 
+        "social_welfare_h" : "social welfare"}
 plt_Gn, plt_Ln, plt_Pn, plt_set = [output_to_plot(result_dict[x], ylab[x]) for x in 
                                     ["Gn", "Ln", "Pn", "settlement"]]
+plt_sp = output_to_plot(result_dict["shadow_price"], ylab["shadow_price"], legend=False)
+plt_sw = output_to_plot(result_dict["social_welfare_h"], ylab["social_welfare_h"], legend=False)
 
 ### MODULE-CODE [END]
 
@@ -77,8 +84,11 @@ env = Environment(
 )
 
 template = env.get_template('index.shorttermtemplate.html')
-template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set, 
-                                    plt_Gn=plt_Gn, plt_Ln=plt_Ln, plt_Pn=plt_Pn, plt_set=plt_set)
+template_content = template.render(message_optimality=mess, 
+                                    df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set, df_sp=df_sp,
+                                    df_sw=df_sw, 
+                                    plt_Gn=plt_Gn, plt_Ln=plt_Ln, plt_Pn=plt_Pn, plt_set=plt_set,
+                                    plt_sp=plt_sp, plt_sw=plt_sw)
 
 
 f = open("index.html", "w")
