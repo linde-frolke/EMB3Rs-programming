@@ -21,15 +21,14 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
         Pnode = cp.Variable((settings.nr_of_h, network_data.nr_of_n))
         for t in settings.timestamps:
             for n in range(network_data.nr_of_n):
-                #print(n)
+                # if there are some agents located at this node
                 if network_data.N[n] in network_data.loc_a:
                     # define the nodal power injection for nodes with an agent located there
                     select_agents = network_data.loc_a.index(network_data.N[n])
-                    # print("node " + str(n) + " has agent located there: " + str(select_agents))
                     constraint_builder.add_constraint(Pnode[t, n] == cp.sum(Pn_var[t, select_agents]),
                                                   str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
+                # if there are no agents at this node
                 else:
-                    # print(network_data.N[n])
                     # nodal power injection is zero if there is no agent at this node
                     constraint_builder.add_constraint(Pnode[t, n] == 0,
                                                   str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
@@ -37,7 +36,6 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
         for t in settings.timestamps:
             constraint_builder.add_constraint(
                 network_data.A @ Ppipe[t, :] == Pnode[t, :], str_="flow_continuity")
-
         # adapt constraintBuilder by adding pipeline flow restrictions
         constraint_builder.add_constraint(
             Ppipe >= 0, str_="unidirectional_pipeline_flow")
