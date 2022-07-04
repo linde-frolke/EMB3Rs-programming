@@ -44,13 +44,10 @@ g_max[:,agent_ids.index('grid_1')] = max_consum
 
 # maximum capacity of demands, lmax
 l_max = np.zeros((tot_h,nr_agents))
-l_min = np.zeros((tot_h,nr_agents))
 
 sm_consumption = consumption_data.loc[:,'SM_consumption']
 l_max[:,agent_ids.index('sm_1')] = sm_consumption
-l_min[:,agent_ids.index('sm_1')] = sm_consumption
 l_max[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']
-l_min[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']
 
 # Cost of generators
 # costs = nr_h x nr_agent
@@ -192,7 +189,6 @@ for i,date in enumerate(one_year_idx,1):
 	
 	g_max_list = g_max[24*(i-1):24*i,:].tolist()
 	l_max_list = l_max[24*(i-1):24*i,:].tolist()
-	l_min_list = l_min[24*(i-1):24*i,:].tolist()
 
 	cost_list = cost[24*(i-1):24*i,:].tolist()
 	utility_list = utility[24*(i-1):24*i,:].tolist()
@@ -201,7 +197,7 @@ for i,date in enumerate(one_year_idx,1):
 		'md': 'p2p',  # other options are  'p2p' or 'community'
 		'nr_of_hours': nr_h,
 		'offer_type': 'simple',
-		'prod_diff': 'noPref',
+		'prod_diff': 'networkDistance', # noPref, co2Emissions, networkDistance, losses
 		'network': 'none',
 		'el_dependent': 'false',
 		'el_price': 'none', # not list but array 

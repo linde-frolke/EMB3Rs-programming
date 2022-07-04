@@ -68,3 +68,94 @@ def Create_Network(agent_ids,buildingID,nodes_name_data,pipe_length):
 	edges = [(up_,dw_) for up_,dw_ in pool_pipe_length.loc[:,'up_str_node':'dw_str_node'].values]
 	
 	return nodes, edges, pool_pipe_length
+
+def Create_penalties(nodes, edges):
+
+	class Graph():
+		def __init__(self, vertices):
+			self.V = vertices
+			self.graph = [[0 for column in range(vertices)]
+						for row in range(vertices)]
+			self.weights = [0 for row in range(vertices)]
+	
+		def printSolution(self, dist, source_node):
+			print(f"Vertex \t Distance from n{source_node+1}")
+			for node in range(self.V):
+				print(f"n{node+1}", "\t\t", dist[node])
+	
+		# A utility function to find the vertex with
+		# minimum distance value, from the set of vertices
+		# not yet included in shortest path tree
+		def minDistance(self, dist, sptSet):
+	
+			# Initialize minimum distance for next node
+			min = 1e7
+	
+			# Search not nearest vertex not in the
+			# shortest path tree
+			for v in range(self.V):
+				if dist[v] < min and sptSet[v] == False:
+					min = dist[v]
+					min_index = v
+	
+			return min_index
+	
+		# Function that implements Dijkstra's single source
+		# shortest path algorithm for a graph represented
+		# using adjacency matrix representation
+		def dijkstra(self, src):
+	
+			dist = [1e7] * self.V
+			dist[src] = 0
+			sptSet = [False] * self.V
+	
+			for cout in range(self.V):
+	
+				# Pick the minimum distance vertex from
+				# the set of vertices not yet processed.
+				# u is always equal to src in first iteration
+				u = self.minDistance(dist, sptSet)
+	
+				# Put the minimum distance vertex in the
+				# shortest path tree
+				sptSet[u] = True
+	
+				# Update dist value of the adjacent vertices
+				# of the picked vertex only if the current
+				# distance is greater than new distance and
+				# the vertex in not in the shortest path tree
+				for v in range(self.V):
+					if (self.graph[u][v] > 0 and
+					sptSet[v] == False and
+					dist[v] > dist[u] + self.graph[u][v]):
+						dist[v] = dist[u] + self.graph[u][v]
+						self.weights[v] = dist[v]
+	
+			#self.printSolution(dist,src)  # to see what edges the weights are associated to
+			return (self.weights), self.graph
+	
+	# Make matrix of node connections
+	undirected = False
+
+	edges=list(edges)
+	n_edges = len(edges)
+	n_nodes = len(nodes)
+	A = np.zeros((n_nodes,n_nodes))
+
+	for i, node1 in enumerate((nodes)):
+		for j,node2 in enumerate((nodes)):
+			if (node1,node2) in edges:
+				A[i,j] = 1
+				if undirected == True:
+					A[j,i] = 1 # if the graph is undirected
+	
+	source = 42 # Define source node (grid node)
+	source_index = source - 1 
+	g = Graph(len(nodes)) # Create graph 
+
+	g.graph = A 
+	g.graph.shape
+
+	weights,graph=g.dijkstra(source_index)
+
+	return weights # index of where the node is located

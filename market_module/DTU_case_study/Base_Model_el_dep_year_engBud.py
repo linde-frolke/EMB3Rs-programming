@@ -2,18 +2,15 @@ from market_module.short_term.market_functions.run_shortterm_market import run_s
 
 import numpy as np
 import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-#from pyvis.network import Network
-import unicodedata
-
-from market_module.DTU_case_study.plotting import plotting
 from market_module.DTU_case_study.load_data import load_data
+from market_module.DTU_case_study.save_tocsv import save_tocsv
+
+# Pool Energy Budget
+##---------------------------
 
 # settings
-model_name = 'base_el_dep'
 tot_h = 24*365
 nr_h = 24
 grid_max_import_kWh_h = 10**5
@@ -22,10 +19,14 @@ nr_grid = 1
 nr_sm = 1
 nr_agents = nr_con+nr_grid+nr_sm
 cap_constant = 1.5
+util_constant = 1.1
 Year = 2018
 Month = 4
 Day = 14
 COP = 3.5
+
+# Energy Budget
+EB_constant = 2 
 
 # Load data
 consumption_data, price_el_hourly, grid_price = load_data(tot_h,Year,Month,Day)
@@ -51,9 +52,9 @@ g_max[:,agent_ids.index('grid_1')] = max_consum
 l_max = np.zeros((tot_h,nr_agents))
 
 sm_consumption = consumption_data.loc[:,'SM_consumption']
-l_max[:,agent_ids.index('sm_1')] = sm_consumption*2 # for upward and downward flexibility
+l_max[:,agent_ids.index('sm_1')] = sm_consumption*EB_constant # for upward and downward flexibility
 
-l_max[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']*2
+l_max[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']*EB_constant
 
 # Cost of generators
 # costs = nr_h x nr_agent
@@ -68,17 +69,16 @@ cost[:,agent_ids.index('grid_1')] = grid_price.values.squeeze() # input prices o
 # Utility costs
 util_cost = np.zeros(nr_agents)
 max_grid = grid_price.max()[0]# max cost of generator cost, so set to sufficiently high utility
-util_cost[nr_grid:] = max_grid
+util_cost[nr_grid:] = max_grid*util_constant
 # maximum price of generator from cost_chp
 utility = np.tile(util_cost,(tot_h,1))
-
 
 #for loop, optimizies it for every 24 hours
 # g_max,l_max,l_min,cost,utility has to be for every 24
 # index it so it skips 24 index after first iteration in loop
 start_date = consumption_data.index.date[0]
 end_date = consumption_data.index.date[-1]+timedelta(days=1)
-one_year_idx = pd.date_range(start=start_date,end=end_date,freq='D')
+one_year_idx = pd.date_range(start=start_date,end=end_date,freq='D')[:-1]
 time_range = pd.date_range(start=start_date,end=end_date,freq='H')[:-1]
 
 # monthly average
@@ -89,6 +89,8 @@ Ln_year = []
 
 sw_year = []
 settlement_year = []
+Gn_revenue_year = []
+Ln_revenue_year = []
 
 
 for i,date in enumerate(one_year_idx,1):
@@ -138,154 +140,23 @@ for i,date in enumerate(one_year_idx,1):
 	sw = pd.DataFrame.from_dict((results['social_welfare_h']['Social Welfare']))
 	settlement = pd.DataFrame.from_dict(results['settlement'])
 
+	Gn_revenue = pd.DataFrame(index=range(
+            nr_h), columns=agent_ids)
+	Ln_revenue = pd.DataFrame(index=range(
+				nr_h), columns=agent_ids)
+
+	Gn_revenue = pd.DataFrame(uniform_price.values*Gn.values, columns=Gn.columns, index=Gn.index)
+	Ln_revenue = pd.DataFrame(uniform_price.values*Ln.values, columns=Ln.columns, index=Ln.index)
+
 	uniform_price_year.append(uniform_price)
 	Pn_year.append(Pn)
 	Gn_year.append(Gn)
 	Ln_year.append(Ln)
 	sw_year.append(sw)
 	settlement_year.append(settlement)
+	Gn_revenue_year.append(Gn_revenue)
+	Ln_revenue_year.append(Ln_revenue)
 
 
-df_uniform_price = pd.concat(uniform_price_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Pn_year = pd.concat(Pn_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Gn_year = pd.concat(Gn_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_Ln_year = pd.concat(Ln_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_sw_year = pd.concat(sw_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-df_settlement_year = pd.concat(settlement_year).set_index(time_range).groupby(pd.Grouper(freq='24H')).mean()
-
-# Monthly Averages
-df_uniform_price_mavg = pd.concat(uniform_price_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Pn_year_mavg = pd.concat(Pn_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Gn_year_mavg = pd.concat(Gn_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_Ln_year_mavg = pd.concat(Ln_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_sw_year_mavg = pd.concat(sw_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-df_settlement_year_mavg = pd.concat(settlement_year).set_index(time_range).groupby(pd.Grouper(freq='1M')).mean()
-
-
-#plotting(results, model_name)
-Pn = df_Pn_year
-Gn = df_Gn_year
-Ln = df_Ln_year
-
-sw = df_sw_year*-1 # social welfare should be flipped
-settlement = df_settlement_year
-
-model_name = 'Energy Budget-Electricity Dependent'
-# Plotting 
-# Production and consumption of supermarket 
-fig, axes = plt.subplots()
-Ln.sm_1.plot(ax=axes)
-Gn.sm_1.plot(ax=axes)
-axes.set_title(f'Supermarket Consumption and Production ({model_name})')
-axes.legend(['Consumption','Production'])
-#axes.legend(['Consumption,Production'])
-axes.set_xlabel('Time')
-axes.set_ylabel('kWh')
-axes.grid()
-
-# Production of grid and Market Price
-fig, axes = plt.subplots(2,1,sharex=True)
-axes[0].plot(Gn['grid_1'])
-axes[1].plot(df_uniform_price)
-axes[0].set_title(f'Grid Production ({model_name})')
-axes[1].set_title(f'Market Price ({model_name})')
-axes[1].set_xlabel('Time')
-axes[0].grid()
-axes[1].grid()
-
-# Production of Grid and SuperMarket
-fig,axes = plt.subplots()
-Pn.grid_1.plot(ax=axes)
-Pn.sm_1.plot(ax=axes)
-axes.legend(['Grid','Supermarket'])
-axes.set_title(f'$P_n$ of Agents ({model_name})')
-axes.set_ylabel('kWh')
-axes.grid()
-
-# Social Welfare
-start = sw.min()[0]
-end = sw.max()[0]
-fig,axes = plt.subplots()
-sw.plot(ax=axes)
-axes.yaxis.set_ticks(np.arange(start,end,-(start-end)/10.0))
-axes.legend(['Social Welfare'],loc='upper left')
-axes.set_xlabel('Time')
-axes.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-axes.set_title(f'Social Welfare ({model_name})')
-axes.grid()
-
-# Settlement
-fig,axes = plt.subplots()
-settlement.grid_1.plot(ax=axes)
-settlement.sm_1.plot(ax=axes)
-axes.set_xlabel('Time')
-axes.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-axes.set_title(f'Settlement ({model_name})')
-axes.grid()
-axes.legend()
-
-# compare actual consumption of supermarket and flexiblity
-Ln_sm = pd.concat(Ln_year).set_index(time_range)['sm_1']
-fig, ax = plt.subplots(figsize=(10,5))
-ax.plot(sm_consumption,alpha=0.5,label='Actual',linestyle='-', marker='o',markersize=2)
-ax.plot(Ln_sm,alpha=0.5,label='Flexible',linestyle='-', marker='o',markersize=2)
-#ax.scatter(x=sm_consumption.index,y=sm_consumption.values,s=10,alpha=0.3,label='Actual')
-#ax.scatter(x=Ln_sm.index,y=Ln_sm.values,s=10,alpha=0.3,label='Flexible')
-ax.set_xlabel('Time')
-ax.set_ylabel('kWh')
-ax.set_title('Load flexibility')
-ax.legend()
-plt.tight_layout()
-plt.grid(which='minor')
-plt.grid(which='major')
-plt.show()
-
-
-'''
-# Monthly Averages
-fig, ax = plt.subplots()
-df_uniform_price_mavg.plot.bar(ax=ax,label='Uniform Price')
-ax.xticks(rot=30)
-ax.set_xticklabels(df_uniform_price_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-ax.set_title('Monthly Average Uniform Pricing')
-plt.legend()
-
-fig, ax = plt.subplots()
-df_Pn_year_mavg.plot.bar() 
-ax.xticks(rot=30)
-ax.set_xticklabels(df_uniform_price_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-ax.set_title('Monthly Average Uniform Pricing')
-
-fig, ax = plt.subplots()
-ax.boxplot(df_Gn_year.sm_1)
-ax.set_xticklabels(df_Gn_year_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-ax.set_title('Monthly Average Production of SuperMarket')
-
-plt.legend()
-plt.show()
-
-fig, ax = plt.subplots()
-df_Ln_year_mavg.plot.bar() 
-ax.xticks(rot=30)
-ax.set_xticklabels(df_uniform_price_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('kWh')
-ax.set_title('Monthly Average Uniform Pricing')
-
-fig, ax = plt.subplots()
-df_sw_year_mavg.plot.bar()  
-ax.xticks(rot=30)
-ax.set_xticklabels(df_uniform_price_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-ax.set_title('Monthly Average Uniform Pricing')
-
-fig, ax = plt.subplots()
-df_settlement_year_mavg.plot.bar() 
-ax.xticks(rot=30)
-ax.set_xticklabels(df_uniform_price_mavg.index.month_name(),rotation=30)
-ax.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
-ax.set_title('Monthly Average Uniform Pricing')
-plt.show()
-'''
+model_name = 'Pool_EB'
+save_tocsv(model_name,time_range,uniform_price_year,Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year)
