@@ -2,7 +2,8 @@
 Shared repository Linde&amp;Sergio
 
 
-#####################################################################################
+################################################################################
+
 There are a total of 4 test cases: Pool Base, Pool EnergyBudget, Pool Network Base, Pool Network EnergyBudget
 
 The codes uses a combination of functions: 
@@ -15,7 +16,7 @@ The codes uses a combination of functions:
 
 The only variable that has to be changed to run these codes 
 
-######################################################################################
+###############################################################################
 Using the Plot_figures code
 # -------------------------
 
