@@ -4,21 +4,22 @@ Shared repository Linde&amp;Sergio
 
 ################################################################################
 
-There are a total of 4 test cases: Pool Base, Pool EnergyBudget, Pool Network Base, Pool Network EnergyBudget
+# There are a total of 4 test cases: Pool Base, Pool EnergyBudget, Pool Network Base, Pool Network EnergyBudget
 
 The codes uses a combination of functions: 
-1. load_data()
+*1. load_data()
 	- Change the 'path' variable to where the 'Linde_data' folder is located
-2. load_network() 	
+*2. load_network() 	
 	- Change the 'path' variable to where the 'Linde_data' folder is located
-3. save_tocsv()
+*3. save_tocsv()
 	- Change the 'path' variable to the folder you want the dataframes to be saved
 
 The only variable that has to be changed to run these codes 
 
 ###############################################################################
-Using the Plot_figures code
-# -------------------------
+
+# Using the Plot_figures code
+
 
 1. Change the path where the 'CSV' files are located
 2. Change the 'modelName_base' and 'modelName_EB' to network being analyzed
