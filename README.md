@@ -2,8 +2,6 @@
 Shared repository Linde&amp;Sergio
 
 
-################################################################################
-
 # There are a total of 4 test cases: Pool Base, Pool EnergyBudget, Pool Network Base, Pool Network EnergyBudget
 
 The codes uses a combination of functions: 
@@ -15,8 +13,6 @@ The codes uses a combination of functions:
 	- Change the 'path' variable to the folder you want the dataframes to be saved
 
 The only variable that has to be changed to run these codes 
-
-###############################################################################
 
 # Using the Plot_figures code
 
@@ -30,8 +26,6 @@ How it works:
 1. Input two models (Names: (Pool_Base, Pool_EB), (PoolNetwork_Base, PoolNetwork_EB))
 2. If model is 'Network' the market clearing price is computed as a weighted price of two zones.
 
-
-##############################################################################################################
 # Notes:
 1. It seems that the there is a difference in the total consumed energy between the EB and the base
 2. The difference is amplified in the network option
