@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emb3rs - Test Report</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
+    integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="container pt-5">
+  <img src="https://www.emb3rs.eu/wp-content/uploads/2019/12/EMB3Rs_horizontal-Logo.png" class="img">
+  <!-- Change after this -->
+  <h1>Outputs Short Term Market</h1>
+  <h2>Optimality</h2>
+    {{message_optimality}}
+
+  <h2>Tables of output variables</h2>
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Hourly Generation per agent
+          </button>
+        </h2>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+              {{df_Gn}} 
+            </div>
+          </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            Hourly Load per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+            {{df_Ln}} 
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            Hourly Settlement per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <div class="card-body">
+          {{df_set}}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFour">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+          <div class="card-body">
+            {{df_sp}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFive">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+          <div class="card-body">
+            {{df_sw}}
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <h2>Plots of output variables</h2>
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOneB">
+        <h2 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOneB" aria-expanded="true" aria-controls="collapseOneB">
+            Hourly Generation per agent
+          </button>
+        </h2>
+        </div>
+        <div id="collapseOneB" class="collapse" aria-labelledby="headingOneB" data-parent="#accordionExample">
+            <div class="card-body">
+              {{plt_Gn}} 
+            </div>
+          </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwoB">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwoB" aria-expanded="false" aria-controls="collapseTwoB">
+            Hourly Load per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwoB" class="collapse" aria-labelledby="headingTwoB" data-parent="#accordionExample">
+        <div class="card-body">
+            {{plt_Ln}} 
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThreeB">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThreeB" aria-expanded="false" aria-controls="collapseThreeB">
+            Hourly Settlement per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseThreeB" class="collapse" aria-labelledby="headingThreeB" data-parent="#accordionExample">
+        <div class="card-body">
+          {{plt_set}}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFourB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFourB" aria-expanded="false" aria-controls="collapseFourB">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFourB" class="collapse" aria-labelledby="headingFourB" data-parent="#accordionExample">
+          <div class="card-body">
+            {{plt_sp}}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFiveB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFiveB" aria-expanded="false" aria-controls="collapseFiveB">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFiveB" class="collapse" aria-labelledby="headingFiveB" data-parent="#accordionExample">
+          <div class="card-body">
+            {{plt_sw}}
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- Change Before this -->
+</body>
+
+</html>

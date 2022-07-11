@@ -76,7 +76,11 @@ class ResultData:
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
         if settings.market_design == "centralized":
-            self.QoE = pd.DataFrame(["none"])
+            self.QoE = pd.DataFrame(index=range(
+                settings.diff), columns=["QoE"])
+            for t in range(0, settings.diff):
+                self.QoE["QoE"][t] = 'Not Defined'
+
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "decentralized":
             # QoE
@@ -158,7 +162,6 @@ class ResultData:
                 else:
                     aux.append(self.Gn[agent][t] / agent_data.gmax[agent][t])
             self.ADG[agent]['ADG'] = np.average(aux) * 100
-
         # SUCCESSFUL PARTICIPATION IN THE MARKET (SPM)
         self.SPM = pd.DataFrame(index=['SPM'], columns=prod_pros)
         for agent in prod_pros:
@@ -206,7 +209,8 @@ class ResultData:
                        'SPM': self.SPM.transpose().to_dict()['SPM'],
                        'ADG': self.ADG.transpose().to_dict()['ADG'],
                        'expensive_prod': self.expensive_prod,
-                       'QoE': list(self.QoE)
+                       #'QoE': list(self.QoE)
+                       'QoE': self.QoE.to_dict()['QoE']
                        }
         if self.market == 'centralized':
             return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
