@@ -388,8 +388,8 @@ class Network(BaseModel):
             A = np.zeros((len(self.N), len(self.P)))
             for p_nr in range(self.nr_of_p):
                 p = self.P[p_nr]
-                n1_nr = np.where(self.N == p[0])
-                n2_nr = np.where(self.N == p[1])
+                n1_nr = self.N.index(p[0])
+                n2_nr = self.N.index(p[1])
                 A[n1_nr, p_nr] = 1
                 A[n2_nr, p_nr] = -1
             self.A = A

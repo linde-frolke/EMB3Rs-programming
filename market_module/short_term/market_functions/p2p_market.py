@@ -20,8 +20,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
     # collect named constraints in cb
     cb = ConstraintBuilder()
 
-
-# prepare parameters
+    # prepare parameters
     Gmin = cp.Parameter(
         (settings.nr_of_h, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy())
     Gmax = cp.Parameter(
@@ -130,7 +129,10 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
 
     # define the problem and solve it.
     prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-    result_ = prob.solve(solver=cp.SCIP)
+    if settings.offer_type == "block":
+        result_ = prob.solve(solver=cp.SCIP)
+    else:
+        result_ = prob.solve(solver=cp.GUROBI)
 
     print("problem status: %s" % prob.status)
 

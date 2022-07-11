@@ -44,13 +44,10 @@ g_max[:,agent_ids.index('grid_1')] = max_consum
 
 # maximum capacity of demands, lmax
 l_max = np.zeros((tot_h,nr_agents))
-l_min = np.zeros((tot_h,nr_agents))
 
 sm_consumption = consumption_data.loc[:,'SM_consumption']
 l_max[:,agent_ids.index('sm_1')] = sm_consumption
-l_min[:,agent_ids.index('sm_1')] = sm_consumption
 l_max[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']
-l_min[:,nr_grid+nr_sm:] = consumption_data.loc[:,'Row_House1':'Row_House30']
 
 # Cost of generators
 # costs = nr_h x nr_agent
@@ -65,7 +62,7 @@ cost[:,agent_ids.index('grid_1')] = grid_price.values.squeeze() # input prices o
 # Utility costs
 util_cost = np.zeros(nr_agents)
 max_grid = grid_price.max()[0]# max cost of generator cost, so set to sufficiently high utility
-util_cost[nr_grid:] = max_grid + 1000
+util_cost[nr_grid:] = max_grid
 # maximum price of generator from cost_chp
 utility = np.tile(util_cost,(tot_h,1))
 
@@ -192,7 +189,6 @@ for i,date in enumerate(one_year_idx,1):
 	
 	g_max_list = g_max[24*(i-1):24*i,:].tolist()
 	l_max_list = l_max[24*(i-1):24*i,:].tolist()
-	l_min_list = l_min[24*(i-1):24*i,:].tolist()
 
 	cost_list = cost[24*(i-1):24*i,:].tolist()
 	utility_list = utility[24*(i-1):24*i,:].tolist()
@@ -201,7 +197,7 @@ for i,date in enumerate(one_year_idx,1):
 		'md': 'p2p',  # other options are  'p2p' or 'community'
 		'nr_of_hours': nr_h,
 		'offer_type': 'simple',
-		'prod_diff': 'noPref',
+		'prod_diff': 'networkDistance', # noPref, co2Emissions, networkDistance, losses
 		'network': 'none',
 		'el_dependent': 'false',
 		'el_price': 'none', # not list but array 
@@ -223,25 +219,25 @@ for i,date in enumerate(one_year_idx,1):
 		}
 
 	results = run_shortterm_market(input_dict=input_dict)
-# '''
-# 	uniform_price = pd.DataFrame(results['shadow_price']['uniform price'])
+'''
+	uniform_price = pd.DataFrame(results['shadow_price']['uniform price'])
 
-# 	Pn = pd.DataFrame.from_dict(results['Pn'])
-# 	Gn = pd.DataFrame.from_dict(results['Gn'])
-# 	Ln = pd.DataFrame.from_dict(results['Ln'])
+	Pn = pd.DataFrame.from_dict(results['Pn'])
+	Gn = pd.DataFrame.from_dict(results['Gn'])
+	Ln = pd.DataFrame.from_dict(results['Ln'])
 
-# 	sw = pd.DataFrame.from_dict((results['social_welfare_h']['Social Welfare']))
-# 	settlement = pd.DataFrame.from_dict(results['settlement'])
+	sw = pd.DataFrame.from_dict((results['social_welfare_h']['Social Welfare']))
+	settlement = pd.DataFrame.from_dict(results['settlement'])
 
-# 	Gn_revenue = pd.DataFrame(uniform_price.values*Gn.values, columns=Gn.columns, index=Gn.index)
-# 	Ln_revenue = pd.DataFrame(uniform_price.values*Ln.values, columns=Ln.columns, index=Ln.index)
+	Gn_revenue = pd.DataFrame(uniform_price.values*Gn.values, columns=Gn.columns, index=Gn.index)
+	Ln_revenue = pd.DataFrame(uniform_price.values*Ln.values, columns=Ln.columns, index=Ln.index)
 
-# 	uniform_price_year.append(uniform_price)
-# 	Pn_year.append(Pn)
-# 	Gn_year.append(Gn)
-# 	Ln_year.append(Ln)
-# 	sw_year.append(sw)
-# 	settlement_year.append(settlement)
-# 	Gn_revenue_year.append(Gn_revenue)
-# 	Ln_revenue_year.append(Ln_revenue)
-# '''
+	uniform_price_year.append(uniform_price)
+	Pn_year.append(Pn)
+	Gn_year.append(Gn)
+	Ln_year.append(Ln)
+	sw_year.append(sw)
+	settlement_year.append(settlement)
+	Gn_revenue_year.append(Gn_revenue)
+	Ln_revenue_year.append(Ln_revenue)
+'''

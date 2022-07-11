@@ -9,9 +9,9 @@ dependencies:
   - matplotlib=
   - numpy=
   - pandas=
-  - pyscipopt=
+  - pyscipopt=3.5.0
   - scipy=
-
+  - seaborn=
   # for pypi packages (uncomment only if there are packages)
   # - pip:
   #     - numpy==
