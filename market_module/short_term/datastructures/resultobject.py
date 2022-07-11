@@ -268,8 +268,8 @@ class ResultData:
                        'QoE': self.QoE.to_dict(orient="list")["QoE"],
                        'optimal': bool_to_string(self.optimal),
                        'settlement' : self.settlement.to_dict(orient="list"),
-                       'social_welfare_h': self.social_welfare_h.to_dict(orient="list")
-                       # TODO "agent_operational_cost " should be added
+                       'social_welfare_h': self.social_welfare_h.to_dict(orient="list")#,
+                       #"agent_operational_cost" : self.agent_op_cost.to_dict(orient="list")
                        }
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
