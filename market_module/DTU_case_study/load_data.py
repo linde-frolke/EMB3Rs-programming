@@ -10,7 +10,7 @@ def fill_missing(df,start_date,end_date):
     return df
 
 def load_data(nr_h,Year,Month,Day):
-    path = "C:/Users/hyung/Documents/Desktop/Student Job/Data/Linde_data/"
+    path = "market_module/DTU_case_study/Linde_data/"
 
     consumption_data_pre = pd.read_csv(path+'EMB3Rs_Full_Data.csv',
                                         usecols=range(1,34),
@@ -41,7 +41,7 @@ def load_data(nr_h,Year,Month,Day):
     return consumption_data, price_el_hourly, grid_price
 
 def load_network():
-    path = "C:/Users/hyung/Documents/Desktop/Student Job/Data/Linde_data/"
+    path = "market_module/DTU_case_study/Linde_data/"
     nodes_name_data = pd.read_csv(path + 'Nodes_data.csv',names=['id','name'])
     buildingID = pd.read_csv(path+'BuildingID.csv',names=['Node'])   
     pipe_length = pd.read_csv(path+'pipe_data.csv')

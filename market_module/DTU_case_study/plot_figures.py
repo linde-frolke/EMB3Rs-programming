@@ -1,7 +1,7 @@
-#%%
+#
 import sys 
-sys.path.append('C://Users//hyung//Documents//GitHub//EMB3Rs-programming')
-#%%
+sys.path.append('/EMB3Rs-programming')
+#
 from datetime import timedelta
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,7 +12,7 @@ from market_module.DTU_case_study.load_data import load_data
 plt.rcParams["figure.figsize"] = (14,6)
 
 #Path to load the dataframe from
-path = 'C://Users//hyung//Documents//GitHub//EMB3Rs-programming//market_module//DTU_case_study//Data//'
+path = 'market_module/DTU_case_study/Data/'
 
 modelName_base = 'PoolNetwork_base'
 modelName_EB = 'PoolNetwork_EB'
@@ -109,7 +109,7 @@ def compute_averages(df_dict):
 df_dict = read_hourly(modelName_base,modelName_EB,output_names,time_range_h,path)
 df_dict_avg = compute_averages(df_dict)
 
-#%%
+#
 
 # plot the averages
 if 'Network' in modelName_base:
@@ -135,8 +135,8 @@ else:
     axes.set_xlabel('Time')
     axes.set_ylabel('Euro [{}]'.format(unicodedata.lookup("EURO SIGN")))
     axes.legend(['Base','EB'])
-#plt.show()
-
+plt.show()
+plt.close()
 # Plot the averages of each hour 
 reduced_time = pd.date_range(start='2018-11',end='2019-4-13',freq='H')
 flex_havg = df_dict['EB_Ln'].sm_1.loc[reduced_time].groupby(df_dict['EB_Ln'].sm_1.loc[reduced_time].index.hour).mean()
@@ -164,7 +164,8 @@ ax2.tick_params(axis ='y', labelcolor = 'blue')
 ax[1].set_xlabel('Hour')
 ax[1].set_ylabel('SM Cost Euro [{}]'.format(unicodedata.lookup("EURO SIGN")),color='orange')
 ax2.set_ylabel('Grid Cost Euro [{}]'.format(unicodedata.lookup("EURO SIGN")),color='blue')
-
+plt.show()
+plt.close()
 # Plot the weekly average of settlements 
 reduced_time = pd.date_range(start='2018-11',end='2019-4-13',freq='W')
 cost_wavg = cost.groupby(pd.Grouper(freq='1W')).mean()
@@ -200,7 +201,8 @@ df_uniform_price_EB_wavg.loc[reduced_time].plot(ax=ax[1])
 ax[1].set_title('Weekly Average of Market Clearing Price')
 ax[1].legend(['Base','Energy Budget'])
 plt.tight_layout()
-#plt.show()
+plt.show()
+plt.close()
 
 # SM and Grid production weekly average
 reduced_time = pd.date_range(start='2018-11',end='2019-4-13',freq='1W')

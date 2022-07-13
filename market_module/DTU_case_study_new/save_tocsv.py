@@ -43,12 +43,12 @@ class CaseStudyData:
 def save_topickle(model_name, casedata):
     path = "market_module/DTU_case_study_new/output_data/"
     
-    filehandler = open(path + model_name, 'w') 
-    pickle.dump(casedata, filehandler)
+    with open(path + model_name + '.pickle', 'w') as handle:
+        pickle.dump(casedata, handle)
 
 def load_frompickle(model_name):
     path = "market_module/DTU_case_study_new/output_data/"
-    filehandler = open(path + model_name, 'w') 
+    filehandler = open(path + model_name + '.pickle', 'r') 
     casedata = pickle.load(filehandler)
     return casedata
 
