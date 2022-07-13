@@ -141,7 +141,7 @@ class ResultData:
             settings.diff), columns=agent_data.agent_name)
         for t in range(0, settings.diff):
             for agent in agent_data.agent_name:
-                    self.agent_operational_cost[agent][t]=agent_data.cost[agent][t]*self.Gn[agent][t] - agent_data.util[agent][t]*self.Ln[agent][t]
+                    self.agent_operational_cost[agent][t]=agent_data.cost[agent][t]*self.Gn[agent][t]
 
         # list with producers+prosumers
         prod_pros = []
