@@ -5,14 +5,14 @@ def save_tocsv(model_name,time_range,uniform_price_year,Pn_year,Gn_year,Ln_year,
     # Path to save the CSV files
     path = "market_module/DTU_case_study/Data_new/"
     
-    df_uniform_price_year = pd.concat(uniform_price_year).set_index(time_range)
-    df_Pn_year = pd.concat(Pn_year).set_index(time_range)
-    df_Gn_year = pd.concat(Gn_year).set_index(time_range)
-    df_Ln_year = pd.concat(Ln_year).set_index(time_range)
-    df_sw_year = pd.concat(sw_year).set_index(time_range)
-    df_settlement_year = pd.concat(settlement_year).set_index(time_range)
-    df_Gn_rev_year = pd.concat(Gn_revenue_year).set_index(time_range)
-    df_Ln_rev_year = pd.concat(Ln_revenue_year).set_index(time_range)
+    df_uniform_price_year = pd.concat(uniform_price_year).head(len(time_range)).set_index(time_range)
+    df_Pn_year = pd.concat(Pn_year).head(len(time_range)).set_index(time_range)
+    df_Gn_year = pd.concat(Gn_year).head(len(time_range)).set_index(time_range)
+    df_Ln_year = pd.concat(Ln_year).head(len(time_range)).set_index(time_range)
+    df_sw_year = pd.concat(sw_year).head(len(time_range)).set_index(time_range)
+    df_settlement_year = pd.concat(settlement_year).head(len(time_range)).set_index(time_range)
+    df_Gn_rev_year = pd.concat(Gn_revenue_year).head(len(time_range)).set_index(time_range)
+    df_Ln_rev_year = pd.concat(Ln_revenue_year).head(len(time_range)).set_index(time_range)
 
     # Export to CSV
     df_uniform_price_year.to_csv(path+f'df_uniform_price_year{model_name}.csv')
@@ -30,14 +30,14 @@ class CaseStudyData:
                 Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year):
         self.name = model_name
         self.timerange = time_range
-        self.price = pd.concat(uniform_price_year)
-        self.Pn = pd.concat(Pn_year)
-        self.Gn = pd.concat(Gn_year)
-        self.Ln = pd.concat(Ln_year)
-        self.SW = pd.concat(sw_year)
-        self.settlement = pd.concat(settlement_year)
-        self.Gn_rev = pd.concat(Gn_revenue_year)
-        self.Ln_rev = pd.concat(Ln_revenue_year)
+        self.price = pd.concat(uniform_price_year).head(len(time_range)).set_index(time_range)
+        self.Pn = pd.concat(Pn_year).head(len(time_range)).set_index(time_range)
+        self.Gn = pd.concat(Gn_year).head(len(time_range)).set_index(time_range)
+        self.Ln = pd.concat(Ln_year).head(len(time_range)).set_index(time_range)
+        self.SW = pd.concat(sw_year).head(len(time_range)).set_index(time_range)
+        self.settlement = pd.concat(settlement_year).head(len(time_range)).set_index(time_range)
+        self.Gn_rev = pd.concat(Gn_revenue_year).head(len(time_range)).set_index(time_range)
+        self.Ln_rev = pd.concat(Ln_revenue_year).head(len(time_range)).set_index(time_range)
 
 
 def save_topickle(model_name, casedata):

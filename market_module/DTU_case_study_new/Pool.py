@@ -92,8 +92,19 @@ save_topickle(model_name=model_name, casedata=pool_data)
 
 ## POOL WITH Energy budget
 print("running pool with energyBudget")
-
+# adapt l_max
 l_max_EB = l_max * 2
+
+# to store monthly average
+uniform_price_year = []
+Pn_year = []
+Gn_year = []
+Ln_year = []
+
+sw_year = []
+settlement_year = []
+Gn_revenue_year = []
+Ln_revenue_year = []
 for i,date in enumerate(one_year_idx,1):
 	print('-'*80)
 	print(date)
