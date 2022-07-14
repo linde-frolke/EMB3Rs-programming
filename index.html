@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emb3rs - Test Report</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
+    integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="container pt-5">
+  <img src="https://www.emb3rs.eu/wp-content/uploads/2019/12/EMB3Rs_horizontal-Logo.png" class="img">
+  <!-- Change after this -->
+  <h1>Outputs Short Term Market</h1>
+  <h2>Optimality</h2>
+    The optimization was solved successfully, i.e. an optimal solution to the optimization was found. 
+
+
+  <h2>Tables of output variables</h2>
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Hourly Generation per agent
+          </button>
+        </h2>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+              <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prosumer_1</th>
+      <th>prosumer_2</th>
+      <th>consumer_1</th>
+      <th>producer_1</th>
+    </tr>
+    <tr>
+      <th>t</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table> 
+            </div>
+          </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            Hourly Load per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+            <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prosumer_1</th>
+      <th>prosumer_2</th>
+      <th>consumer_1</th>
+      <th>producer_1</th>
+    </tr>
+    <tr>
+      <th>t</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>3.0</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table> 
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            Hourly Settlement per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <div class="card-body">
+          <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prosumer_1</th>
+      <th>prosumer_2</th>
+      <th>consumer_1</th>
+      <th>producer_1</th>
+    </tr>
+    <tr>
+      <th>t</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>-30.0</td>
+      <td>0.0</td>
+      <td>-30.0</td>
+      <td>60.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-48.0</td>
+      <td>-24.0</td>
+      <td>0.0</td>
+      <td>72.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>19.0</td>
+      <td>-19.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>55.0</td>
+      <td>55.0</td>
+      <td>-165.0</td>
+      <td>55.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>62.0</td>
+      <td>0.0</td>
+      <td>-93.0</td>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>-48.0</td>
+      <td>-48.0</td>
+      <td>-24.0</td>
+      <td>120.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>-64.0</td>
+      <td>0.0</td>
+      <td>-64.0</td>
+      <td>128.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>31.0</td>
+      <td>0.0</td>
+      <td>-93.0</td>
+      <td>62.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>43.0</td>
+      <td>43.0</td>
+      <td>-129.0</td>
+      <td>43.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>0.0</td>
+      <td>-33.0</td>
+      <td>0.0</td>
+      <td>33.0</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFour">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+          <div class="card-body">
+            <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>uniform price</th>
+    </tr>
+    <tr>
+      <th>t</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>19.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>44.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>55.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>51.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>43.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>33.0</td>
+    </tr>
+  </tbody>
+</table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFive">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+          <div class="card-body">
+            <table border="1" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Social Welfare</th>
+    </tr>
+    <tr>
+      <th>t</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>-65.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-68.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>-97.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>-102.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>-72.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>-145.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>-111.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>-178.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>-75.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>-106.0</td>
+    </tr>
+  </tbody>
+</table>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <h2>Plots of output variables</h2>
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOneB">
+        <h2 class="mb-0">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOneB" aria-expanded="true" aria-controls="collapseOneB">
+            Hourly Generation per agent
+          </button>
+        </h2>
+        </div>
+        <div id="collapseOneB" class="collapse" aria-labelledby="headingOneB" data-parent="#accordionExample">
+            <div class="card-body">
+              
+
+<style>
+
+</style>
+
+<div id="fig_el334201405884362852005608410366"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el334201405884362852005608410366", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588436011280", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435737232", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435667408", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435737936", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435738256", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435778768", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435778704", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435808656", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435809808", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435777296", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435944848"}, {"text": "generation", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588436400336"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435778064"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435779152"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435809040"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435810192"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 1.0, 2.0, 0.0, 2.0], [1.0, 0.0, 0.0, 0.0, 3.0], [2.0, 1.0, 3.0, 0.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 1.0, 1.0, 0.0, 1.0], [5.0, 2.0, 3.0, 0.0, 1.0], [6.0, 2.0, 0.0, 0.0, 5.0], [7.0, 1.0, 4.0, 0.0, 4.0], [8.0, 1.0, 5.0, 0.0, 2.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 1.0, 1.0, 0.0, 1.0], [11.0, 2.0, 2.0, 0.0, 1.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588436285200", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+         
+         mpld3.draw_figure("fig_el334201405884362852005608410366", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588436011280", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435737232", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435667408", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435737936", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435738256", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435778768", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435778704", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435808656", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435809808", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435777296", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435944848"}, {"text": "generation", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588436400336"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435778064"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435779152"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435809040"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435810192"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 1.0, 2.0, 0.0, 2.0], [1.0, 0.0, 0.0, 0.0, 3.0], [2.0, 1.0, 3.0, 0.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 1.0, 1.0, 0.0, 1.0], [5.0, 2.0, 3.0, 0.0, 1.0], [6.0, 2.0, 0.0, 0.0, 5.0], [7.0, 1.0, 4.0, 0.0, 4.0], [8.0, 1.0, 5.0, 0.0, 2.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 1.0, 1.0, 0.0, 1.0], [11.0, 2.0, 2.0, 0.0, 1.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588436285200", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+                 
+                 mpld3.draw_figure("fig_el334201405884362852005608410366", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588436011280", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435737232", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435667408", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435737936", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435738256", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435778768", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435778704", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435808656", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435809808", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435777296", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435944848"}, {"text": "generation", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588436400336"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435778064"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435779152"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435809040"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435810192"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 1.0, 2.0, 0.0, 2.0], [1.0, 0.0, 0.0, 0.0, 3.0], [2.0, 1.0, 3.0, 0.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 1.0, 1.0, 0.0, 1.0], [5.0, 2.0, 3.0, 0.0, 1.0], [6.0, 2.0, 0.0, 0.0, 5.0], [7.0, 1.0, 4.0, 0.0, 4.0], [8.0, 1.0, 5.0, 0.0, 2.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 1.0, 1.0, 0.0, 1.0], [11.0, 2.0, 2.0, 0.0, 1.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588436285200", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script> 
+            </div>
+          </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwoB">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwoB" aria-expanded="false" aria-controls="collapseTwoB">
+            Hourly Load per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwoB" class="collapse" aria-labelledby="headingTwoB" data-parent="#accordionExample">
+        <div class="card-body">
+            
+
+<style>
+
+</style>
+
+<div id="fig_el334201405884358087846005866520"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el334201405884358087846005866520", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588435552784", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435163728", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435164432", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435164752", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435165008", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435209744", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435209680", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435247696", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435248848", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435208208", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435511952"}, {"text": "load", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435398352"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435208976"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435210128"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435248080"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435249232"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 2.0, 2.0, 1.0, 0.0], [1.0, 2.0, 1.0, 0.0, 0.0], [2.0, 1.0, 2.0, 1.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 0.0, 0.0, 3.0, 0.0], [5.0, 0.0, 3.0, 3.0, 0.0], [6.0, 4.0, 2.0, 1.0, 0.0], [7.0, 3.0, 4.0, 2.0, 0.0], [8.0, 0.0, 5.0, 3.0, 0.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 0.0, 0.0, 3.0, 0.0], [11.0, 2.0, 3.0, 0.0, 0.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588435808784", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+         
+         mpld3.draw_figure("fig_el334201405884358087846005866520", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588435552784", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435163728", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435164432", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435164752", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435165008", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435209744", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435209680", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435247696", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435248848", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435208208", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435511952"}, {"text": "load", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435398352"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435208976"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435210128"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435248080"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435249232"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 2.0, 2.0, 1.0, 0.0], [1.0, 2.0, 1.0, 0.0, 0.0], [2.0, 1.0, 2.0, 1.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 0.0, 0.0, 3.0, 0.0], [5.0, 0.0, 3.0, 3.0, 0.0], [6.0, 4.0, 2.0, 1.0, 0.0], [7.0, 3.0, 4.0, 2.0, 0.0], [8.0, 0.0, 5.0, 3.0, 0.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 0.0, 0.0, 3.0, 0.0], [11.0, 2.0, 3.0, 0.0, 0.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588435808784", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+                 
+                 mpld3.draw_figure("fig_el334201405884358087846005866520", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-0.25, 5.25], "xdomain": [-0.55, 11.55], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588435552784", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588435163728", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588435164432", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588435164752", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588435165008", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588435209744", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588435209680", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588435247696", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588435248848", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588435208208", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435511952"}, {"text": "load", "position": [-0.04869511648745521, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588435398352"}, {"text": "prosumer_1", "position": [0.10360663082437274, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435208976"}, {"text": "prosumer_2", "position": [0.10360663082437274, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435210128"}, {"text": "consumer_1", "position": [0.10360663082437274, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435248080"}, {"text": "producer_1", "position": [0.10360663082437274, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588435249232"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 2.0, 2.0, 1.0, 0.0], [1.0, 2.0, 1.0, 0.0, 0.0], [2.0, 1.0, 2.0, 1.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 0.0, 0.0, 3.0, 0.0], [5.0, 0.0, 3.0, 3.0, 0.0], [6.0, 4.0, 2.0, 1.0, 0.0], [7.0, 3.0, 4.0, 2.0, 0.0], [8.0, 0.0, 5.0, 3.0, 0.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 0.0, 0.0, 3.0, 0.0], [11.0, 2.0, 3.0, 0.0, 0.0]], "data02": [[0.025201612903225812, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.05320340501792115, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.0812051971326165, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.01960125448028671, 0.7417440776815776], [0.279317876344086, 0.7417440776815776], [0.28491823476702516, 0.7417440776815776], [0.28491823476702516, 0.7492597101972102], [0.28491823476702516, 0.9736952861952862], [0.28491823476702516, 0.9812109187109187], [0.279317876344086, 0.9812109187109187], [0.01960125448028671, 0.9812109187109187], [0.014000896057347667, 0.9812109187109187], [0.014000896057347667, 0.9736952861952862], [0.014000896057347667, 0.7492597101972102], [0.014000896057347667, 0.7417440776815776], [0.01960125448028671, 0.7417440776815776]]}, "id": "el33420140588435808784", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script> 
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThreeB">
+        <h2 class="mb-0">
+          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThreeB" aria-expanded="false" aria-controls="collapseThreeB">
+            Hourly Settlement per agent
+          </button>
+        </h2>
+      </div>
+      <div id="collapseThreeB" class="collapse" aria-labelledby="headingThreeB" data-parent="#accordionExample">
+        <div class="card-body">
+          
+
+<style>
+
+</style>
+
+<div id="fig_el334201405884351643684424599971"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el334201405884351643684424599971", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-179.65, 142.65], "xdomain": [-0.55, 11.55], "ydomain": [-179.65, 142.65], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588434912720", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433854608", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588433855184", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588433855504", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588433855760", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588433900240", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588433900176", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588433901392", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588433902544", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588433857680", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434089232"}, {"text": "settlement", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434091216"}, {"text": "prosumer_1", "position": [0.8046875, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433858448"}, {"text": "prosumer_2", "position": [0.8046875, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433900624"}, {"text": "consumer_1", "position": [0.8046875, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433901776"}, {"text": "producer_1", "position": [0.8046875, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433902928"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -30.0, 0.0, -30.0, 60.0], [1.0, -48.0, -24.0, 0.0, 72.0], [2.0, 0.0, 19.0, -19.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 55.0, 55.0, -165.0, 55.0], [5.0, 62.0, 0.0, -93.0, 31.0], [6.0, -48.0, -48.0, -24.0, 120.0], [7.0, -64.0, 0.0, -64.0, 128.0], [8.0, 31.0, 0.0, -93.0, 62.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 43.0, 43.0, -129.0, 43.0], [11.0, 0.0, -33.0, 0.0, 33.0]], "data02": [[0.726282482078853, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7542842741935484, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7822860663082437, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.720682123655914, 0.7417440776815776], [0.9803987455197131, 0.7417440776815776], [0.9859991039426522, 0.7417440776815776], [0.9859991039426522, 0.7492597101972102], [0.9859991039426522, 0.9736952861952862], [0.9859991039426522, 0.9812109187109187], [0.9803987455197131, 0.9812109187109187], [0.720682123655914, 0.9812109187109187], [0.7150817652329748, 0.9812109187109187], [0.7150817652329748, 0.9736952861952862], [0.7150817652329748, 0.7492597101972102], [0.7150817652329748, 0.7417440776815776], [0.720682123655914, 0.7417440776815776]]}, "id": "el33420140588435164368", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+         
+         mpld3.draw_figure("fig_el334201405884351643684424599971", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-179.65, 142.65], "xdomain": [-0.55, 11.55], "ydomain": [-179.65, 142.65], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588434912720", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433854608", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588433855184", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588433855504", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588433855760", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588433900240", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588433900176", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588433901392", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588433902544", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588433857680", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434089232"}, {"text": "settlement", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434091216"}, {"text": "prosumer_1", "position": [0.8046875, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433858448"}, {"text": "prosumer_2", "position": [0.8046875, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433900624"}, {"text": "consumer_1", "position": [0.8046875, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433901776"}, {"text": "producer_1", "position": [0.8046875, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433902928"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -30.0, 0.0, -30.0, 60.0], [1.0, -48.0, -24.0, 0.0, 72.0], [2.0, 0.0, 19.0, -19.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 55.0, 55.0, -165.0, 55.0], [5.0, 62.0, 0.0, -93.0, 31.0], [6.0, -48.0, -48.0, -24.0, 120.0], [7.0, -64.0, 0.0, -64.0, 128.0], [8.0, 31.0, 0.0, -93.0, 62.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 43.0, 43.0, -129.0, 43.0], [11.0, 0.0, -33.0, 0.0, 33.0]], "data02": [[0.726282482078853, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7542842741935484, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7822860663082437, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.720682123655914, 0.7417440776815776], [0.9803987455197131, 0.7417440776815776], [0.9859991039426522, 0.7417440776815776], [0.9859991039426522, 0.7492597101972102], [0.9859991039426522, 0.9736952861952862], [0.9859991039426522, 0.9812109187109187], [0.9803987455197131, 0.9812109187109187], [0.720682123655914, 0.9812109187109187], [0.7150817652329748, 0.9812109187109187], [0.7150817652329748, 0.9736952861952862], [0.7150817652329748, 0.7492597101972102], [0.7150817652329748, 0.7417440776815776], [0.720682123655914, 0.7417440776815776]]}, "id": "el33420140588435164368", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+                 
+                 mpld3.draw_figure("fig_el334201405884351643684424599971", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-179.65, 142.65], "xdomain": [-0.55, 11.55], "ydomain": [-179.65, 142.65], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588434912720", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433854608", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 2, "coordinates": "data", "id": "el33420140588433855184", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 3, "coordinates": "data", "id": "el33420140588433855504", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data01", "xindex": 0, "yindex": 4, "coordinates": "data", "id": "el33420140588433855760", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "axes", "id": "el33420140588433900240", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 2, "coordinates": "axes", "id": "el33420140588433900176", "color": "#FF7F0E", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 3, "coordinates": "axes", "id": "el33420140588433901392", "color": "#2CA02C", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}, {"data": "data02", "xindex": 0, "yindex": 4, "coordinates": "axes", "id": "el33420140588433902544", "color": "#D62728", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 1000002.0, "drawstyle": "default"}], "paths": [{"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "axes", "pathcodes": ["M", "L", "S", "L", "S", "L", "S", "L", "S", "Z"], "id": "el33420140588433857680", "dasharray": "none", "alpha": 0.8, "facecolor": "rgba(255, 255, 255, 0.8)", "edgecolor": "rgba(204, 204, 204, 0.8)", "edgewidth": 1.0, "zorder": 1000000.0}], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434089232"}, {"text": "settlement", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434091216"}, {"text": "prosumer_1", "position": [0.8046875, 0.9364177489177489], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433858448"}, {"text": "prosumer_2", "position": [0.8046875, 0.8793694008537759], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433900624"}, {"text": "consumer_1", "position": [0.8046875, 0.8223210527898027], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433901776"}, {"text": "producer_1", "position": [0.8046875, 0.7652727047258298], "coordinates": "axes", "h_anchor": "start", "v_baseline": "auto", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 1000003.0, "id": "el33420140588433902928"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -30.0, 0.0, -30.0, 60.0], [1.0, -48.0, -24.0, 0.0, 72.0], [2.0, 0.0, 19.0, -19.0, 0.0], [3.0, 0.0, 0.0, 0.0, 0.0], [4.0, 55.0, 55.0, -165.0, 55.0], [5.0, 62.0, 0.0, -93.0, 31.0], [6.0, -48.0, -48.0, -24.0, 120.0], [7.0, -64.0, 0.0, -64.0, 128.0], [8.0, 31.0, 0.0, -93.0, 62.0], [9.0, 0.0, 0.0, 0.0, 0.0], [10.0, 43.0, 43.0, -129.0, 43.0], [11.0, 0.0, -33.0, 0.0, 33.0]], "data02": [[0.726282482078853, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7542842741935484, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867], [0.7822860663082437, 0.9495701058201058, 0.8925217577561328, 0.8354734096921597, 0.7784250616281867]], "data03": [[0.720682123655914, 0.7417440776815776], [0.9803987455197131, 0.7417440776815776], [0.9859991039426522, 0.7417440776815776], [0.9859991039426522, 0.7492597101972102], [0.9859991039426522, 0.9736952861952862], [0.9859991039426522, 0.9812109187109187], [0.9803987455197131, 0.9812109187109187], [0.720682123655914, 0.9812109187109187], [0.7150817652329748, 0.9812109187109187], [0.7150817652329748, 0.9736952861952862], [0.7150817652329748, 0.7492597101972102], [0.7150817652329748, 0.7417440776815776], [0.720682123655914, 0.7417440776815776]]}, "id": "el33420140588435164368", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFourB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFourB" aria-expanded="false" aria-controls="collapseFourB">
+              Hourly shadow price (market clearing price)
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFourB" class="collapse" aria-labelledby="headingFourB" data-parent="#accordionExample">
+          <div class="card-body">
+            
+
+<style>
+
+</style>
+
+<div id="fig_el334201405884348800165403132815"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el334201405884348800165403132815", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [17.2, 56.8], "xdomain": [-0.55, 11.55], "ydomain": [17.2, 56.8], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433690512", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433433488", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434052944"}, {"text": "market clearing price", "position": [-0.06658826164874554, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433687504"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 30.0], [1.0, 24.0], [2.0, 19.0], [3.0, 44.0], [4.0, 55.0], [5.0, 31.0], [6.0, 24.0], [7.0, 32.0], [8.0, 31.0], [9.0, 51.0], [10.0, 43.0], [11.0, 33.0]]}, "id": "el33420140588434880016", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+         
+         mpld3.draw_figure("fig_el334201405884348800165403132815", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [17.2, 56.8], "xdomain": [-0.55, 11.55], "ydomain": [17.2, 56.8], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433690512", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433433488", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434052944"}, {"text": "market clearing price", "position": [-0.06658826164874554, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433687504"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 30.0], [1.0, 24.0], [2.0, 19.0], [3.0, 44.0], [4.0, 55.0], [5.0, 31.0], [6.0, 24.0], [7.0, 32.0], [8.0, 31.0], [9.0, 51.0], [10.0, 43.0], [11.0, 33.0]]}, "id": "el33420140588434880016", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+                 
+                 mpld3.draw_figure("fig_el334201405884348800165403132815", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [17.2, 56.8], "xdomain": [-0.55, 11.55], "ydomain": [17.2, 56.8], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433690512", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588433433488", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588434052944"}, {"text": "market clearing price", "position": [-0.06658826164874554, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433687504"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 30.0], [1.0, 24.0], [2.0, 19.0], [3.0, 44.0], [4.0, 55.0], [5.0, 31.0], [6.0, 24.0], [7.0, 32.0], [8.0, 31.0], [9.0, 51.0], [10.0, 43.0], [11.0, 33.0]]}, "id": "el33420140588434880016", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFiveB">
+          <h2 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFiveB" aria-expanded="false" aria-controls="collapseFiveB">
+              Hourly social welfare
+            </button>
+          </h2>
+        </div>
+        <div id="collapseFiveB" class="collapse" aria-labelledby="headingFiveB" data-parent="#accordionExample">
+          <div class="card-body">
+            
+
+<style>
+
+</style>
+
+<div id="fig_el33420140588434356048948164997"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el33420140588434356048948164997", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-186.9, 8.9], "xdomain": [-0.55, 11.55], "ydomain": [-186.9, 8.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433038672", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588432900368", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433232720"}, {"text": "social welfare", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433234640"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -65.0], [1.0, -68.0], [2.0, -97.0], [3.0, 0.0], [4.0, -102.0], [5.0, -72.0], [6.0, -145.0], [7.0, -111.0], [8.0, -178.0], [9.0, 0.0], [10.0, -75.0], [11.0, -106.0]]}, "id": "el33420140588434356048", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+         
+         mpld3.draw_figure("fig_el33420140588434356048948164997", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-186.9, 8.9], "xdomain": [-0.55, 11.55], "ydomain": [-186.9, 8.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433038672", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588432900368", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433232720"}, {"text": "social welfare", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433234640"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -65.0], [1.0, -68.0], [2.0, -97.0], [3.0, 0.0], [4.0, -102.0], [5.0, -72.0], [6.0, -145.0], [7.0, -111.0], [8.0, -178.0], [9.0, 0.0], [10.0, -75.0], [11.0, -106.0]]}, "id": "el33420140588434356048", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.7.js", function(){
+                 
+                 mpld3.draw_figure("fig_el33420140588434356048948164997", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.55, 11.55], "ylim": [-186.9, 8.9], "xdomain": [-0.55, 11.55], "ydomain": [-186.9, 8.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 8, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 10, "tickvalues": null, "tickformat_formatter": "", "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": false}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33420140588433038672", "lines": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "id": "el33420140588432900368", "color": "#1F77B4", "linewidth": 1.5, "dasharray": "none", "alpha": 1, "zorder": 2, "drawstyle": "default"}], "paths": [], "markers": [], "texts": [{"text": "hour number", "position": [0.5, -0.07921476671476674], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433232720"}, {"text": "social welfare", "position": [-0.10791890681003585, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 10.0, "color": "#000000", "alpha": 1, "zorder": 3, "id": "el33420140588433234640"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, -65.0], [1.0, -68.0], [2.0, -97.0], [3.0, 0.0], [4.0, -102.0], [5.0, -72.0], [6.0, -145.0], [7.0, -111.0], [8.0, -178.0], [9.0, 0.0], [10.0, -75.0], [11.0, -106.0]]}, "id": "el33420140588434356048", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+          </div>
+        </div>
+      </div>
+  </div>
+  <!-- Change Before this -->
+</body>
+
+</html>

@@ -454,6 +454,7 @@ def test_decentralized():
     print(result_dict['Pn'])
     # print(result.Ln)
     print(result_dict["Gn"])
+    print(result_dict["QoE"])
 
 
     print("finished test_decentralized().............................................")
