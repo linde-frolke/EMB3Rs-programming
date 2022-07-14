@@ -24,32 +24,3 @@ def save_tocsv(model_name,time_range,uniform_price_year,Pn_year,Gn_year,Ln_year,
     df_Gn_rev_year.to_csv(path+f'df_Gn_revenue_year{model_name}.csv')
     df_Ln_rev_year.to_csv(path+f'df_Ln_revenue_year{model_name}.csv')
 
-
-class CaseStudyData:
-    def __init__(self, model_name,time_range, uniform_price_year,
-                Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year):
-        self.name = model_name
-        self.timerange = time_range
-        self.price = uniform_price_year
-        self.Pn = Pn_year
-        self.Gn = Gn_year
-        self.Ln = Ln_year
-        self.SW = sw_year
-        self.settlement = settlement_year
-        self.Gn_rev = Gn_revenue_year
-        self.Ln_rev = Ln_revenue_year
-
-
-def save_topickle(model_name, casedata):
-    path = "market_module/DTU_case_study_new/output_data/"
-    
-    filehandler = open(path + model_name, 'w') 
-    pickle.dump(casedata, filehandler)
-
-def load_frompickle(model_name):
-    path = "market_module/DTU_case_study_new/output_data/"
-    filehandler = open(path + model_name, 'w') 
-    casedata = pickle.load(filehandler)
-    return casedata
-
-

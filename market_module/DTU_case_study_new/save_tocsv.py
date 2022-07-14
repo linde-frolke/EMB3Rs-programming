@@ -30,25 +30,25 @@ class CaseStudyData:
                 Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year):
         self.name = model_name
         self.timerange = time_range
-        self.price = uniform_price_year
-        self.Pn = Pn_year
-        self.Gn = Gn_year
-        self.Ln = Ln_year
-        self.SW = sw_year
-        self.settlement = settlement_year
-        self.Gn_rev = Gn_revenue_year
-        self.Ln_rev = Ln_revenue_year
+        self.price = pd.concat(uniform_price_year)
+        self.Pn = pd.concat(Pn_year)
+        self.Gn = pd.concat(Gn_year)
+        self.Ln = pd.concat(Ln_year)
+        self.SW = pd.concat(sw_year)
+        self.settlement = pd.concat(settlement_year)
+        self.Gn_rev = pd.concat(Gn_revenue_year)
+        self.Ln_rev = pd.concat(Ln_revenue_year)
 
 
 def save_topickle(model_name, casedata):
     path = "market_module/DTU_case_study_new/output_data/"
     
-    with open(path + model_name + '.pickle', 'w') as handle:
+    with open(path + model_name + '.pickle', 'wb') as handle:
         pickle.dump(casedata, handle)
 
 def load_frompickle(model_name):
     path = "market_module/DTU_case_study_new/output_data/"
-    filehandler = open(path + model_name + '.pickle', 'r') 
+    filehandler = open(path + model_name + '.pickle', 'rb') 
     casedata = pickle.load(filehandler)
     return casedata
 
