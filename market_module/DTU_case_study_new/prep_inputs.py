@@ -34,7 +34,8 @@ def prep_inputs():
     # maximum capacity of generators, gmax
     # (nr_hours,nr_agents)
     # take the largest consumption value
-    max_consum = np.ones(tot_h)*max(consumption_data.max(axis=0)[:-1])*cap_constant
+    max_consum = np.ones(tot_h)*consumption_data.sum(axis=1).max()*cap_constant
+    # print(max_consum)
     max_sm_avaliable = (consumption_data.loc[:,'SM_avail_heat'])
 
     g_max = np.zeros((tot_h,nr_agents))
