@@ -1,0 +1,762 @@
+
+<!DOCTYPE html>
+
+<html lang="EN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to EMB3Rs’s Market Module documentation! &#8212; EMB3Rs 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-emb3rs-s-market-module-documentation">
+<h1>Welcome to EMB3Rs’s Market Module documentation!<a class="headerlink" href="#welcome-to-emb3rs-s-market-module-documentation" title="Permalink to this heading">¶</a></h1>
+<p>The EMB3Rs platform has been designed to evaluate the reuse and trade of waste Heating
+and Cooling (HC) in a holistic perspective within an industrial process,
+energy system environment, or in District Heating and Cooling (DHC) systems
+under-regulated and liberalized market environment. The platform empowers
+industrial users and stakeholders to investigate the economic potential
+of their investment in the recovery of waste HC as an energy resource, based on
+the simulation of supply-demand scenarios. To this end, the platform is able to
+simulate multiple business and market models for DHC systems.
+The EMB3Rs platform is composed of five modules: Core Functionalities (CF),
+Geographical Information System (GIS), Techno-Economic Optimisation (TEO),
+Market Module (MM), and Business Module (BM).
+The dedicated MM allows users to simulate current and future trends for the HC markets,
+allowing them to choose the best market framework aligned with the users’ economic,
+environmental and social interests. This is especially important for users who have
+invested (or are considering investing) in waste heat recovery to assess the economic
+potential and environmental savings of their investment. Recently, peer-to-peer (P2P)
+and community-based markets have been presented as an alternative to existing pool
+energy markets, both for HC and electricity systems. Therefore, the MM models and
+implements the P2P and community-based market designs, in addition to the conventional
+pool market design. In this way, users can create, test and validate different market
+structures for selling and buying energy in DHC systems. The outputs of the market
+analysis enable users (e.g., industries, supermarkets and data centres) to estimate
+potential costs and revenues for different market participants from trading excess
+heat and cold, under different market designs.
+Based on a user’s experience and motivation, different types of market analysis might
+be required. To address this, the MM was divided into short-term and long-term analyses.
+The short-term market analysis is intended to give an overview of individual agents’
+performance when subjected to different market features. In this design, users are
+able to change some parameters and easily and quickly check the effect of such changes
+on market outcomes. In this way, the effect of different market settings can be studied
+in case studies with short horizons. On the other hand, the long-term market analysis
+can be used to investigate market outcomes for agents in wider time ranges like months
+or years. This is more suitable when the user wants to evaluate the profitability of
+potential investments.</p>
+</section>
+<section id="short-term">
+<h1>Short-Term<a class="headerlink" href="#short-term" title="Permalink to this heading">¶</a></h1>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<p>In order to run a simulation, some inputs must be chosen by the user. Some of these are specific to the desired market design, namely Pool, P2P or
+Community-based market.
+First of all, the user has to select the market design (e.g., Pool, P2P, or Community). Regardless of the selected market, the user must select the number
+of simulated hours, which can go up to 48h. In addition,
+a date to start the simulation is selected. This is used to select the correct inputs from other modules (TEO, CF), that will be used to create the agent bids.
+Next, the offer type is selected, which includes the simple, block or energy budget options.
+There is an option to include electricity market dependence. This option makes the price and quantity bids of agents that are CHPs dependent on an input
+electricity price (forecast).
+The product differentiation option is only needed for the P2P market design. Here, the available options are CO2 emissions, energy losses, distance or
+no preference.</p>
+<p>In case the Community market is selected, the user must provide several settings. The type of objective function must be chosen (either “autonomy” or
+“peakShaving”), which will specify what goal the community is trying to achieve. In addition, the user must input three parameters
+representing the penalty for importing heat, the reward for exporting heat, and the penalty for the size of the peak import. Default values are presented
+for these parameters, but, optionally, the user can modify them.</p>
+<p>In case the user simulates a Pool market, there is an option to include network operating conditions in the market. If this option is selected,
+the dispatch determined by the market will respect the thermal energy flow directions in the network. Note that this does not mean the sizes of thermal
+energy flows will be feasible, as this needs to be checked by a network operator. If necessary, the network operator would have to re-dispatch.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 54%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>md</p></td>
+<td><p>Market design. Represents the market design the user intends to simulate. Pool, P2P and Community are the options.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>nr_of_hours</p></td>
+<td><p>Represents the simulation horizon period. An integer is expected.</p></td>
+<td><p>Hours</p></td>
+<td><p>Integer</p></td>
+</tr>
+<tr class="row-even"><td><p>start_datetime</p></td>
+<td><p>Date of the format “dd-mm-yyyy”.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>offer_type</p></td>
+<td><p>Represents the offer type, which can be related to all agents or only to some agents. Simple, Block and energyBudget are the options</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-even"><td><p>prod_diff</p></td>
+<td><p>The option related to product differentiation, namely, by encouraging or penalizing some market transactions, according to user preferences. noPref (No Preferences), co2Emissions (CO2 Emissions), networkDistance (Network Distance) and losses (Energy Losses)   are the options  .</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>el_dependent</p></td>
+<td><p>Only available for Pool market True or False.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Boolean</p></td>
+</tr>
+<tr class="row-even"><td><p>el_price</p></td>
+<td><p>If el_dependent=True, an electricity price (forecast) must be entered for all market hours.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Network</p></td>
+<td><p>“none” or “direction”.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-even"><td><p>Objective</p></td>
+<td><p>Only if “md = community”. Should be one of [“autonomy”, “peakShaving”].</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>Community settings</p></td>
+<td><p>Include g_peak, g_exp, g_imp. g_exp must be nonpositive, while g_imp and g_peak must be nonnegative.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Integers</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<p>After the Inputs are defined, other parameters must be provided. These parameters are not only linked to the individual agents and their characteristics,
+but also the network features. Some can be defined by the user, others come from other EMB3Rs modules, namely CF, TEO and GIS.
+The information related to the bids, namely
+prices and quantities must be mandatorily provided for each agent and each time step.</p>
+<p>The model uses sets related to the time slices for the simulation and the agents’ names. These sets are automatically created within the module,
+based on the agents’ bids and the user-selected market horizon.</p>
+<p>Under some settings, GIS data is necessary to run the market. This is the case when the user chooses to include “network = directions”, or whether a
+P2P market considering technical losses or network distances preferences is selected. The GIS module provides information on the linked nodes and correspondent distances.
+If the user has chosen to include block offers, a dictionary with the block offer information must be provided by the user.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 47%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Data Source</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>agent_ids [n]</p></td>
+<td><p>Represents each agent id. This is imported from TEO.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+<td><p>CF (sinks), TEO (sources)</p></td>
+</tr>
+<tr class="row-odd"><td><p>co2_emissions [n]</p></td>
+<td><p>CO2 emissions by agent, imported from TEO. This list is only required when preferences on CO2-Emissions are selected in the P2P market.</p></td>
+<td><p>Kg.CO2/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-even"><td><p>gmax [t,n]</p></td>
+<td><p>The maximum production each agent offers in the market. Values must be provided for each agent and each time step. A constant value for each agent is imported from the TEO module, but an optional user input can override the imported values.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-odd"><td><p>lmax [t,n]</p></td>
+<td><p>Maximum consumption each agent offers to purchase in the market. Values must be provided for each agent and each time step. This load profile is imported from the TEO module.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+<td><p>CF</p></td>
+</tr>
+<tr class="row-even"><td><p>cost [t,n]</p></td>
+<td><p>The offer price is related to the production, which represents the minimum price the agent wants to receive per unit of energy. Values must be provided for each agent and each time step. This is imported from the TEO module.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-odd"><td><p>util [t,n]</p></td>
+<td><p>This bid is related to consumption. Values must be provided for each agent and each time step.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>User</p></td>
+</tr>
+<tr class="row-even"><td><p>gis_data</p></td>
+<td><p>All the network data that is required to run the MM under the Distance or Losses product differentiation features. It must be a dictionary with the linked agents, the total length between them, and the total costs associated with each pipeline. This is also used in case the network feature is selected in the Pool market. It is imported from the GIS module.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Dict</p></td>
+<td><p>GIS</p></td>
+</tr>
+<tr class="row-odd"><td><p>block_offer</p></td>
+<td><p>A dictionary with agent IDs as keys. The values include the time steps when the block offer is active. Not all agent IDs need to be included, only the IDs of agents that submit block bids are needed.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Dict</p></td>
+<td><p>User</p></td>
+</tr>
+<tr class="row-even"><td><p>is_in_community</p></td>
+<td><p>A boolean for each agent specifies whether it is part of the community or not. This input is required when the Community market is chosen.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+<td><p>User</p></td>
+</tr>
+<tr class="row-odd"><td><p>is_chp</p></td>
+<td><p>A boolean for each agent specifies whether it is a CHP or not. This input is mandatory in case the user selects the electricity dependence option. This input is derived from agent IDs provided by the TEO, so the user does not need to input this.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-even"><td><p>chp_pars</p></td>
+<td><p>For each agent that is a CHP, some parameters must be specified. This input is mandatory in case the user selects the electricity dependence option, otherwise, it is not needed.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+<td><p>User</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="optimization-variables">
+<h2>Optimization Variables<a class="headerlink" href="#optimization-variables" title="Permalink to this heading">¶</a></h2>
+<p>To run a simulation, some variables are used to represent the agents’ behaviour within each market section. Ln, Gn and Pn are related to individual agents and are
+computed both for all models. Snm, Bnm and Tnm are related to the trades between peers but are only computed in the decentralized model. Also, a dual variable is
+obtained, representing the market clearing price for each transaction.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 54%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ln [t,n]</p></td>
+<td><p>Amount purchased in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gn [t,n]</p></td>
+<td><p>Amount sold in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Pn [t,n]</p></td>
+<td><p>Represents the net balance for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Snm [t,n,n]</p></td>
+<td><p>Amount sold by agent n to agent m, for each agent, for each time step. This variable is only used in the decentralized market.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Bnm [t,n,n]</p></td>
+<td><p>Amount bought by agent n to agent m, for each agent, for each time step. This variable is only used in the decentralized market.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tnm [t,n,n]</p></td>
+<td><p>Represents the net balance for each bilateral trade, for each agent, for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>b [t,n]</p></td>
+<td><p>Binary variable indicating whether a bid is fully accepted or fully rejected. This variable is only used if the block offer is selected.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>shadow_price [t,n,n] or [t,n]</p></td>
+<td><p>Presents the market clearing price. Presents one value per time step, if the centralized market design is chosen. Outputs one value per transaction and per time step, if the decentralized market design is the selected one.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<p>With regard to the outputs, it is possible to get and visualize some optimization variables, as well as the simulation status. In addition, several other
+outputs are calculated based on performances to assist and aid the user to assess the results.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 54%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ln [t,n]</p></td>
+<td><p>Amount purchased in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gn [t,n]</p></td>
+<td><p>Amount sold in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Pn [t,n]</p></td>
+<td><p>Represents the net balance for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Settlement [t,n]</p></td>
+<td><p>The settlement is obtained by multiplying the energy dispatched by the price of each transaction. It is calculated for each agent for each time step.</p></td>
+<td><p>€</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>social_welfare [t]</p></td>
+<td><p>The social welfare is obtained by multiplying the energy dispatched by the bid of each agent and then grouping the results by time step. A value is presented for each time step.</p></td>
+<td><p>€</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>shadow_price [t,n,n] or [t,n]</p></td>
+<td><p>Represents the market clearing price. It presents one value per time step if the centralized market design is selected. Outputs one value per transaction and per time step, if the decentralized market design is selected.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Market plot</p></td>
+<td><p>Yields a plot with the offers’ merit order for all agents, for a single selected time step  . It is only available if the Pool market is the simulated design.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Figure</p></td>
+</tr>
+<tr class="row-odd"><td><p>QoE</p></td>
+<td><p>Indicates the fairness level for each market result. The closer this indicator is to 1, the fairer the results will be to consumers. Outputs one value per time step. This value is only available in the P2P market design.</p></td>
+<td><p>%</p></td>
+<td><p>Array</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="long-term">
+<h1>Long-Term<a class="headerlink" href="#long-term" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>Inputs<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>In order to run a simulation, some pre-defined inputs must be inserted by the user. These inputs are related to the desired market design, namely
+a centralised or decentralised structure and the simulation time horizon. The latter is defined by the combination of horizon basis (weeks, months or years),
+data profile (hourly or daily) and recurrence, which will define the number of instances to run. In addition, a date to start the simulation is selected.
+This is used to select the correct inputs from other modules (TEO, CF) that will be used to form agent bids. Afterward, the user can also select the
+yearly demand rate, denoting the increase or decrease in the demand over the simulated years. The product differentiation option is only needed for the
+decentralised design. Here, the available options are CO2 emissions, distance or no preference.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 64%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>md</p></td>
+<td><p>Represents the market design the user intends to simulate. Centralized or Decentralized are the options.</p></td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>horizon_basis</p></td>
+<td><p>Represents the simulation horizon period. Weeks, Months or Years are the options.</p></td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-even"><td><p>data_profile</p></td>
+<td><p>Represents the level of data aggregation, which can be considered as hourly or daily grouped. That is, it sets whether the optimization process is simulated on an hourly or daily basis for the entire time horizon. Note that this option influences the computational effort of the MM. Hourly or Daily are the options.</p></td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>recurrence</p></td>
+<td><p>Represents the number of periods selected in the horizon_basis. An integer is expected.</p></td>
+<td><p>Integer</p></td>
+</tr>
+<tr class="row-even"><td><p>start_datetime</p></td>
+<td><p>A data of format “dd-mm-yyyy”.</p></td>
+<td><p>String</p></td>
+</tr>
+<tr class="row-odd"><td><p>yearly_demand_rate</p></td>
+<td><p>The expected yearly demand rate change. The demand can increase or decrease over the years so a float number within the range [-1,1] is expected.</p></td>
+<td><p>Float</p></td>
+</tr>
+<tr class="row-even"><td><p>prod_diff_option</p></td>
+<td><p>The option is related to product differentiation, namely, by encouraging or penalizing some market transactions, according to user preferences. noPref (No Preference), co2Emissions (CO2 Emissions) and networkDistance (Network Distance) are the options.</p></td>
+<td><p>String</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h2>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<p>After the Inputs are defined, other parameters must be provided. These parameters are not only linked to the individual agents and their characteristics,
+but also the network features. Some can be defined by the user, or come from other EMB3Rs modules, namely CF, TEO and GIS.
+Here the name and emissions of each agent are included. Then the information related to the bids, namely prices and quantities,
+whether one agent is willing to sell or buy energy, must be provided for each agent and each time step.</p>
+<p>The model uses sets related to time slices for the simulation and agent’s names. These sets are automatically created within the module,
+based on the agents’ bids and the user-select market horizon.</p>
+<p>Under some settings, GIS data is necessary to run the market. This is the case if the user has chosen a decentralized market with a distance-based preference.
+This GIS module provides information on the linked nodes and correspondent distances.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 47%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Data Source</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>agent_ids [n]</p></td>
+<td><p>Represents each agent id. This is imported from TEO.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Array</p></td>
+<td><p>CF (sinks), TEO (sources)</p></td>
+</tr>
+<tr class="row-odd"><td><p>co2_emissions [n]</p></td>
+<td><p>CO2 emissions by agent, imported from TEO. This list is only required when preferences on CO2-Emissions are selected in the decentralized model.</p></td>
+<td><p>Kg.CO2/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-even"><td><p>gmax [t,n]</p></td>
+<td><p>The maximum production each agent offers in the market. Values must be provided for each agent and each time step. A constant value for each agent is imported from the TEO module, but an optional user input can override the imported values.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-odd"><td><p>lmax [t,n]</p></td>
+<td><p>Maximum consumption each agent offers to purchase in the market. Values must be provided for each agent and each time step. This load profile is imported from the TEO module.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+<td><p>CF</p></td>
+</tr>
+<tr class="row-even"><td><p>cost [t,n]</p></td>
+<td><p>The offer price is related to the production, which represents the minimum price the agent wants to receive per unit of energy. Values must be provided for each agent and each time step. This is imported from the TEO module.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>TEO</p></td>
+</tr>
+<tr class="row-odd"><td><p>util [t,n]</p></td>
+<td><p>This bid is related to consumption. Values must be provided for each agent and each time step.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+<td><p>User</p></td>
+</tr>
+<tr class="row-even"><td><p>gis_data</p></td>
+<td><p>The network data to run the platform under the distance product differentiation feature. It must be a dictionary with the linked agents, the total length between them and the total cost associated with each pipeline. Such information is imported from the GIS module.</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>Dictionary</p></td>
+<td><p>GIS</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h2>Optimization Variables<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<p>To compute the MM through the long-term market analysis, some variables are used to represent the agents’ behaviour within each market section.
+Ln, Gn and Pn are related to individual agents and are computed both for centralized and decentralized modes. Snm, Bnm and Tnm are related to the
+trades between peers but are only computed in the decentralized model. Also, a dual variable is obtained, representing the market clearing price
+for each transaction.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 54%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ln [t,n]</p></td>
+<td><p>Amount purchased in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gn [t,n]</p></td>
+<td><p>Amount sold in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Pn [t,n]</p></td>
+<td><p>Represents the net balance for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Snm [t,n,n]</p></td>
+<td><p>Amount sold by agent n to agent m, for each agent, for each time step. This variable is only used in the decentralized market.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Bnm [t,n,n]</p></td>
+<td><p>Amount bought by agent n to agent m, for each agent, for each time step. This variable is only used in the decentralized market.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tnm [t,n,n]</p></td>
+<td><p>Represents the net balance for each bilateral trade, for each agent, for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>shadow_price [t,n,n] or [t,n]</p></td>
+<td><p>Presents the market clearing price. Presents one value per time step, if the centralized market design is chosen. Outputs one value per transaction and per time step, if the decentralized market design is the selected one.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id4">
+<h2>Outputs<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<p>With regard to the outputs, it is possible to get and visualize some variables as well as the simulation status. In addition,
+several other outputs are calculated based on performances to assist the user to assess the results.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 54%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Data Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Ln [t,n]</p></td>
+<td><p>Amount purchased in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gn [t,n]</p></td>
+<td><p>Amount sold in the market for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>Pn [t,n]</p></td>
+<td><p>Represents the net balance for each agent for each time step.</p></td>
+<td><p>kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>Settlement [t,n]</p></td>
+<td><p>The settlement is obtained by multiplying the energy dispatched by the price of each transaction. It is calculated for each agent for each time step.</p></td>
+<td><p>€</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>agent_operational_cost [t,n]</p></td>
+<td><p>The agent operating cost is obtained by multiplying the energy dispatched by the bid of each agent. It is calculated for each agent for each time step.</p></td>
+<td><p>€</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>social_welfare [t]</p></td>
+<td><p>The social welfare is obtained by multiplying the energy dispatched by the bid of each agent and then grouping the results by time step. A value is presented for each time step.</p></td>
+<td><p>€</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>shadow_price [t,n,n] or [t,n]</p></td>
+<td><p>Represents the market clearing price. It presents one value per time step if the centralized market design is selected. Outputs one value per transaction and per time step, if the decentralized market design is selected.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>SPM</p></td>
+<td><p>This KPI indicates the percentage of successful participation in the market by sources and sinks. One value is presented per agent.</p></td>
+<td><p>%</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-even"><td><p>ADG</p></td>
+<td><p>This KPI indicates the average dispatched production by a source. The dispatched production by period is based on the ratio between the available capacity and the actual dispatched production.</p></td>
+<td><p>%</p></td>
+<td><p>Array</p></td>
+</tr>
+<tr class="row-odd"><td><p>expensive_prod</p></td>
+<td><p>Indicates the best price an agent must offer in the market to achieve higher revenue. The output will be one value since one agent and time step must be selected.</p></td>
+<td><p>€/kWh</p></td>
+<td><p>Float</p></td>
+</tr>
+<tr class="row-even"><td><p>QoE</p></td>
+<td><p>Indicates the fairness level for each market result. The closer this indicator is to 1, the fairer the results will be. Outputs one value per time step. This value is only available in the decentralized market design.</p></td>
+<td><p>%</p></td>
+<td><p>Array</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Welcome to EMB3Rs’s Market Module documentation!</a></li>
+<li><a class="reference internal" href="#short-term">Short-Term</a><ul>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#optimization-variables">Optimization Variables</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#long-term">Long-Term</a><ul>
+<li><a class="reference internal" href="#id1">Inputs</a></li>
+<li><a class="reference internal" href="#id2">Parameters</a></li>
+<li><a class="reference internal" href="#id3">Optimization Variables</a></li>
+<li><a class="reference internal" href="#id4">Outputs</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="#">Table of Contents</a></h3>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Linde and Sérgio.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
