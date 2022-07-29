@@ -3,17 +3,23 @@
   <component name="ChangeListManager">
     <list default="true" id="bb56f31c-037a-4df5-b585-bd13877dba86" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/doctrees/environment.pickle" beforeDir="false" afterPath="$PROJECT_DIR$/build/doctrees/environment.pickle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/doctrees/index.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/build/doctrees/index.doctree" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/html/_sources/index.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/html/_sources/index.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/html/searchindex.js" beforeDir="false" afterPath="$PROJECT_DIR$/build/html/searchindex.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/source/index.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/tests/test_prototype_centralized.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -34,7 +40,49 @@
       <recent name="C:\Users\antonio.s.faria\OneDrive - INESC TEC\EMB3Rs-programming\build\html" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.test">
+    <configuration name="offline_testing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="EMB3Rs-programming" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/market_module/long_term/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/market_module/long_term/tests/offline_testing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="EMB3Rs-programming" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test_long_term" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="EMB3Rs-programming" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -58,6 +106,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.offline_testing" />
         <item itemvalue="Python.test_long_term" />
       </list>
     </recent_temporary>
@@ -83,5 +133,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

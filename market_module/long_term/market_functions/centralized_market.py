@@ -26,6 +26,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     t = settings.diff
 
     for n_iter in range(0, t):
+        print(n_iter)
         # collect named constraints in cb
         cb = ConstraintBuilder()
         # prepare parameters

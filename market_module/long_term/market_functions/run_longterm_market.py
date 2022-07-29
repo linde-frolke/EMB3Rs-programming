@@ -1,9 +1,9 @@
 import pandas as pd
 
 # import own modules
-from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
+from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
 from ...long_term.market_functions.centralized_market import make_centralized_market
-from ...long_term.market_functions.decentralized_market import make_decentralized_market
+
 
 from ...cases.exceptions.module_runtime_exception import ModuleRuntimeException
 from ...cases.exceptions.module_validation_exception import ModuleValidationException
@@ -26,13 +26,14 @@ def run_longterm_market(input_dict):
                            cost=input_dict['cost'], util=input_dict['util'], co2=input_dict['co2_emissions']
                            )
 
-    gis_data = pd.DataFrame(data=input_dict['gis_data'])
-    network = Network(agent_data=agent_data, gis_data=gis_data)
-
     # construct and solve market -----------------------------
     if settings.market_design == "centralized":
         result = make_centralized_market(agent_data=agent_data, settings=settings)
     elif settings.market_design == "decentralized":
+        from ...long_term.market_functions.decentralized_market import make_decentralized_market #TODO: #27/07/2022 Moved this, check if is working for the decentralized
+        from ...long_term.datastructures.inputstructs import Network #TODO: #27/07/2022 Moved this, check if is working for the decentralized
+        gis_data = pd.DataFrame(data=input_dict['gis_data'])
+        network = Network(agent_data=agent_data, gis_data=gis_data)
         result = make_decentralized_market(agent_data=agent_data, settings=settings,
                                            network=network)
     else:

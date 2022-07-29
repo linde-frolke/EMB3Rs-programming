@@ -288,167 +288,172 @@ def test_centralized():
 
     result_dict = run_longterm_market(input_dict)
 
+
+
+
+
+    print('Done------------------------------------')
     # MAIN RESULTS
     # ADG
-    print(result_dict["ADG"])
-    print(result_dict["SPM"])
+    #print(result_dict["ADG"])
+    #print(result_dict["SPM"])
 
     # Shadow price per hour
-    print(result_dict['shadow_price'])
+    #print(result_dict['shadow_price'])
     # Energy dispatch
     # print(result.Pn)
-    print(result_dict['Pn'])
+    #print(result_dict['Pn'])
     # print(result.Ln)
-    print(result_dict["Gn"])
+    #print(result_dict["Gn"])
 
     # Find the best price
     # TODO test this somewhere else
     # print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
 
-    # test using "convert_user_and_module_inputs()" -------------------------------------------------
-    # convert some inputs to platform format
-    tmp = np.array(input_dict["util"])
-    util = {}
-    for i in range(tmp.shape[1]):
-        util[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
-    util.pop("producer_1")
-    util.pop("prosumer_1")  # make prosumer_1 a producer
+    # # test using "convert_user_and_module_inputs()" -------------------------------------------------
+    # # convert some inputs to platform format
+    # tmp = np.array(input_dict["util"])
+    # util = {}
+    # for i in range(tmp.shape[1]):
+    #     util[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
+    # util.pop("producer_1")
+    # util.pop("prosumer_1")  # make prosumer_1 a producer
+    #
+    # # initialize input data dictionary
+    # input_data = {}
+    # # add platform data
+    # input_data["platform"] = {
+    #     "md": "centralized",
+    #     'horizon_basis': 'months',
+    #     'data_profile': 'daily',
+    #     'recurrence': 2,
+    #     'yearly_demand_rate': 0.05,
+    #     "prod_diff": "noPref",
+    #     "start_datetime": "31-01-2002",
+    #     "util": util
+    # }
+    # #Date related
+    # date_format = '%d-%m-%Y'
+    # start_date = datetime.strptime(input_data['platform']["start_datetime"], date_format)
+    # if input_data['platform']['horizon_basis'] == 'weeks':
+    #     end_date = start_date + relativedelta(weeks=input_data['platform']['recurrence'])
+    # if input_data['platform']['horizon_basis'] == 'months':
+    #     end_date = start_date + relativedelta(months=input_data['platform']['recurrence'])
+    # if input_data['platform']['horizon_basis'] == 'years':
+    #     end_date = start_date + relativedelta(years=input_data['platform']['recurrence'])
+    #
+    # if input_data['platform']['data_profile'] == 'hourly':
+    #     diff = end_date - start_date  # difference
+    #     diff = int(diff.total_seconds()/3600) #difference in hours
+    #
+    # if input_data['platform']['data_profile'] == 'daily':
+    #     diff = end_date - start_date  # difference
+    #     diff = int(diff.total_seconds()/3600/24) #difference in days
+    #
+    # nr_of_hours = diff
+    #
+    # # extract day month year
+    # day, month, year = [int(x) for x in input_data["platform"]["start_datetime"].split("-")]
+    # as_date = datetime(year=year, month=month, day=day)
+    # start_hourofyear = as_date.timetuple().tm_yday * 24  # start index if selecting from entire year of hourly data.
+    # end_hourofyear = start_hourofyear + nr_of_hours  # end index if selecting from entire year of hourly data.
+    #
+    # # add gis data  (load format from file...) -------------------------------
+    # res_sources_sinks = pd.DataFrame(input_dict["gis_data"]).to_dict("records")
+    # netsolnodes = [{"osmid": input_dict["nodes"][i]} for i in range(len(input_dict["nodes"]))]
+    # netsoledge = [{"from": input_dict["edges"][i][0],
+    #                "to": input_dict["edges"][i][1]} for i in range(len(input_dict["edges"]))]
+    #
+    # input_data["gis-module"] = {"res_sources_sinks": res_sources_sinks,
+    #                             "network_solution_nodes": netsolnodes,
+    #                             "network_solution_edges": netsoledge
+    #                             }
+    #
+    # # add CF data ---
+    # tmp = np.array(input_dict["lmax"])
+    # lmax = {}
+    # for i in range(tmp.shape[1]):
+    #     lmax_sel = tmp[:, i].tolist()
+    #     tmp2 = [0] * 365 * 24
+    #     # print(lmax_sel)
+    #     tmp2[start_hourofyear:end_hourofyear] = lmax_sel
+    #     # print(tmp2)
+    #     lmax[input_dict["agent_ids"][i]] = tmp2
+    #
+    # lmax.pop("producer_1")
+    # lmax.pop("prosumer_1")
+    # strms = [{"sink_id": "aaaa" + str(i),
+    #           "streams": [{
+    #               "stream_id": input_dict["agent_ids"][i],
+    #               "hourly_stream_capacity": lmax[input_dict["agent_ids"][i]]
+    #           } for i in [1, 2]]}]
+    # input_data["cf-module"] = {"all_sinks_info": {"sinks": strms}}
+    #
+    # # add TEO data ---
+    # producers = (input_dict["agent_ids"])[:1] + input_dict["agent_ids"][3:4]
+    # # GMAX
+    # tmp = np.array(input_dict["gmax"])
+    # gmax = {}
+    # for i in range(tmp.shape[1]):
+    #     gmax[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
+    # gmax.pop("consumer_1")
+    # gmax.pop("prosumer_2")
+    #
+    # AccNewCap = [{'NAME': 'AccumulatedNewCapacity',
+    #               'VALUE': max(gmax[producers[i]]),
+    #               'TECHNOLOGY': producers[i],
+    #               'YEAR': '2002'} for i in range(len(producers))]
+    # # COST
+    # tmp = np.array(input_dict["cost"])
+    # cost = {}
+    # for i in range(tmp.shape[1]):
+    #     cost[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
+    # cost.pop("consumer_1")
+    # cost.pop("prosumer_2")
+    # AnnVarOp = [{'NAME': 'AnnualVariableOperatingCost',
+    #              'VALUE': sum(cost[producers[i]]) / len(cost[producers[i]]),
+    #              'TECHNOLOGY': producers[i],
+    #              'YEAR': '2002'} for i in range(len(producers))]
+    # # Total prod
+    # ProdTechAn = [{'NAME': 'ProductionByTechnologyAnnual',
+    #                'VALUE': 1,
+    #                'TECHNOLOGY': producers[i],
+    #                'YEAR': '2002'} for i in range(len(producers))]
+    #
+    # # CO2
+    # AnTechEm = [{'NAME': 'AnnualTechnologyEmission',
+    #              'VALUE': 0,
+    #              'EMISSION': "CO2",
+    #              'TECHNOLOGY': producers[i],
+    #              'YEAR': '2002'} for i in range(len(producers))]
+    #
+    # input_data["teo-module"] = {"AccumulatedNewCapacity": AccNewCap,
+    #                             "AnnualVariableOperatingCost": AnnVarOp,
+    #                             "ProductionByTechnologyAnnual": ProdTechAn,
+    #                             "AnnualTechnologyEmission": AnTechEm
+    #                             }
+    #
+    # # convert inputs to wanted scheme -------------------------------------------
+    # inputs_converted = convert_user_and_module_inputs(input_data=input_data)
+    # # run the market ------------------------------------------------------------
+    # result_dict2 = run_longterm_market(input_dict=inputs_converted)
+    #
+    # # MAIN RESULTS
+    # # ADG
+    # print(result_dict["ADG"])
+    # print(result_dict["SPM"])
+    #
+    # # Shadow price per hour
+    # print(result_dict['shadow_price'])
+    # # Energy dispatch
+    # # print(result.Pn)
+    # print(result_dict['Pn'])
+    # # print(result.Ln)
+    # print(result_dict["Gn"])
 
-    # initialize input data dictionary
-    input_data = {}
-    # add platform data
-    input_data["platform"] = {
-        "md": "centralized",
-        'horizon_basis': 'months',
-        'data_profile': 'daily',
-        'recurrence': 2,
-        'yearly_demand_rate': 0.05,
-        "prod_diff": "noPref",
-        "start_datetime": "31-01-2002",
-        "util": util
-    }
-    #Date related
-    date_format = '%d-%m-%Y'
-    start_date = datetime.strptime(input_data['platform']["start_datetime"], date_format)
-    if input_data['platform']['horizon_basis'] == 'weeks':
-        end_date = start_date + relativedelta(weeks=input_data['platform']['recurrence'])
-    if input_data['platform']['horizon_basis'] == 'months':
-        end_date = start_date + relativedelta(months=input_data['platform']['recurrence'])
-    if input_data['platform']['horizon_basis'] == 'years':
-        end_date = start_date + relativedelta(years=input_data['platform']['recurrence'])
-
-    if input_data['platform']['data_profile'] == 'hourly':
-        diff = end_date - start_date  # difference
-        diff = int(diff.total_seconds()/3600) #difference in hours
-
-    if input_data['platform']['data_profile'] == 'daily':
-        diff = end_date - start_date  # difference
-        diff = int(diff.total_seconds()/3600/24) #difference in days
-
-    nr_of_hours = diff
-
-    # extract day month year
-    day, month, year = [int(x) for x in input_data["platform"]["start_datetime"].split("-")]
-    as_date = datetime(year=year, month=month, day=day)
-    start_hourofyear = as_date.timetuple().tm_yday * 24  # start index if selecting from entire year of hourly data.
-    end_hourofyear = start_hourofyear + nr_of_hours  # end index if selecting from entire year of hourly data.
-
-    # add gis data  (load format from file...) -------------------------------
-    res_sources_sinks = pd.DataFrame(input_dict["gis_data"]).to_dict("records")
-    netsolnodes = [{"osmid": input_dict["nodes"][i]} for i in range(len(input_dict["nodes"]))]
-    netsoledge = [{"from": input_dict["edges"][i][0],
-                   "to": input_dict["edges"][i][1]} for i in range(len(input_dict["edges"]))]
-
-    input_data["gis-module"] = {"res_sources_sinks": res_sources_sinks,
-                                "network_solution_nodes": netsolnodes,
-                                "network_solution_edges": netsoledge
-                                }
-
-    # add CF data ---
-    tmp = np.array(input_dict["lmax"])
-    lmax = {}
-    for i in range(tmp.shape[1]):
-        lmax_sel = tmp[:, i].tolist()
-        tmp2 = [0] * 365 * 24
-        # print(lmax_sel)
-        tmp2[start_hourofyear:end_hourofyear] = lmax_sel
-        # print(tmp2)
-        lmax[input_dict["agent_ids"][i]] = tmp2
-
-    lmax.pop("producer_1")
-    lmax.pop("prosumer_1")
-    strms = [{"sink_id": "aaaa" + str(i),
-              "streams": [{
-                  "stream_id": input_dict["agent_ids"][i],
-                  "hourly_stream_capacity": lmax[input_dict["agent_ids"][i]]
-              } for i in [1, 2]]}]
-    input_data["cf-module"] = {"all_sinks_info": {"sinks": strms}}
-
-    # add TEO data ---
-    producers = (input_dict["agent_ids"])[:1] + input_dict["agent_ids"][3:4]
-    # GMAX
-    tmp = np.array(input_dict["gmax"])
-    gmax = {}
-    for i in range(tmp.shape[1]):
-        gmax[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
-    gmax.pop("consumer_1")
-    gmax.pop("prosumer_2")
-
-    AccNewCap = [{'NAME': 'AccumulatedNewCapacity',
-                  'VALUE': max(gmax[producers[i]]),
-                  'TECHNOLOGY': producers[i],
-                  'YEAR': '2002'} for i in range(len(producers))]
-    # COST
-    tmp = np.array(input_dict["cost"])
-    cost = {}
-    for i in range(tmp.shape[1]):
-        cost[input_dict["agent_ids"][i]] = tmp[:, i].tolist()
-    cost.pop("consumer_1")
-    cost.pop("prosumer_2")
-    AnnVarOp = [{'NAME': 'AnnualVariableOperatingCost',
-                 'VALUE': sum(cost[producers[i]]) / len(cost[producers[i]]),
-                 'TECHNOLOGY': producers[i],
-                 'YEAR': '2002'} for i in range(len(producers))]
-    # Total prod
-    ProdTechAn = [{'NAME': 'ProductionByTechnologyAnnual',
-                   'VALUE': 1,
-                   'TECHNOLOGY': producers[i],
-                   'YEAR': '2002'} for i in range(len(producers))]
-
-    # CO2
-    AnTechEm = [{'NAME': 'AnnualTechnologyEmission',
-                 'VALUE': 0,
-                 'EMISSION': "CO2",
-                 'TECHNOLOGY': producers[i],
-                 'YEAR': '2002'} for i in range(len(producers))]
-
-    input_data["teo-module"] = {"AccumulatedNewCapacity": AccNewCap,
-                                "AnnualVariableOperatingCost": AnnVarOp,
-                                "ProductionByTechnologyAnnual": ProdTechAn,
-                                "AnnualTechnologyEmission": AnTechEm
-                                }
-
-    # convert inputs to wanted scheme -------------------------------------------
-    inputs_converted = convert_user_and_module_inputs(input_data=input_data)
-    # run the market ------------------------------------------------------------
-    result_dict2 = run_longterm_market(input_dict=inputs_converted)
-
-    # MAIN RESULTS
-    # ADG
-    print(result_dict["ADG"])
-    print(result_dict["SPM"])
-
-    # Shadow price per hour
-    print(result_dict['shadow_price'])
-    # Energy dispatch
-    # print(result.Pn)
-    print(result_dict['Pn'])
-    # print(result.Ln)
-    print(result_dict["Gn"])
 
 
-
-    print("finished test_centralized().............................................")
+    #print("finished test_centralized().............................................")
 
 
 
@@ -513,8 +518,4 @@ def test_centralized():
 #     # print(result.Ln)
 #     print(result_dict["Gn"])
 #
-#     # Find the best price
-#     # TODO test this somewhere else
-#     # print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
-#
-#
+
