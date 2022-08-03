@@ -103,8 +103,8 @@ class MarketSettings(BaseModel):
             raise ValueError('If horizon_basis is weeks, then recurrence should be less than 53')
         if (values['horizon_basis'] == 'months') and v > 12:
             raise ValueError('If horizon_basis is months, then recurrence should be less than 13')
-        if (values['horizon_basis'] == 'years') and v > 10:
-            raise ValueError('If horizon_basis is years, then recurrence should be less than 11')
+        if (values['horizon_basis'] == 'years') and v > 21:
+            raise ValueError('If horizon_basis is years, then recurrence should be less than 21')
         return v
 
     @validator("ydr")
@@ -180,18 +180,18 @@ class AgentData(BaseModel):
             self.util = pd.DataFrame(self.replicate_data(np.array(self.util), self.settings), columns=self.agent_name)
 
         #If user provides hourly data, but wants a daily simulation
-        if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
-            self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
-            self.lmax = pd.DataFrame(self.cumulative_sum(np.array(self.lmax), self.settings), columns=self.agent_name)
+        # if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
+        #     self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
+        #     self.lmax = pd.DataFrame(self.cumulative_sum(np.array(self.lmax), self.settings), columns=self.agent_name)
+        #
+        #     self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
+        #     self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
+        # else:
+        self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
+        self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
 
-            self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
-            self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
-        else:
-            self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
-            self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
-
-            self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
-            self.util = pd.DataFrame(self.util, columns=self.agent_name)
+        self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
+        self.util = pd.DataFrame(self.util, columns=self.agent_name)
 
         # These are parameters now
         self.lmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))
@@ -247,21 +247,21 @@ class AgentData(BaseModel):
                 raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
-                raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
-                    len(values['name']), values['settings'].diff*24,
-                    len(values['name'])))
+        # elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #     len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+        #         raise ValueError('gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+        #             len(values['name']), values['settings'].diff*24,
+        #             len(values['name'])))
 
-        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
-                raise ValueError(
-                    'gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
-                        values['settings'].diff,
-                        len(values['name']), values['settings'].diff * 24,
-                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
+        # elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #             len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+        #         raise ValueError(
+        #             'gmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+        #                 values['settings'].diff,
+        #                 len(values['name']), values['settings'].diff * 24,
+        #                 len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
     @validator('lmax')
@@ -272,21 +272,21 @@ class AgentData(BaseModel):
                 raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
-                raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
-                    len(values['name']), values['settings'].diff*24,
-                    len(values['name'])))
-
-        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
-                raise ValueError(
-                    'lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
-                        values['settings'].diff,
-                        len(values['name']), values['settings'].diff * 24,
-                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
+        # elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v) ) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #     len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+        #         raise ValueError('lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+        #             len(values['name']), values['settings'].diff*24,
+        #             len(values['name'])))
+        #
+        # elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #             len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+        #         raise ValueError(
+        #             'lmax dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+        #                 values['settings'].diff,
+        #                 len(values['name']), values['settings'].diff * 24,
+        #                 len(values['name']), 365,len(values['name']), 366,len(values['name'])))
 
         return v
 
@@ -298,21 +298,21 @@ class AgentData(BaseModel):
                 raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
-                raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
-                    len(values['name']), values['settings'].diff*24,
-                    len(values['name'])))
-
-        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
-                raise ValueError(
-                    'cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
-                        values['settings'].diff,
-                        len(values['name']), values['settings'].diff * 24,
-                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
+        # elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #     len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+        #         raise ValueError('cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+        #             len(values['name']), values['settings'].diff*24,
+        #             len(values['name'])))
+        #
+        # elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #             len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+        #         raise ValueError(
+        #             'cost dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+        #                 values['settings'].diff,
+        #                 len(values['name']), values['settings'].diff * 24,
+        #                 len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
     @validator('util')
@@ -323,21 +323,21 @@ class AgentData(BaseModel):
                 raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}]'.format(values['settings'].diff,
                     len(values['name'])))
 
-        elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-            len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
-                raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
-                    len(values['name']), values['settings'].diff*24,
-                    len(values['name'])))
-
-        elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
-            if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
-                    len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
-                raise ValueError(
-                    'util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
-                        values['settings'].diff,
-                        len(values['name']), values['settings'].diff * 24,
-                        len(values['name']), 365,len(values['name']), 366,len(values['name'])))
+        # elif values['settings'].data_profile == 'daily' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #     len(v) != values['settings'].diff and len(v) != values['settings'].diff * 24):
+        #         raise ValueError('util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}]'.format(values['settings'].diff,
+        #             len(values['name']), values['settings'].diff*24,
+        #             len(values['name'])))
+        #
+        # elif (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
+        #     if (len(cls.check_dimension(v)) != 1 or cls.check_dimension(v)[0] != len(values['name'])) or (
+        #             len(v) != values['settings'].diff and len(v) != 365 and len(v) != 366):
+        #         raise ValueError(
+        #             'util dimensions are incorrect. Dimensions should be: [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}] or [{:d}*{:d}]'.format(
+        #                 values['settings'].diff,
+        #                 len(values['name']), values['settings'].diff * 24,
+        #                 len(values['name']), 365,len(values['name']), 366,len(values['name'])))
         return v
 
 

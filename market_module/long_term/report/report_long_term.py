@@ -5,18 +5,31 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
-def report_long_term(longterm_results):
+def report_long_term(longterm_results, data_profile):
     ## convert outputs to html to put in report
-    df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x],filter="sum") for x in
-                                        ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
+    if data_profile == 'hourly':
+        df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x],filter="sum") for x in
+                                            ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
 
 
-    #Results with different format
-    df_spm = output_to_html_no_index(longterm_results["SPM"])
-    df_adg = output_to_html_no_index(longterm_results["ADG"])
-    #df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
-    df_social_w = output_to_html_list(longterm_results['social_welfare_h'], filter='mean')
-    df_shadow_price = output_to_html_list(longterm_results['shadow_price'], filter='mean')
+        #Results with different format
+        df_spm = output_to_html_no_index(longterm_results["SPM"])
+        df_adg = output_to_html_no_index(longterm_results["ADG"])
+        #df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
+        df_social_w = output_to_html_list(longterm_results['social_welfare_h'], filter='mean')
+        df_shadow_price = output_to_html_list(longterm_results['shadow_price'], filter='mean')
+
+    else:
+        df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x]) for x in
+                                                      ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
+
+        # Results with different format
+        df_spm = output_to_html_no_index(longterm_results["SPM"])
+        df_adg = output_to_html_no_index(longterm_results["ADG"])
+        # df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
+        df_social_w = output_to_html_list(longterm_results['social_welfare_h'])
+        df_shadow_price = output_to_html_list(longterm_results['shadow_price'])
+
 
 
     ### REPORT_RENDERING_CODE [BEGIN]

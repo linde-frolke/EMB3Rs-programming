@@ -26,7 +26,8 @@ def convert_user_and_module_inputs(input_data):
     if user_input['user']['horizon_basis'] == 'months':
         end_date = start_date + relativedelta(months=user_input['user']["recurrence"])
     if user_input['user']['horizon_basis'] == 'years':
-        end_date = start_date + relativedelta(years=user_input['user']["recurrence"])
+        #always sending just one year of hourly data
+        end_date = start_date + relativedelta(years=1)
 
     if user_input['user']['data_profile'] == 'hourly':
         diff = end_date - start_date  # difference
@@ -34,7 +35,8 @@ def convert_user_and_module_inputs(input_data):
 
     if user_input['user']['data_profile'] == 'daily':
         diff = end_date - start_date  # difference
-        diff = int(diff.total_seconds()/3600/24) #difference in days
+        # always sending just one year of hourly data
+        diff = int(diff.total_seconds()/3600) #difference in hours
 
     nr_of_hours = diff
 

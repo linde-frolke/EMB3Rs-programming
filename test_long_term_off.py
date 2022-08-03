@@ -16,8 +16,8 @@ warnings.filterwarnings("ignore")
 
 input_data = {}
 
-input_data['user'] = {'md': 'centralized', 'horizon_basis': 'years', 'recurrence': 1,
-                      'data_profile': 'hourly', 'yearly_demand_rate': 0.05,
+input_data['user'] = {'md': 'centralized', 'horizon_basis': 'years', 'recurrence': 2,
+                      'data_profile': 'daily', 'yearly_demand_rate': 0.05,
                       'start_datetime': datetime(2018, 1, 1, 0, 0),
                       'prod_diff_option': 'noPref',
                       'util': [40.5, 500, 600, 1500, 3000, 50, 4000, 60, 700, 7000, 35, 66, 44, 888]}
@@ -52,16 +52,30 @@ result_dict = run_longterm_market(input_dict=inputs_converted)
 # result_dict = json.load(f)
 # f.close()
 
-## convert outputs to html to put in report
-df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(result_dict[x], filter="sum") for x in
-                                        ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
+if input_data['user']['data_profile'] == 'hourly':
 
-#Results with different format
-df_spm = output_to_html_no_index(result_dict["SPM"])
-df_adg = output_to_html_no_index(result_dict["ADG"])
-df_qoe = output_to_html_no_index_transpose(result_dict["QoE"])
-df_social_w = output_to_html_list(result_dict['social_welfare_h'], filter='mean')
-df_shadow_price = output_to_html_list(result_dict['shadow_price'], filter='mean')
+    ## convert outputs to html to put in report
+    df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(result_dict[x], filter="sum") for x in
+                                            ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
+
+    #Results with different format
+    df_spm = output_to_html_no_index(result_dict["SPM"])
+    df_adg = output_to_html_no_index(result_dict["ADG"])
+    df_qoe = output_to_html_no_index_transpose(result_dict["QoE"])
+    df_social_w = output_to_html_list(result_dict['social_welfare_h'], filter='mean')
+    df_shadow_price = output_to_html_list(result_dict['shadow_price'], filter='mean')
+
+else:
+    ## convert outputs to html to put in report
+    df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(result_dict[x]) for x in
+                                                  ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
+
+    # Results with different format
+    df_spm = output_to_html_no_index(result_dict["SPM"])
+    df_adg = output_to_html_no_index(result_dict["ADG"])
+    df_qoe = output_to_html_no_index_transpose(result_dict["QoE"])
+    df_social_w = output_to_html_list(result_dict['social_welfare_h'])
+    df_shadow_price = output_to_html_list(result_dict['shadow_price'])
 
 
 ### MODULE-CODE [END]
