@@ -1,8 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt, mpld3
 
-def output_to_html(output_dict):
+def output_to_html(output_dict, filter="none"):
     df = pd.DataFrame(output_dict)
+
+    if filter == "mean":
+        df = get_mean(df)
+    elif filter == "sum":
+        df = get_sum(df)
+
     df.index.name = "t"
     html = df.round(decimals=2).to_html(
         classes=['table'], 
@@ -25,11 +31,31 @@ def output_to_html_no_index_transpose(output_dict):
         )
     return html
 
-def output_to_html_list(list):
+def output_to_html_list(list, filter="none"):
     df = pd.DataFrame(list)
+
+    if filter == "mean":
+        df = get_mean(df)
+    elif filter == "sum":
+        df = get_sum(df)
+
     html = df.round(decimals=2).to_html(
         classes=['table'],
         )
     return html
+
+
+def get_mean(df):
+    N = 24 # h
+    df = df.groupby(df.index // N).agg("mean")
+
+    return df
+
+
+def get_sum(df):
+    N = 24 # h
+    df = df.groupby(df.index // N).agg("sum")
+
+    return df
 
 

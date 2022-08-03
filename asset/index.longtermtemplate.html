@@ -19,7 +19,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
     integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+
 </head>
+
+
 
 <body class="container pt-5">
   <img src="https://www.emb3rs.eu/wp-content/uploads/2019/12/EMB3Rs_horizontal-Logo.png" class="img">
@@ -31,7 +37,8 @@
   In this way, users can create, test and validate different market structures for energy matching in DHC systems.
   The outputs of the market analysis enable users (e.g., industries, supermarkets and data centres) to estimate potential
   costs and revenues for different market participants from trading excess heat and cold.
-  
+
+
   <h2>Main Results</h2>
   <div class="accordion" id="accordionExample">
     <! Generation-->
@@ -47,7 +54,10 @@
             <div class="card-body">
               Amount sold in the market for each agent for each time step.
               <p></p>
-              {{df_Gn}} 
+              <div class="table-responsive">
+              <table class="table">
+                {{df_Gn}}
+               </table>
             </div>
           </div>
     </div>
@@ -64,7 +74,11 @@
         <div class="card-body">
             Amount purchased in the market for each agent for each time step.
           <p></p>
-            {{df_Ln}} 
+          <div class="table-responsive">
+              <table class="table">
+                {{df_Ln}}
+               </table>
+            </div>
         </div>
       </div>
     </div>
@@ -86,7 +100,11 @@
               <p> For the decentralized market, it is computed as:
                 <p><center> <img src="https://latex.codecogs.com/svg.image?SE_n&space;=&space;\sum&space;_{m\in\Omega_n}\lambda_{n,m}&space;P_{n,m}" title="https://latex.codecogs.com/svg.image?SE_n = \sum _{m\in\Omega_n}\lambda_{n,m} P_{n,m}" />
           <p></p>
-          {{df_set}}
+          <div class="table-responsive">
+              <table class="table">
+                {{df_set}}
+               </table>
+            </div>
         </div>
       </div>
     <! Net balance-->
@@ -102,7 +120,11 @@
           <div class="card-body">
             The net balance for each agent for each time step.
             <p></p>
-              {{df_Pn}}
+            <div class="table-responsive">
+              <table class="table">
+                {{df_Pn}}
+               </table>
+            </div>
           </div>
         </div>
       </div>
@@ -120,7 +142,11 @@
                             This quantity can be computed for each producer/consumer, and is equal to the scheduled quantity times the price bid of that producer/consumer:
               <p> <center> <img src="https://latex.codecogs.com/svg.image?Agent&space;Operational&space;Cost&space;=&space;\sum&space;_{m\in\Omega_n}C_{n,m}&space;P_{n,m}" title="https://latex.codecogs.com/svg.image?Agent Operational Cost = \sum _{m\in\Omega_n}C_{n,m} P_{n,m}" /></center></p>
             <p></p>
-              {{df_ag_op_cost}}
+            <div class="table-responsive">
+              <table class="table">
+                {{df_ag_op_cost}}
+               </table>
+            </div>
           </div>
         </div>
       </div>
@@ -140,7 +166,11 @@
             In the second step, SPM (%) is calculated, for each source, considering all time slots as:
               <p><center> <img src="https://latex.codecogs.com/svg.image?SPM_n=\frac{1}{T}\sum&space;_{t\in&space;T}\chi_n^t*100" title="https://latex.codecogs.com/svg.image?SPM_n=\frac{1}{T}\sum _{t\in T}\chi_n^t*100" /></center></p>
             <p></p>
-              {{df_spm}}
+                        <div class="table-responsive">
+              <table class="table">
+                {{df_spm}}
+               </table>
+            </div>
           </div>
         </div>
       </div>
@@ -159,32 +189,16 @@
               <p> <center><img src="https://latex.codecogs.com/svg.image?ADG_n=\frac{1}{T}&space;\frac{\sum_{t\in&space;T&space;P_n^t}}{\bar{P_n^t}}" title="https://latex.codecogs.com/svg.image?ADG_n=\frac{1}{T} \frac{\sum_{t\in T P_n^t}}{\bar{P_n^t}}" /> </center></p>
             <p>where <img src="https://latex.codecogs.com/svg.image?{\bar{P_n^t}}" title="https://latex.codecogs.com/svg.image?{\bar{P_n^t}}" /> is the maximum available energy quantity for a certain agent at a specific time.</p>
             <p></p>
-              {{df_adg}}
+                        <div class="table-responsive">
+              <table class="table">
+                {{df_adg}}
+               </table>
+            </div>
           </div>
         </div>
       </div>
 
-      <! QoE -->
-      <div class="card">
-        <div class="card-header" id="headingNine">
-          <h2 class="mb-0">
-            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-              Quality of Experience per time stamp [%]
-            </button>
-          </h2>
-        </div>
-        <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
-          <div class="card-body">
-                            Quality of Experience (QoE) is a measure that evaluates the fairness of market outcomes. This is based on agent satisfaction according to the perceived price of energy <img src="https://latex.codecogs.com/svg.image?\sigma_n^t" title="https://latex.codecogs.com/svg.image?\sigma_n^t" /> per time <img src="https://latex.codecogs.com/svg.image?t" title="https://latex.codecogs.com/svg.image?t" />. Firstly, <img src="https://latex.codecogs.com/svg.image?\sigma_n^t" title="https://latex.codecogs.com/svg.image?\sigma_n^t" />  is calculated for each agent based on:
-            <p><center><img src="https://latex.codecogs.com/svg.image?\sigma_n^t=\sum_{m&space;\in&space;\Omega_n}\lambda_{n,m}^t&space;P_{n,m}^t" title="https://latex.codecogs.com/svg.image?\sigma_n^t=\sum_{m \in \Omega_n}\lambda_{n,m}^t P_{n,m}^t" /></center></p>
-            <p>Then, the QoE indicator is computed as: </p>
-              <p><center><img src="https://latex.codecogs.com/svg.image?QoE=1-\frac{\sigma^t}{\sigma_{max}^t}" title="https://latex.codecogs.com/svg.image?QoE=1-\frac{\sigma^t}{\sigma_{max}^t}" /> </center></p>
-            where <img src="https://latex.codecogs.com/svg.image?\sigma^t" title="https://latex.codecogs.com/svg.image?\sigma^t" /> is the standard deviation of perceived prices and <img src="https://latex.codecogs.com/svg.image?\sigma^t_{max}=\phi&space;_{max}^t-\phi_{min}^t" title="https://latex.codecogs.com/svg.image?\sigma^t_{max}=\phi _{max}^t-\phi_{min}^t" />  represents the maximum price deviation.
-            <p></p>
-              {{df_qoe}}
-          </div>
-        </div>
-      </div>
+
 
       <! Social Welfare -->
       <div class="card">
@@ -200,7 +214,11 @@
                               Social welfare comprises all market agents and is computed by summing the scheduled quantity times the price bid of that agent:
               <p><center><img src="https://latex.codecogs.com/svg.image?SW=\sum_{n\in&space;\Omega_n}C_nP_n" title="https://latex.codecogs.com/svg.image?SW=\sum_{n\in \Omega_n}C_nP_n" /></center></p>
             <p></p>
-              {{df_social_w}}
+                        <div class="table-responsive">
+              <table class="table">
+                {{df_social_w}}
+               </table>
+            </div>
           </div>
         </div>
       </div>
@@ -218,7 +236,11 @@
           <div class="card-body">
                               Represents the market clearing price. Presents one value per time step, if the centralized market design is chosen. Outputs one value per transaction and per time step, if the decentralized market design is the selected one.
             <p></p>
-              {{df_shadow_price}}
+                        <div class="table-responsive">
+              <table class="table">
+                {{df_shadow_price}}
+               </table>
+            </div>
           </div>
         </div>
       </div>

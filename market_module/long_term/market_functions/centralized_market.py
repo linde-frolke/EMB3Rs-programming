@@ -16,7 +16,6 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     """
 
 
-
     Pn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
@@ -67,22 +66,20 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
         result_ = prob.solve(solver=cp.SCIP)
-        print("problem status: %s" % prob.status)
 
         # throw an error if the problem is not solved.
-        if prob.status not in ["infeasible", "unbounded"]:
-            # Otherwise, problem.value is inf or -inf, respectively.
-            print("Optimal value: %s" % prob.value)
-        else:
+        if prob.status in ["infeasible", "unbounded"]:
             # print("Problem is %s" % prob.status)
             raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
         variables = prob.variables()
         varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-        Pn_t.T[n_iter] = list(variables[varnames.index("Pn")].value)
-        Ln_t.T[n_iter] = list(variables[varnames.index("Ln")].value)
-        Gn_t.T[n_iter] = list(variables[varnames.index("Gn")].value)
-        shadow_price_t.T[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
+
+        Pn_t.iloc[n_iter] = list(variables[varnames.index("Pn")].value)
+        Ln_t.iloc[n_iter] = list(variables[varnames.index("Ln")].value)
+        Gn_t.iloc[n_iter] = list(variables[varnames.index("Gn")].value)
+        shadow_price_t.iloc[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
+
 
     # store result in result object
     result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)

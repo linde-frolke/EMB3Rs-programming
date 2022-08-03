@@ -274,16 +274,14 @@ input_dict = {'md': 'centralized',
 
 result_dict = run_longterm_market(input_dict=input_dict)
 
+df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(result_dict[x], filter="sum") for x in
+                                              ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
 
-## convert outputs to html to put in report
-df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(result_dict[x]) for x in
-                                    ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
-
-#Results with different format
+# Results with different format
 df_spm = output_to_html_no_index(result_dict["SPM"])
 df_adg = output_to_html_no_index(result_dict["ADG"])
-df_qoe = output_to_html_no_index_transpose(result_dict["QoE"])
-df_social_w = output_to_html_list(result_dict['social_welfare_h'])
+# df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
+df_social_w = output_to_html_list(result_dict['social_welfare_h'], filter='mean')
 df_shadow_price = output_to_html_list(result_dict['shadow_price'])
 
 
@@ -300,7 +298,7 @@ env = Environment(
 
 template = env.get_template('index.longtermtemplate.html')
 template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set, df_ag_op_cost=df_ag_op_cost,
-                                   df_spm=df_spm, df_adg=df_adg, df_qoe=df_qoe, df_social_w=df_social_w,
+                                   df_spm=df_spm, df_adg=df_adg, df_social_w=df_social_w,
                                    df_shadow_price=df_shadow_price)
 
 
