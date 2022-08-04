@@ -25,7 +25,6 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     t = settings.diff
 
     for n_iter in range(0, t):
-        print(n_iter)
         # collect named constraints in cb
         cb = ConstraintBuilder()
         # prepare parameters
@@ -65,7 +64,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         # common for all offer types ------------------------------------------------
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        result_ = prob.solve(solver=cp.SCIP)
+        result_ = prob.solve(solver=cp.GUROBI)
 
         # throw an error if the problem is not solved.
         if prob.status in ["infeasible", "unbounded"]:

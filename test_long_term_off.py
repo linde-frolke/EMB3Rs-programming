@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 
 input_data = {}
 
-input_data['user'] = {'md': 'centralized', 'horizon_basis': 'years', 'recurrence': 2,
+input_data['user'] = {'md': 'centralized', 'horizon_basis': 'years', 'recurrence': 1,
                       'data_profile': 'daily', 'yearly_demand_rate': 0.05,
                       'start_datetime': datetime(2018, 1, 1, 0, 0),
                       'prod_diff_option': 'noPref',

@@ -5,7 +5,7 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
-def report_long_term(longterm_results, data_profile):
+def report_long_term(longterm_results, data_profile=None):
     ## convert outputs to html to put in report
     if data_profile == 'hourly':
         df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x],filter="sum") for x in
