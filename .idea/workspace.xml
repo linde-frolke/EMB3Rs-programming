@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bb56f31c-037a-4df5-b585-bd13877dba86" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/main_longterm.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/main_longterm.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
