@@ -1,12 +1,12 @@
 """
 function that converts TEO and CF inputs to the "input_dict" we were expecting
 """
-import json
+# import json
+# from datetime import datetime
+
 import numpy as np
 import pandas as pd
-import datetime
-import xlrd
-from datetime import datetime
+# import xlrd
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 
@@ -18,7 +18,7 @@ def convert_user_and_module_inputs(input_data):
 
     # Date related
     datetime_date = user_input['user']['start_datetime']
-    start_date = parse(datetime_date.strftime('%d-%m-%Y'))
+    start_date = parse(datetime_date)
     start_date_str = start_date.strftime('%d-%m-%Y')
 
     if user_input['user']['horizon_basis'] == 'weeks':
@@ -78,14 +78,15 @@ def convert_user_and_module_inputs(input_data):
     util_sinks = np.tile(util_sinks_t0,(diff,1))
 
     if len(util_sinks_t0) != len(all_stream_ids):
-        raise('Utility does not match the sinks size')
+        raise Exception('Utility does not match the sinks size')
 
     # get TEO data
     teo_output = input_data["teo-module"]
 
     #Convert TEO inputs
     #TODO: get co2 emissions if we use product differentiation
-    ProductionByTechnologyAnnual = pd.DataFrame(teo_output["ProductionByTechnologyMM"])
+    production_by_technology_annual = teo_output.get("ProductionByTechnologyMM", teo_output["ProductionByTechnology"])
+    ProductionByTechnologyAnnual = pd.DataFrame(production_by_technology_annual)
     VariableOMCost = pd.DataFrame(teo_output["VariableOMCost"])
 
     #Converting timeslice from str to int
@@ -144,22 +145,21 @@ def convert_user_and_module_inputs(input_data):
 
     # construct input_dict
     input_dict = {
-                    'md': user_input['user']['md'],
-                    'horizon_basis': user_input['user']["horizon_basis"],
-                    'data_profile': user_input['user']["data_profile"],
-                    'recurrence': user_input['user']["recurrence"],
-                    'yearly_demand_rate': user_input['user']["yearly_demand_rate"],
-                    'prod_diff_option': user_input['user']["prod_diff_option"],
-                    'agent_ids': agent_ids,
-                    'gmax': gmax,
-                    'lmax': lmax,
-                    'cost': cost,
-                    'util': util,
-                    'start_datetime': start_date_str,
-                    'co2_emissions': None,  # allowed values are 'none' or array of size (nr_of_agents)
-                    'gis_data': None,
-                    'nodes': None,
-                    'edges': None
-                    }
-
+        'md': user_input['user']['md'],
+        'horizon_basis': user_input['user']["horizon_basis"],
+        'data_profile': user_input['user']["data_profile"],
+        'recurrence': user_input['user']["recurrence"],
+        'yearly_demand_rate': user_input['user']["yearly_demand_rate"],
+        'prod_diff_option': user_input['user']["prod_diff_option"],
+        'agent_ids': agent_ids,
+        'gmax': gmax,
+        'lmax': lmax,
+        'cost': cost,
+        'util': util,
+        'start_datetime': start_date_str,
+        'co2_emissions': None,  # allowed values are 'none' or array of size (nr_of_agents)
+        'gis_data': None,
+        'nodes': None,
+        'edges': None
+    }
     return input_dict

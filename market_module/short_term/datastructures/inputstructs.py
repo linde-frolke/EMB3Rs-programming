@@ -6,7 +6,7 @@ import heapq
 from typing import List, Any, Union, Dict
 from pydantic import BaseModel, validator, Field, constr, conint
 
-from market_module.cases.exceptions.module_validation_exception import ModuleValidationException #, confloat
+# from market_module.cases.exceptions.module_validation_exception import ModuleValidationException #, confloat
 
 # general settings object ---------------------------------------------------------------------------------------------
 class MarketSettings(BaseModel):
