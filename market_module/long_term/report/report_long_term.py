@@ -1,4 +1,4 @@
-from market_module.market_module.long_term.plotting_processing_functions.outputs_to_html import output_to_html, output_to_html_no_index, output_to_html_no_index_transpose, output_to_html_list
+from market_module.long_term.plotting_processing_functions.outputs_to_html import output_to_html, output_to_html_no_index, output_to_html_no_index_transpose, output_to_html_list
 from jinja2 import Environment, FileSystemLoader, PackageLoader, select_autoescape
 import os
 
