@@ -4,60 +4,90 @@ from market_module.DTU_case_study_new.save_tocsv import save_tocsv, save_topickl
 from market_module.DTU_case_study_new.prep_inputs import prep_inputs
 import matplotlib.pyplot as plt
 
+# figure settings --------------------------------------------------------------
+# to save figures
+folder = "/home/linde/Documents/2019PhD/EMB3Rs/WP4_case_study/results/figs/"
+color_sm = "blue"
+color_res = "yellow"
+figtype = ".png"
+
 # get inputs
 one_year_idx, nr_h, agent_ids, g_max, l_max, cost, utility, time_range = prep_inputs()
 
-## value of flexibility, pool ---------------------------------------------------
+# get results 
 pool = load_frompickle("Pool_base")
 pool_EB = load_frompickle("Pool_EB")
-
-plt.plot(time_range, pool.Ln.sum(axis=1), label="pool")
-plt.plot(time_range, pool_EB.Ln.sum(axis=1).head(len(time_range)), label="pool EB")
-plt.show()
-
-# plot the difference 
-daily_load = pool.Ln.groupby(pool.Ln.index.date).sum().sum(axis=1)
-daily_load_EB = pool_EB.Ln.groupby(pool_EB.Ln.index.date).sum().sum(axis=1)
-
-plt.plot((daily_load - daily_load_EB))
-plt.show()
-
-(daily_load != daily_load_EB).sum()
-wrong_dates = daily_load.index[(daily_load - daily_load_EB).abs() > 0.1]
-
-# check out those days 
-start_date = pd.to_datetime(wrong_dates[0])
-end_date = pd.to_datetime(wrong_dates[0]) + pd.Timedelta(days=1)
-
-time_frame = (pool.Ln.index >= start_date) & (pool.Ln.index < end_date)
-
-# check that budget is not the same on that day
-pool.Ln[time_frame].sum() - pool_EB.Ln[time_frame].sum()
-
-plt.plot(pool.Ln[time_frame].sum(axis=1), label="no EB")
-plt.plot(pool_EB.Ln[time_frame].sum(axis=1), label="EB")
-df_lmax = pd.DataFrame(l_max).set_index(pool.Ln.index)
-plt.plot(df_lmax[time_frame].sum(axis=1), label="lmax")
+p2p = load_frompickle("P2P_base")
+# get insight in inputs 
+df_lmax = pd.DataFrame(l_max, index = pool.Ln.index, columns=pool.Ln.columns)
+mnts = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+barWidth = 0.4
+br1 = np.arange(12)
+br2 = [x + barWidth for x in br1]
+plt.bar(br1, height=df_lmax.iloc[:,1:2].sum(axis=1).groupby(df_lmax.index.month).sum() / 10**3, label="supermarket",  width = barWidth)
+plt.bar(br2, height=df_lmax.iloc[:,2:].sum(axis=1).groupby(df_lmax.index.month).sum() / 10**3, label="residential",  width = barWidth)
+plt.xlabel("month")
+plt.ylabel("total monthly load [MWh]")
+plt.xticks([r + barWidth for r in range(12)], mnts)
 plt.legend()
+plt.savefig(folder + "inputs_Ln_monthly" + figtype)
 plt.show()
 
-df_cost = pd.DataFrame(cost).set_index(pool.Ln.index)
-df_util = pd.DataFrame(utility).set_index(pool.Ln.index)
-df_cost[time_frame]
-df_util[time_frame]
-df_gmax = pd.DataFrame(g_max).set_index(pool.Ln.index)
 
-# plot the difference between lmax and pool
-daily_load = pool.Ln.groupby(pool.Ln.index.date).sum().sum(axis=1)
-daily_load_EB = pool_EB.Ln.groupby(pool_EB.Ln.index.date).sum().sum(axis=1)
 
-plt.plot(pool.Ln.sum(axis=1), label="Ln no EB")
-plt.plot(df_lmax.sum(axis=1), label="lmax")
-plt.plot(df_gmax.sum(axis=1), label="gmax")
+## value of flexibility, pool ---------------------------------------------------
+
+
+# how does flexibility affect the scheduled load? --------
+# plot the difference in load profile for the consumers
+plt.plot(pool.Ln.iloc[:, 2:].sum(axis=1).groupby(pool.Ln.index.hour).mean(), label="w/o Energy Budget")
+plt.plot(pool_EB.Ln.iloc[:, 2:].sum(axis=1).groupby(pool_EB.Ln.index.hour).mean(), label="w/  Energy Budget")
+# plt.plot(2*df_lmax.iloc[:, 2:].sum(axis=1).groupby(pool.Ln.index.hour).mean(), label="average max load", color="gray", linestyle="dotted")
 plt.legend()
+plt.xlabel("time of day [h]")
+plt.ylabel("average residential load [kWh]")
+plt.savefig(folder + "pool_compare_Ln_EB.pdf")
+#plt.plot(df_lmax.iloc[:, 2:].sum(axis=1).groupby(pool.Ln.index.hour).mean())
 plt.show()
 
-plt.plot(pool.Ln.sum(axis=1) - df_lmax.sum(axis=1))
+# how does flexibility affect the market price?
+# monthly average market clearing price with respect the two models, i.e. base and energy budget
+mnts = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+barWidth = 0.4
+br1 = np.arange(12)
+br2 = [x + barWidth for x in br1]
+unit = 10**3
+plt.bar(br1, height=pool.price.groupby(pool.price.index.month).mean().sum(axis=1) / unit, label="w/o Energy Budget",  width = barWidth)
+plt.bar(br2, height=pool_EB.price.groupby(pool.price.index.month).mean().sum(axis=1) / unit, label="w/  Energy Budget", width = barWidth)
+plt.xlabel("month")
+plt.ylabel("avg market price [€/MWh]")
+plt.xticks([r + barWidth for r in range(12)], mnts)
+plt.legend()
+plt.savefig(folder + "pool_compare_price_EB" + figtype)
 plt.show()
 
-df_lmax.sum(axis=1).max()
+# how does flexibility affect the schedules of the grid and supermarket?
+# montly total Gn with respect the two models, i.e. base and energy budget
+unit = 10**3
+plt.plot(br1, pool.Gn.loc[:,"grid_1"].groupby(pool.price.index.month).sum() / unit, label="grid w/o Energy Budget")
+plt.plot(br1, pool.Gn.loc[:,"sm_1"].groupby(pool.price.index.month).sum() / unit, label="supermarket w/o Energy Budget")
+plt.plot(br1, pool_EB.Gn.loc[:,"grid_1"].groupby(pool.price.index.month).sum() / unit, label="grid w/  Energy Budget", linestyle="dotted")
+plt.plot(br1, pool_EB.Gn.loc[:,"sm_1"].groupby(pool.price.index.month).sum() / unit, label="supermarket w/  Energy Budget", linestyle="dotted")
+plt.xlabel("month")
+plt.ylabel("scheduled generation [MWh]")
+plt.xticks([r + barWidth for r in range(12)], mnts)
+plt.legend()
+plt.savefig(folder + "pool_compare_Gn_monthly_EB" + figtype)
+plt.show()
+
+# social welfare
+"TODO"
+
+# check that p2p base is same as pool -- it is. 
+plt.plot(pool.Gn.loc[:, "grid_1"] - p2p.Gn.loc[:, "grid_1"])
+plt.show()
+plt.plot(pool.Gn - p2p.Gn) # insignificant differences
+plt.show()
+
+plt.plot(pool.Ln - p2p.Ln)
+plt.show()

@@ -27,10 +27,15 @@ def save_tocsv(model_name,time_range,uniform_price_year,Pn_year,Gn_year,Ln_year,
 
 class CaseStudyData:
     def __init__(self, model_name,time_range, uniform_price_year,
-                Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year):
+                Pn_year,Gn_year,Ln_year,sw_year,settlement_year,Gn_revenue_year,Ln_revenue_year, p2p=False,
+                Tnm=None):
         self.name = model_name
         self.timerange = time_range
-        self.price = pd.concat(uniform_price_year).head(len(time_range)).set_index(time_range)
+        if p2p:
+            self.price = uniform_price_year
+            self.Tnm = Tnm
+        else:
+            self.price = pd.concat(uniform_price_year).head(len(time_range)).set_index(time_range)
         self.Pn = pd.concat(Pn_year).head(len(time_range)).set_index(time_range)
         self.Gn = pd.concat(Gn_year).head(len(time_range)).set_index(time_range)
         self.Ln = pd.concat(Ln_year).head(len(time_range)).set_index(time_range)

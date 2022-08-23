@@ -1,6 +1,7 @@
 import cvxpy as cp
 import numpy as np
 import itertools
+import mosek
 from pyscipopt.scip import Model
 
 from ...short_term.datastructures.resultobject import ResultData
@@ -132,7 +133,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
     if settings.offer_type == "block":
         result_ = prob.solve(solver=cp.SCIP)
     else:
-        result_ = prob.solve(solver=cp.GUROBI)
+        result_ = prob.solve(solver=cp.GUROBI) # MOSEK, mosek_params={mosek.iparam.intpnt_solve_form: mosek.solveform.dual})
 
     print("problem status: %s" % prob.status)
 
