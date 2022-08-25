@@ -101,10 +101,12 @@ p2p_data = CaseStudyData(model_name,time_range,newest,Pn_year,
 save_topickle(model_name=model_name, casedata=p2p_data)
 
 
-## p2p WITH Energy budget
+## p2p WITH preferences
 print("running p2p with distance preference ")
 ##---------------------------
 one_year_idx, nr_h, agent_ids, g_max, l_max, cost, utility, time_range = prep_inputs()
+gis_data = make_gis_data(agent_ids=agent_ids)
+test = pd.DataFrame(gis_data)
 
 # monthly average
 shadow_price_year = []
@@ -133,7 +135,7 @@ for i,date in enumerate(one_year_idx,1):
 		'md': 'p2p',  # other options are  'p2p' or 'community'
 		'nr_of_hours': nr_h,
 		'offer_type': 'simple',
-		'prod_diff': 'distance',
+		'prod_diff': 'networkDistance',
 		'network': 'none',
 		'el_dependent': 'false',
 		'el_price': 'none', # not list but array 
@@ -149,7 +151,7 @@ for i,date in enumerate(one_year_idx,1):
 		'block_offer': 'none', 
 		'is_chp': 'none', 
 		'chp_pars': 'none',  
-		'gis_data': 'none',  
+		'gis_data': gis_data,  
 		'nodes': 'none', 
 		'edges': 'none',
 		}
