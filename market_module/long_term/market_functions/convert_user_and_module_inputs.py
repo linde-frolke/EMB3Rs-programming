@@ -40,14 +40,11 @@ def convert_user_and_module_inputs(input_data):
 
     nr_of_hours = diff
 
-#TODO: Check later if this is required for the longterm
-
-
-    # # get GIS data ----------
-    #TODO: do this if we use decentralized market
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
+    all_sources_info = input_data["cf-module"]["all_sources_info"]
+
 
     # convert CF inputs -----------------------------------------------------------------------------
     # get some sink info
@@ -84,7 +81,6 @@ def convert_user_and_module_inputs(input_data):
     teo_output = input_data["teo-module"]
 
     #Convert TEO inputs
-    #TODO: get co2 emissions if we use product differentiation
     production_by_technology_annual = teo_output.get("ProductionByTechnologyMM", teo_output["ProductionByTechnology"])
     ProductionByTechnologyAnnual = pd.DataFrame(production_by_technology_annual)
     VariableOMCost = pd.DataFrame(teo_output["VariableOMCost"])
@@ -128,11 +124,45 @@ def convert_user_and_module_inputs(input_data):
 
     cost_sources = cost_sources.to_numpy()
 
+    #Getting CO2 Emissions
+    co2_names=[] #Agents with co2 data
+    for leng_nr in teo_output['AnnualTechnologyEmission']:
+        co2_names.append(leng_nr['TECHNOLOGY'])
+    #
+    emissions_sources=[]
+    for source in source_names:
+        if source in co2_names:
+            for tech in teo_output['AnnualTechnologyEmission']:
+                if tech['TECHNOLOGY'] == source:
+                    emissions_sources.append(tech['VALUE'])
+        else:
+            emissions_sources.append(0)
+
+
+    # Get GIS data
+
+    gis_output = input_data['gis-module']
+    gis_data = {'from_to': [],
+                'losses_total': [],
+                'length': [],
+                'total_costs': []}
+
+    for link in gis_output['gis_data']['res_sources_sinks']:
+        for source in source_names:
+            if 'sou' in source:
+                for sink in all_stream_ids:
+                    if link['from_to'][1:-1].split(',')[0] == source.split('sou')[1].split('str')[0] and link['from_to'][1:-1].split(',')[1][1:] == sink.split('sink')[1].split('str')[0]:
+                        gis_data['from_to'].append('(\'{}\',\'{}\')'.format(source,sink))
+                        gis_data['losses_total'].append(link['losses_total'])
+                        gis_data['length'].append(link['length'])
+                        gis_data['total_costs'].append(link['total_costs'])
+
     # prep inputs
     lmax_sources = np.zeros((nr_of_hours, nr_of_sources))
     util_sources = np.zeros((nr_of_hours, nr_of_sources))
     gmax_sinks = np.zeros((nr_of_hours, len(all_stream_ids)))
     cost_sinks = np.zeros((nr_of_hours, len(all_stream_ids)))
+    emissions_sinks = np.zeros(len(all_stream_ids))
 
     ## combine in input_dict as we used to have it
     # make input dict ------------------------
@@ -142,6 +172,7 @@ def convert_user_and_module_inputs(input_data):
     lmax = np.concatenate((lmax_sources, lmax_sinks), axis=1).tolist()
     cost = np.concatenate((cost_sources, cost_sinks), axis=1).tolist()
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
+    co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
     # construct input_dict
     input_dict = {
@@ -157,8 +188,8 @@ def convert_user_and_module_inputs(input_data):
         'cost': cost,
         'util': util,
         'start_datetime': start_date_str,
-        'co2_emissions': None,  # allowed values are 'none' or array of size (nr_of_agents)
-        'gis_data': None,
+        'co2_emissions': list(co2_emissions),  # allowed values are 'none' or list of size (nr_of_agents)
+        'gis_data': gis_data,
         'nodes': None,
         'edges': None
     }

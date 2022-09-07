@@ -1,4 +1,5 @@
 import pandas as pd
+from ast import literal_eval
 
 # import own modules
 from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
@@ -32,7 +33,11 @@ def run_longterm_market(input_dict):
     elif settings.market_design == "decentralized":
         from ...long_term.market_functions.decentralized_market import make_decentralized_market #TODO: #27/07/2022 Moved this, check if is working for the decentralized
         from ...long_term.datastructures.inputstructs import Network #TODO: #27/07/2022 Moved this, check if is working for the decentralized
+
         gis_data = pd.DataFrame(data=input_dict['gis_data'])
+        # convert string to tuple
+        gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
+
         network = Network(agent_data=agent_data, gis_data=gis_data)
         result = make_decentralized_market(agent_data=agent_data, settings=settings,
                                            network=network)
