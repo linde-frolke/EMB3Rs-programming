@@ -180,18 +180,18 @@ class AgentData(BaseModel):
             self.util = pd.DataFrame(self.replicate_data(np.array(self.util), self.settings), columns=self.agent_name)
 
         #If user provides hourly data, but wants a daily simulation
-        # if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
-        #     self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
-        #     self.lmax = pd.DataFrame(self.cumulative_sum(np.array(self.lmax), self.settings), columns=self.agent_name)
-        #
-        #     self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
-        #     self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
-        # else:
-        self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
-        self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
+        if self.settings.data_profile == 'daily' and len(self.gmax) == len(self.lmax) == len(self.cost) == len(self.util) == self.settings.diff * 24:
+            self.gmax = pd.DataFrame(self.cumulative_sum(np.array(self.gmax), self.settings), columns=self.agent_name)
+            self.lmax = pd.DataFrame(self.cumulative_sum(np.array(self.lmax), self.settings), columns=self.agent_name)
 
-        self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
-        self.util = pd.DataFrame(self.util, columns=self.agent_name)
+            self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
+            self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
+        else:
+            self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
+            self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
+
+            self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
+            self.util = pd.DataFrame(self.util, columns=self.agent_name)
 
         # These are parameters now
         self.lmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))

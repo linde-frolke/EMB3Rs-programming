@@ -309,7 +309,6 @@ def test_centralized():
     # Find the best price
     # TODO test this somewhere else
     # print(result.find_best_price(15, 'prosumer_1', agent_data, settings))  # user must select hour and agent_id
-
     # # test using "convert_user_and_module_inputs()" -------------------------------------------------
     # # convert some inputs to platform format
     # tmp = np.array(input_dict["util"])

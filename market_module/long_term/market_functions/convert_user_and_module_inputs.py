@@ -43,7 +43,7 @@ def convert_user_and_module_inputs(input_data):
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
-    all_sources_info = input_data["cf-module"]["all_sources_info"]
+    #all_sources_info = input_data["cf-module"]["all_sources_info"]
 
 
     # convert CF inputs -----------------------------------------------------------------------------
@@ -94,6 +94,9 @@ def convert_user_and_module_inputs(input_data):
     for word in agent_names:
         if 'sink' not in word:
             source_names.append(word)
+    #Removing dhn from source_names
+    if 'dhn' in source_names:
+        source_names.remove('dhn')
 
     nr_of_sources = len(source_names)
 
