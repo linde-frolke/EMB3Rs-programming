@@ -69,9 +69,14 @@ def convert_user_and_module_inputs(input_data):
                 lmax_sinks[t,count] = all_sinks_info[sink]['streams'][stream]['hourly_stream_capacity'][t]
                 count+=1
 
-
     utility_list = user_input['user']['util']
-    util_sinks_t0 = np.array(utility_list)
+    util_sinks_t0 = np.zeros(len(all_stream_ids))
+    for stream in range(0, len(all_stream_ids)):
+        # get the nr of the sink that this stream is a part of
+        stream_id_start = int(all_stream_ids[stream].split("str")[0].split("sink")[1])
+        # assign that sink's utility to this stream
+        util_sinks_t0[stream] = utility_list[sink_ids.index(stream_id_start)]
+    
     util_sinks = np.tile(util_sinks_t0,(diff,1))
 
     if len(util_sinks_t0) != len(all_stream_ids):
