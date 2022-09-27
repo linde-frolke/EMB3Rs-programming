@@ -86,8 +86,7 @@ lengths = list(length_dict.values())
 # losss_total 
 losses_total = np.ones(len(from_to))
 
-# total_costs
-total_costs = np.ones(len(from_to))
+
 
 # make connectivity matrix
 A = np.zeros((len(nodes), len(pipes)))
@@ -116,13 +115,36 @@ for i in nodes[:-1]:
 distance[41,:-1] = distance[40,:-1] + lengths[0]
 distance[:-1, 41] = distance[41,:-1]
 
-## TODO Convert to from,to AGENT_IDs
 
-[sol]
-sol
+## Now convert this to the gis_data format 
+from itertools import product
+agents_from_to = [(i, j) for i,j in product(agent_ids, agent_ids) if i >= j]
+distance_vec = [distance[list(loc_dict.keys())[list(loc_dict.values()).index(x[0])] -1 , list(loc_dict.keys())[list(loc_dict.values()).index(x[1])] - 1] for x in agents_from_to]
+losses_vec =  distance_vec ## TODO make this one
+
+# total_costs
+total_costs = list(np.ones(len(agents_from_to)))
 
 gis_data = {}
-gis_data['from_to'] = from_to
-gis_data['losses_total'] = losses_total
-gis_data['length'] = lengths
+gis_data['from_to'] = agents_from_to
+gis_data['losses_total'] = losses_vec
+gis_data['length'] = distance_vec
 gis_data['total_costs'] = total_costs
+
+gis_data
+
+pd.DataFrame(gis_data)
+
+import json
+gis_data
+with open('Nordhavn_gis_data_for_sergio.json', 'w') as f:
+    json.dump(gis_data, f)
+
+nodes
+with open('Nordhavn_nodes_data_for_sergio.json', 'w') as f:
+    json.dump(nodes, f)
+
+pipes
+with open('Nordhavn_pipes_data_for_sergio.json', 'w') as f:
+    json.dump(pipes, f)
+    
