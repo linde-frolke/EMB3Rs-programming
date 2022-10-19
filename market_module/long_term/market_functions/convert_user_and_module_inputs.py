@@ -182,6 +182,26 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
+    ## add storage inputs ---------------------------------------
+    storage_data_TEO = teo_output["AccumulatedNewStorageCapacity"]
+
+    # extract the needed storage data
+    storage_df = pd.DataFrame(storage_data_TEO)
+    storage_df.YEAR = storage_df["YEAR"].astype(int)
+
+    # nr and names
+    nr_of_storage = len(storage_data_TEO)
+    storage_names = list(set(storage_df.STORAGE))
+
+    # capacity per year 
+    storage_capacity_per_timestep = {}
+    if nr_of_storage > 0:
+        for storage_name in storage_names:
+            capacity_per_time = [storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_nr)].to_numpy()[0] for year_nr in year_]
+            storage_capacity_per_timestep[storage_name] = capacity_per_time
+    
+    stor_capacity_list = np.array([storage_capacity_per_timestep[stor] for stor in storage_names]).T.tolist()
+
     # construct input_dict
     input_dict = {
         'md': user_input['user']['md'],
@@ -199,6 +219,8 @@ def convert_user_and_module_inputs(input_data):
         'co2_emissions': list(co2_emissions),  # allowed values are 'none' or list of size (nr_of_agents)
         'gis_data': gis_data,
         'nodes': None,
-        'edges': None
+        'edges': None, 
+        'storage_name': storage_names, 
+        'storage_capacity': stor_capacity_list
     }
     return input_dict

@@ -132,6 +132,8 @@ class AgentData(BaseModel):
     """
     settings: MarketSettings
     name: list
+    storage_name: list
+    storage_capacity: dict
     gmax: list
     lmax: list
     cost: list
@@ -139,6 +141,7 @@ class AgentData(BaseModel):
     co2: Union[None, List] = None
     #to be filled in init
     nr_of_agents : Any
+    nr_of_stor : Any
     co2_emission : Any
     agent_name : Any
     lmin_zeros : Any
@@ -163,7 +166,7 @@ class AgentData(BaseModel):
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.name)
-        # TODO print("todo make sure no ID is identical")
+        self.nr_of_stor = len(self.storage_name)
         self.agent_name = self.name
         # add co2 emission info if needed
         if self.settings.product_diff == "co2Emissions":
@@ -238,7 +241,21 @@ class AgentData(BaseModel):
         if isinstance(v[0], list) == True:
             raise ValueError('Agent IDs should be one dimensional list')
         return v
-
+    @validator("storage_name") #checking list dimensions
+    def storage_name_valid(cls, v):
+        if isinstance(v[0], list) == True:
+            raise ValueError('Storage IDs should be one dimensional list')
+        return v
+    @validator("storage_capacity")
+    def storage_capacity_dimensions_correct(cls, v, values):
+        if not set(v.keys) == set(values["storage_name"]):
+            raise ValueError("The names in 'storage_capacity' should exactly match the names in 'storage_name'")
+        else:
+            for stor in values["storage_name"]:
+                if not len(v[stor]) < values["settings"].diff:
+                    raise ValueError("The storage capacity time series of storage " + stor + " must at least have length " + 
+                    str(values["settings"].diff) + " but has length " + str(len(v[stor])) + " ")
+        return v
     @validator('gmax')
     def gmax_valid(cls, v, values):
         if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):
