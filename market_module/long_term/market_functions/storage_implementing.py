@@ -77,3 +77,9 @@ if nr_of_storage > 0:
     for storage_name in storage_names:
         capacity_per_time = [storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_nr)].to_numpy()[0] for year_nr in year_]
         storage_capacity_per_timestep[storage_name] = capacity_per_time
+
+set(storage_capacity_per_timestep.keys()) == set(storage_names)
+
+len(storage_capacity_per_timestep["tankstorage"])
+
+

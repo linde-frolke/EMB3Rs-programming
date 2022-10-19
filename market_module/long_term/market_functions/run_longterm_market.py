@@ -24,7 +24,8 @@ def run_longterm_market(input_dict):
                            #a_type=input_dict['agent_types'],
                             gmax=input_dict['gmax'],
                            lmax=input_dict['lmax'],
-                           cost=input_dict['cost'], util=input_dict['util'], co2=input_dict['co2_emissions']
+                           cost=input_dict['cost'], util=input_dict['util'], co2=input_dict['co2_emissions'], 
+                           storage_name= input_dict["storage_name"], storage_capacity= input_dict["storage_capacity"]
                            )
 
     # construct and solve market -----------------------------
