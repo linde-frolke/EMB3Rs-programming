@@ -4,3 +4,5 @@ __pycache__
 *.pycmarket_module/short_term/tests/dummy_platform_data_short_term_pool.json
 market_module/short_term/tests/makeDataForDavid.py
 market_module/short_term/tests/dummy_platform_data_short_term_pool.json
+market_module/DTU_case_study/
+market_module/DTU_case_study_new/
