@@ -31,7 +31,7 @@ def run_longterm_market(input_dict):
     # construct and solve market -----------------------------
     if settings.market_design == "centralized":
         result = make_centralized_market(agent_data=agent_data, settings=settings)
-        print(result)
+        
     elif settings.market_design == "decentralized":
         from ...long_term.market_functions.decentralized_market import make_decentralized_market #TODO: #27/07/2022 Moved this, check if is working for the decentralized
         from ...long_term.datastructures.inputstructs import Network #TODO: #27/07/2022 Moved this, check if is working for the decentralized

@@ -8,6 +8,7 @@ from dateutil.parser import parse
 import datetime
 import json 
 from math import ceil
+import matplotlib.pyplot as plt
 
 f1 = open("/home/linde/Documents/2019PhD/EMB3Rs/module_integration/UoW-withstorage-market-module-long-term-input.json")
 input_data = json.load(f1)
@@ -20,9 +21,11 @@ from market_module.long_term.market_functions.convert_user_and_module_inputs imp
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
 input_data["user"]["start_datetime"] = "2023-01-01"
-
+#input_data["recurrence"] = 1
+#input_data["horizon_basis"] = "months"
 # check whether the correct inputs are created
 input_dict = convert_user_and_module_inputs(input_data)
+
 # input_dict["storage_capacity"]
 # input_dict["storage_name"]
 
@@ -30,10 +33,19 @@ input_dict = convert_user_and_module_inputs(input_data)
 
 # 
 output = run_longterm_market(input_dict=input_dict)
-
 output.keys()
-output["optimal"]
 
+pd.DataFrame(output["Bn"]).iloc[1,:].sum() #).iloc([0,:])
+
+pd.DataFrame(output["En"]).iloc[0:49,:].plot()
+plt.show()
+
+#output.keys()
+output["optimal"]
+(pd.DataFrame(output["Pn"]).iloc[1,:]).sum()
+# sum(pd.DataFrame(output["Pn"]).iloc[1,:])
+# sum(pd.DataFrame(output["Pn"]).iloc[2,:])
+# sum(pd.DataFrame(output["Pn"]).iloc[3,:])
 
 # %import cvxpy
 # %print(cvxpy.__version__)
@@ -63,3 +75,4 @@ type(agent_data.storage_capacity)
 
 type(input_dict["storage_capacity"])
 agent_data.storage_name
+agent_data.storage_capacity

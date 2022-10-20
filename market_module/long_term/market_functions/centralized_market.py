@@ -195,7 +195,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             # end the iteration    
 
         # store result in result object
-        result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
+        result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t, En=En_t, Bn=Bn_t)
         
         # return result
         return result

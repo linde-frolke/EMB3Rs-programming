@@ -251,6 +251,12 @@ class AgentData(BaseModel):
         if isinstance(v[0], list) == True:
             raise ValueError('Storage IDs should be one dimensional list')
         return v
+    def no_storage_in_decentralized(cls, v, values):
+        if (len(v) > 0) & (values["settings"].market_design == "decentralized"):
+            raise NotImplementedError("Storage can only be included in the centralized market design, " +
+            "it is not implemented in the decentralized market (yet). \n" +
+            "Please select the centralized market design instead. ")
+        return v
     @validator("storage_capacity")
     def storage_capacity_for_all_storages(cls, v, values):
         nr_of_stor_dimension = np.array(v).shape[1]
