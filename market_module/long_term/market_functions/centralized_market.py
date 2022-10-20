@@ -14,7 +14,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     :param settings:
     :return: ResultData object.
     """
-
+    print("running centralized market")
     #simplifying simulation time
     t = settings.diff
 
@@ -29,8 +29,10 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
 
     # is there any storage present?
     storage_present = len(agent_data.storage_name) > 0
+    
     # if no storage, keep as it was
     if not storage_present:
+        print("running long term without storage")
         for n_iter in range(0, t):
             # collect named constraints in cb
             cb = ConstraintBuilder()
@@ -86,105 +88,114 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             Gn_t.iloc[n_iter] = list(variables[varnames.index("Gn")].value)
             shadow_price_t.iloc[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
 
-        # if storage is present, we run the market for each day separately
-        else:
-            # We assume that the storage is empty at the start and end of the day
-            E_0 = 0
+            # store result in result object
+            result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
+            # return it
+            return result
 
-            ## ITERATE PER DAY 
-            h_per_iter = 24 
-            nr_of_iter = ceil(t / h_per_iter)
-            iter_days = range(nr_of_iter)
-            h_on_last = t - (nr_of_iter - 1)*h_per_iter 
+    # if storage is present, we run the market for each day separately
+    else:
+        print("running long term with storage")
+        # We assume that the storage is empty at the start and end of the day
+        E_0 = 0
 
-            for iter in iter_days:
-                # set the number of timesteps in this iteration
-                if iter == (nr_of_iter - 1):
-                    nr_of_timesteps = h_on_last
-                else:
-                    nr_of_timesteps = h_per_iter
+        ## ITERATE PER DAY 
+        h_per_iter = 24 
+        nr_of_iter = ceil(t / h_per_iter)
+        iter_days = range(nr_of_iter)
+        h_on_last = t - (nr_of_iter - 1)*h_per_iter 
 
-                selected_timesteps = range(iter*h_per_iter, (iter +1)*h_per_iter)
-                # build constraints
-                # collect named constraints in cb
-                cb = ConstraintBuilder()
-                # prepare parameters
-                Gmin = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.gmin[selected_timesteps, :].to_numpy())
-                Gmax = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.gmax.T[selected_timesteps, :].to_numpy())
-                Lmin = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.lmin.T[selected_timesteps, :].to_numpy())
-                Lmax = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.lmax.T[selected_timesteps, :].to_numpy())
+        for iter in iter_days:
+            print("iteration number " + str(iter+1) + " out of " + str(nr_of_iter) + "\n")
+            # set the number of timesteps in this iteration
+            if iter == (nr_of_iter - 1):
+                nr_of_timesteps = h_on_last
+            else:
+                nr_of_timesteps = h_per_iter
 
-                cost = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.cost.T[selected_timesteps, :].to_numpy())
-                util = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.util.T[selected_timesteps, :].to_numpy())
+            selected_timesteps = range(iter*h_per_iter, (iter +1)*h_per_iter)
+            # build constraints
+            # collect named constraints in cb
+            cb = ConstraintBuilder()
+            # prepare parameters
+            Gmin = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.gmin.to_numpy()[selected_timesteps, :])
+            Gmax = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.gmax.to_numpy()[selected_timesteps, :])
+            Lmin = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.lmin.to_numpy()[selected_timesteps, :])
+            Lmax = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.lmax.to_numpy()[selected_timesteps, :])
 
-                stor_capacity = cp.Parameter((nr_of_timesteps, agent_data.nr_of_stor), value=agent_data.storage_capacity[selected_timesteps, :].to_numpy())
+            cost = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.cost.to_numpy()[selected_timesteps, :])
+            util = cp.Parameter((nr_of_timesteps, agent_data.nr_of_agents), value=agent_data.util.to_numpy()[selected_timesteps, :])
 
-                # variables load and generation
-                Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
-                Gn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Gn")
-                Ln = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Ln")
-                # variables storage
-                # the State of Energy of the storage, En
-                En = cp.Variable((nr_of_timesteps, agent_data.nr_of_stor), name="En")
-                # the amount Charged, Bn
-                Bn = cp.Variable((nr_of_timesteps, agent_data.nr_of_stor), name="Bn")
+            stor_capacity = cp.Parameter((nr_of_timesteps, agent_data.nr_of_stor), value=agent_data.storage_capacity.to_numpy()[selected_timesteps, :])
 
-                # variable limits ----------------------------------
-                #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
-                cb.add_constraint(Gmin <= Gn, str_="G_lb")
-                cb.add_constraint(Gn <= Gmax, str_="G_ub")
-                cb.add_constraint(Lmin <= Ln, str_="L_lb")
-                cb.add_constraint(Ln <= Lmax, str_="L_ub")
-                
-                # Storage constraints ---
-                # limits 
-                cb.add_constraint(En >= 0, str_="En_lb")
-                cb.add_constraint(En <= stor_capacity, str_="En_ub")
-                # end of day storage level is set to zero
-                cb.add_constraint(En[nr_of_timesteps -1 , :] == E_0)
-                # Storage energy balance
-                # constraint for first hour of the day. It is assumed that the storage starts and ends at the level E_0
-                cb.add_constraint(En[0, :] == Bn[0,:] + E_0, str_="storage_energy_balance_t0")
-                for h in range(1, nr_of_timesteps):
-                    cb.add_constraint(En[h, :] == En[h-1, :] + Bn[h,:], str="storage_balance_t" + str(h))
+            # variables load and generation
+            Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
+            Gn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Gn")
+            Ln = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Ln")
+            # variables storage
+            # the State of Energy of the storage, En
+            En = cp.Variable((nr_of_timesteps, agent_data.nr_of_stor), name="En")
+            # the amount Charged, Bn
+            Bn = cp.Variable((nr_of_timesteps, agent_data.nr_of_stor), name="Bn")
 
-                # constraints --------------------------------------
-                # define power injection as net generation
-                cb.add_constraint(Pn == Gn - Ln, str_="def_P")
+            # variable limits ----------------------------------
+            #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
+            cb.add_constraint(Gmin <= Gn, str_="G_lb")
+            cb.add_constraint(Gn <= Gmax, str_="G_ub")
+            cb.add_constraint(Lmin <= Ln, str_="L_lb")
+            cb.add_constraint(Ln <= Lmax, str_="L_ub")
+            
+            # Storage constraints ---
+            # limits 
+            cb.add_constraint(En >= 0, str_="En_lb")
+            cb.add_constraint(En <= stor_capacity, str_="En_ub")
+            # end of day storage level is set to zero
+            cb.add_constraint(En[nr_of_timesteps -1 , :] == E_0, str_="set_eod_En")
+            # Storage energy balance
+            # constraint for first hour of the day. It is assumed that the storage starts and ends at the level E_0
+            cb.add_constraint(En[0, :] == Bn[0,:] + E_0, str_="storage_energy_balance_t0")
+            for h in range(1, nr_of_timesteps):
+                cb.add_constraint(En[h, :] == En[h-1, :] + Bn[h,:], str_="storage_balance_t" + str(h))
 
-                # power balance at each time -- net power injection by generators and loads equals what is charged in the storages.
-                cb.add_constraint(cp.sum(Pn, axis=1) == cp.sum(Bn, axis=1), str_="powerbalance")
+            # constraints --------------------------------------
+            # define power injection as net generation
+            cb.add_constraint(Pn == Gn - Ln, str_="def_P")
 
-                # objective function
-                # cp.multiply is element-wise multiplication
-                total_cost = cp.sum(cp.multiply(cost, Gn))
-                total_util = cp.sum(cp.multiply(util, Ln))
-                objective = cp.Minimize(total_cost - total_util)
+            # power balance at each time -- net power injection by generators and loads equals what is charged in the storages.
+            cb.add_constraint(cp.sum(Pn, axis=1) == cp.sum(Bn, axis=1), str_="powerbalance")
 
-                # common for all offer types ------------------------------------------------
-                # define the problem and solve it.
-                prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-                result_ = prob.solve(solver=cp.GUROBI)
+            # objective function
+            # cp.multiply is element-wise multiplication
+            total_cost = cp.sum(cp.multiply(cost, Gn))
+            total_util = cp.sum(cp.multiply(util, Ln))
+            objective = cp.Minimize(total_cost - total_util)
 
-                # throw an error if the problem is not solved.
-                if prob.status in ["infeasible", "unbounded"]:
-                    # print("Problem is %s" % prob.status)
-                    raise ValueError("Given your inputs, the problem is %s" % prob.status)
+            # common for all offer types ------------------------------------------------
+            # define the problem and solve it.
+            prob = cp.Problem(objective, constraints=cb.get_constraint_list())
+            result_ = prob.solve(solver=cp.GUROBI)
 
-                variables = prob.variables()
-                varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
+            # throw an error if the problem is not solved.
+            if prob.status in ["infeasible", "unbounded"]:
+                # print("Problem is %s" % prob.status)
+                raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
-                # save the outputs from this iteration
-                Pn_t.iloc[selected_timesteps, :] = (variables[varnames.index("Pn")].value)
-                Ln_t.iloc[selected_timesteps, :] = (variables[varnames.index("Ln")].value)
-                Gn_t.iloc[selected_timesteps, :] = (variables[varnames.index("Gn")].value)
-                En_t.iloc[selected_timesteps, :] = (variables[varnames.index("Ln")].value)
-                Bn_t.iloc[selected_timesteps, :] = (variables[varnames.index("Gn")].value)
-                
-                shadow_price_t.iloc[selected_timesteps, :] = list(cb.get_constraint(str_="powerbalance").dual_value)
+            variables = prob.variables()
+            varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
 
+            # save the outputs from this iteration
+            Pn_t.iloc[selected_timesteps, :] = variables[varnames.index("Pn")].value
+            Ln_t.iloc[selected_timesteps, :] = variables[varnames.index("Ln")].value
+            Gn_t.iloc[selected_timesteps, :] = variables[varnames.index("Gn")].value
+            En_t.iloc[selected_timesteps, :] = variables[varnames.index("En")].value
+            Bn_t.iloc[selected_timesteps, :] = variables[varnames.index("Bn")].value
+            
+            shadow_price_t.iloc[selected_timesteps] = np.reshape(cb.get_constraint(str_="powerbalance").dual_value, 
+                                                                    (h_per_iter, 1))
+            # end the iteration    
 
-    # store result in result object
-    result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
-
-    return result
+        # store result in result object
+        result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
+        
+        # return result
+        return result

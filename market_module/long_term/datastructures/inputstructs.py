@@ -131,13 +131,13 @@ class AgentData(BaseModel):
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
     settings: MarketSettings
-    name: list
-    storage_name: list
-    storage_capacity: dict
-    gmax: list
-    lmax: list
-    cost: list
-    util: list
+    name: List
+    storage_name: List
+    storage_capacity: list
+    gmax: List
+    lmax: List
+    cost: List
+    util: List
     co2: Union[None, List] = None
     #to be filled in init
     nr_of_agents : Any
@@ -189,12 +189,17 @@ class AgentData(BaseModel):
 
             self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
             self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
+            if len(self.storage_name) > 0:
+                raise NotImplementedError("we still need to implement the daily simulation in case storage is included. try hourly simulation instead.")
+                # TODO FOR STORAGE CAPACITY!! 
         else:
             self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
             self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
 
             self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
             self.util = pd.DataFrame(self.util, columns=self.agent_name)
+
+            self.storage_capacity = pd.DataFrame(self.storage_capacity, columns=self.storage_name)
 
         # These are parameters now
         self.lmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))
@@ -247,14 +252,16 @@ class AgentData(BaseModel):
             raise ValueError('Storage IDs should be one dimensional list')
         return v
     @validator("storage_capacity")
-    def storage_capacity_dimensions_correct(cls, v, values):
-        if not set(v.keys) == set(values["storage_name"]):
-            raise ValueError("The names in 'storage_capacity' should exactly match the names in 'storage_name'")
-        else:
-            for stor in values["storage_name"]:
-                if not len(v[stor]) < values["settings"].diff:
-                    raise ValueError("The storage capacity time series of storage " + stor + " must at least have length " + 
-                    str(values["settings"].diff) + " but has length " + str(len(v[stor])) + " ")
+    def storage_capacity_for_all_storages(cls, v, values):
+        nr_of_stor_dimension = np.array(v).shape[1]
+        if not nr_of_stor_dimension == len(values["storage_name"]):
+            raise ValueError("The 'storage_capacity' input should be given for all storages in 'storage_name', and no others.")
+        return v
+    def storage_capacity_for_all_timesteps(cls, v, values):
+        time_dimension = np.array(v).shape[0]
+        if not time_dimension == values["settings"].diff:
+            raise ValueError("The storage capacity must be given for each timestep in the selected time horizon. Probably start_datetime is selected " + 
+            "such that outputs from TEO do not cover the entire time period selected for the market module. ")
         return v
     @validator('gmax')
     def gmax_valid(cls, v, values):
