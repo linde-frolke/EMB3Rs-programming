@@ -81,6 +81,9 @@ def convert_user_and_module_inputs(input_data):
 
     if len(util_sinks_t0) != len(all_stream_ids):
         raise Exception('Utility does not match the sinks size')
+    
+    if np.min(util_sinks) < 0:
+        raise Exception('Utility cannot be negative!')
 
     # get TEO data
     teo_output = input_data["teo-module"]
@@ -132,6 +135,9 @@ def convert_user_and_module_inputs(input_data):
 
     cost_sources = cost_sources.to_numpy()
 
+    if np.min(cost_sources) < 0:
+        raise Exception('Cost cannot be negative!')
+    
     #Getting CO2 Emissions
     co2_names=[] #Agents with co2 data
     for leng_nr in teo_output['AnnualTechnologyEmission']:
