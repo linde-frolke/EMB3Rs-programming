@@ -41,6 +41,10 @@ def convert_user_and_module_inputs(input_data):
 
     nr_of_hours = diff
 
+    # 
+    # TODO put error if end_date or start_date is not in TEO YEAR.
+    # if not xxx
+    #     raise
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]

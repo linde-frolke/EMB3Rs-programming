@@ -15,7 +15,7 @@ input_data = json.load(f1)
 
 input_data.keys()
 input_data["user"]
-input_data["teo-module"]["AccumulatedNewStorageCapacity"]
+input_data["teo-module"]["ex_capacities"]
 
 from market_module.long_term.market_functions.convert_user_and_module_inputs import convert_user_and_module_inputs #, run_longterm_market
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market

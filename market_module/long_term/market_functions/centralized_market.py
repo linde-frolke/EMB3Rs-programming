@@ -78,7 +78,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
                 # print("Problem is %s" % prob.status)
-                raise ValueError("Given your inputs, the problem is %s" % prob.status)
+                raise RuntimeError("Given your inputs, the problem is %s" % prob.status)
 
             variables = prob.variables()
             varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
@@ -178,7 +178,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
                 # print("Problem is %s" % prob.status)
-                raise ValueError("Given your inputs, the problem is %s" % prob.status)
+                raise RuntimeError("Given your inputs, the problem is %s" % prob.status)
 
             variables = prob.variables()
             varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]

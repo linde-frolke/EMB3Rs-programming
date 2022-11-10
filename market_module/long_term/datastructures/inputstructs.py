@@ -190,8 +190,8 @@ class AgentData(BaseModel):
             self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
             self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
             if len(self.storage_name) > 0:
-                raise NotImplementedError("we still need to implement the daily simulation in case storage is included. try hourly simulation instead.")
-                # TODO FOR STORAGE CAPACITY!! 
+                raise NotImplementedError("The daily simulation is not available in case storage is included. Please select hourly simulation instead.")
+                 
         else:
             self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
             self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
