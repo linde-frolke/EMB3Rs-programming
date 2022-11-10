@@ -64,14 +64,12 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
         
-        if settings.solver == None:
-            result_ = prob.solve(solver=cp.GUROBI)
-        elif settings.solver == 'GUROBI':
+        if settings.solver == 'GUROBI':
             result_ = prob.solve(solver=cp.GUROBI)
         elif settings.solver == 'SCIP':
             result_ = prob.solve(solver=cp.SCIP)
-        else:
-            raise Exception ('Solver not available. Please contact the developers.')
+        # else:
+        #     raise Exception ('Solver not available. Please contact the developers.')
 
         # throw an error if the problem is not solved.
         if prob.status in ["infeasible", "unbounded"]:

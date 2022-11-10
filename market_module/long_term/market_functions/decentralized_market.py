@@ -102,14 +102,10 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
 
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        if settings.solver == None:
-            result_ = prob.solve(solver=cp.GUROBI)
-        elif settings.solver == 'GUROBI':
+        if settings.solver == 'GUROBI':
             result_ = prob.solve(solver=cp.GUROBI)
         elif settings.solver == 'SCIP':
             result_ = prob.solve(solver=cp.SCIP)
-        else:
-            raise Exception('Solver not available. Please contact the developers.')
         print("problem status: %s" % prob.status)
 
         if prob.status not in ["infeasible", "unbounded"]:

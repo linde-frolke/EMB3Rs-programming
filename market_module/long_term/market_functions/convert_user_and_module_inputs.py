@@ -190,7 +190,7 @@ def convert_user_and_module_inputs(input_data):
 
     #Checking if we have solver info
     if not 'solver' in input_data['user']:
-        Solver = None
+        Solver = "GUROBI"
     else:
         Solver = input_data['user']['solver']
         

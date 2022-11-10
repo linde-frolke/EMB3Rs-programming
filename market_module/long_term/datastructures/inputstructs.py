@@ -32,7 +32,7 @@ class MarketSettings(BaseModel):
     day_range: Any
     data_size: Any
     diff: Any
-    solver: Any = None
+    solver: str
 
 
     def __init__(self, **data) -> None:
@@ -72,9 +72,7 @@ class MarketSettings(BaseModel):
             self.diff = end_date - start_date  # difference
             self.diff = int(self.diff.total_seconds()/3600/24) #difference in days
 
-        #Solver
-        self.solver = self.solver
-
+    
     @validator("product_diff")
     def product_diff_valid(cls, v):
         options_product_diff = ["noPref", "co2Emissions", "networkDistance"]
@@ -124,6 +122,12 @@ class MarketSettings(BaseModel):
         options_data_profile=['hourly', 'daily']
         if v not in options_data_profile:
             raise ValueError('data_profile should be one of ' + str(options_data_profile))
+        return v
+    
+    @validator("solver")
+    def solver_implemented(cls, v):
+        if v not in ["SCIP", "GUROBI"]:
+            raise ValueError("solver should be SCIP or GUROBI")
         return v
 
 
