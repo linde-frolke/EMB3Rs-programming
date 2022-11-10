@@ -3,8 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="bb56f31c-037a-4df5-b585-bd13877dba86" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/resultobject.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/datastructures/inputstructs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/centralized_market.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/convert_user_and_module_inputs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/decentralized_market.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" beforeDir="false" afterPath="$PROJECT_DIR$/market_module/long_term/market_functions/run_longterm_market.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +50,9 @@
       <module name="EMB3Rs-programming" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/market_module/long_term" />
       <option name="IS_MODULE_SDK" value="true" />

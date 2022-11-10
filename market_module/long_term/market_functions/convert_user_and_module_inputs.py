@@ -188,6 +188,13 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
+    #Checking if we have solver info
+    if not 'solver' in input_data['user']:
+        Solver = None
+    else:
+        Solver = input_data['user']['solver']
+        
+        
     # construct input_dict
     input_dict = {
         'md': user_input['user']['md'],
@@ -205,6 +212,7 @@ def convert_user_and_module_inputs(input_data):
         'co2_emissions': list(co2_emissions),  # allowed values are 'none' or list of size (nr_of_agents)
         'gis_data': gis_data,
         'nodes': None,
-        'edges': None
+        'edges': None,
+        'solver': Solver
     }
     return input_dict

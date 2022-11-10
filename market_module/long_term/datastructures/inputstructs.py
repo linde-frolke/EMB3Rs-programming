@@ -32,6 +32,7 @@ class MarketSettings(BaseModel):
     day_range: Any
     data_size: Any
     diff: Any
+    solver: Any = None
 
 
     def __init__(self, **data) -> None:
@@ -70,6 +71,9 @@ class MarketSettings(BaseModel):
         if self.data_profile == 'daily':
             self.diff = end_date - start_date  # difference
             self.diff = int(self.diff.total_seconds()/3600/24) #difference in days
+
+        #Solver
+        self.solver = self.solver
 
     @validator("product_diff")
     def product_diff_valid(cls, v):
@@ -154,7 +158,6 @@ class AgentData(BaseModel):
         """
         # pydantic __init__ syntax
         super().__init__(**data)
-
 
 
         # #Just to avoid changing centralized_market and resultobject

@@ -15,7 +15,6 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     :return: ResultData object.
     """
 
-
     Pn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.diff), columns=agent_data.agent_name)
@@ -64,7 +63,15 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         # common for all offer types ------------------------------------------------
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        result_ = prob.solve(solver=cp.GUROBI)
+        
+        if settings.solver == None:
+            result_ = prob.solve(solver=cp.GUROBI)
+        elif settings.solver == 'GUROBI':
+            result_ = prob.solve(solver=cp.GUROBI)
+        elif settings.solver == 'SCIP':
+            result_ = prob.solve(solver=cp.SCIP)
+        else:
+            raise Exception ('Solver not available. Please contact the developers.')
 
         # throw an error if the problem is not solved.
         if prob.status in ["infeasible", "unbounded"]:
