@@ -68,8 +68,10 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             result_ = prob.solve(solver=cp.GUROBI)
         elif settings.solver == 'SCIP':
             result_ = prob.solve(solver=cp.SCIP)
-        # else:
-        #     raise Exception ('Solver not available. Please contact the developers.')
+        elif settings.solver == 'HIGHS':
+            result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+        elif settings.solver == 'COPT':
+            result_ = prob.solve(solver=cp.COPT)
 
         # throw an error if the problem is not solved.
         if prob.status in ["infeasible", "unbounded"]:
@@ -83,7 +85,6 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         Ln_t.iloc[n_iter] = list(variables[varnames.index("Ln")].value)
         Gn_t.iloc[n_iter] = list(variables[varnames.index("Gn")].value)
         shadow_price_t.iloc[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
-
 
     # store result in result object
     result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)

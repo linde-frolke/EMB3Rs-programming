@@ -126,8 +126,8 @@ class MarketSettings(BaseModel):
     
     @validator("solver")
     def solver_implemented(cls, v):
-        if v not in ["SCIP", "GUROBI"]:
-            raise ValueError("solver should be SCIP or GUROBI")
+        if v not in ["SCIP", "GUROBI", "HIGHS", "COPT"]:
+            raise ValueError("solver should be SCIP, GUROBI, HIGHS or COPT")
         return v
 
 

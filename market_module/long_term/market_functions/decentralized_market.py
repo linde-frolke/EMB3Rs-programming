@@ -106,7 +106,10 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
             result_ = prob.solve(solver=cp.GUROBI)
         elif settings.solver == 'SCIP':
             result_ = prob.solve(solver=cp.SCIP)
-        print("problem status: %s" % prob.status)
+        elif settings.solver == 'HIGHS':
+            result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+        elif settings.solver == 'COPT':
+            result_ = prob.solve(solver=cp.COPT)
 
         if prob.status not in ["infeasible", "unbounded"]:
             # Otherwise, problem.value is inf or -inf, respectively.
