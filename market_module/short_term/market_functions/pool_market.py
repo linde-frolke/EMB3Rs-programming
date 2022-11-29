@@ -37,8 +37,8 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
     gmax = agent_data.gmax.to_numpy()
     lmin = agent_data.lmin.to_numpy()
     lmax = agent_data.lmax.to_numpy()
-    cost = agent_data.cost.to_numpy()
-    util = agent_data.util.to_numpy()
+    cost_new = agent_data.cost.to_numpy()
+    util_new = agent_data.util.to_numpy()
 
     for iter in iter_days:
         print("running market for day " + str(iter + 1) + " of " + str(nr_of_iter))
@@ -63,11 +63,10 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
             (nr_of_timesteps, agent_data.nr_of_agents), value=lmin[selected_timesteps, :])
         Lmax = cp.Parameter(
             (nr_of_timesteps, agent_data.nr_of_agents), value=lmax[selected_timesteps, :])
-
         cost = cp.Parameter(
-            (nr_of_timesteps, agent_data.nr_of_agents), value=cost[selected_timesteps, :])
+            (nr_of_timesteps, agent_data.nr_of_agents), value=cost_new[selected_timesteps, :])
         util = cp.Parameter(
-            (nr_of_timesteps, agent_data.nr_of_agents), value=util[selected_timesteps, :])
+            (nr_of_timesteps, agent_data.nr_of_agents), value=util_new[selected_timesteps, :])
 
         # variables
         Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
