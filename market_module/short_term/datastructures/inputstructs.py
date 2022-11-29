@@ -50,7 +50,7 @@ class MarketSettings(BaseModel):
 
     @validator("nr_of_h")
     def nr_of_hours_check(cls, v):
-        max_time_steps = 48  # max 48 hours.
+        max_time_steps = 24*366  # max 1 year   
         if not ((type(v) == int) and (1 <= v <= max_time_steps)):
             raise ValueError("nr_of_hours should be an integer between 1 and " + str(max_time_steps))
         return v
