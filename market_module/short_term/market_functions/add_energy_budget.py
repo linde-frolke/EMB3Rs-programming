@@ -4,7 +4,7 @@ import numpy as np
 from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
-def add_energy_budget(constraint_builder, load_var, agent_data):
+def add_energy_budget(constraint_builder, load_var, total_budget, agent_data):
     """
     :param constraint_builder A constraintBuilder object.
     :param load_var     A cp variable of dimension (hrs, agents)
@@ -13,11 +13,10 @@ def add_energy_budget(constraint_builder, load_var, agent_data):
     :return: the constraintBuilder with
     """
     # decide on total budget
-    total_budget = cp.Parameter(agent_data.nr_of_agents,
-                                value=np.sum(0.5 * (agent_data.lmin + agent_data.lmax).to_numpy(), axis=0))
+    total_budget_par = cp.Parameter(agent_data.nr_of_agents, value=total_budget)
 
     # adapts constraintBuilder by adding the energy budget constraint for each load
     constraint_builder.add_constraint(
-        cp.sum(load_var, axis=0) == total_budget, str_="energyBudget")
+        cp.sum(load_var, axis=0) == total_budget_par, str_="energyBudget")
 
     return constraint_builder
