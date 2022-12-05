@@ -170,7 +170,6 @@ class AgentData(BaseModel):
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.name)
-        # TODO print("todo make sure no ID is identical")
         self.agent_name = self.name
         # add co2 emission info if needed
         if self.settings.product_diff == "co2Emissions":
