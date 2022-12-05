@@ -183,7 +183,8 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
         Ln_t.iloc[selected_timesteps] = list(variables[varnames.index("Ln")].value)
         Gn_t.iloc[selected_timesteps] = list(variables[varnames.index("Gn")].value)
         shadow_price_t.iloc[selected_timesteps] = np.resize(cb.get_constraint(str_="powerbalance").dual_value, (nr_of_timesteps, 1))
-        
+    
+    
     result = ResultData(prob_status=prob.status, Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, cb=cb, 
                         agent_data=agent_data, settings=settings)
 
