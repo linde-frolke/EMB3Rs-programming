@@ -122,7 +122,7 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
                 raise ValueError(
                     "You need to give a Network object as input, if you want to include network constraints")
             else:
-                cb = add_network_directions(cb, settings, network, Pn)
+                cb = add_network_directions(cb, settings, network, Pn, nr_of_timesteps)
 
         # common for all offer types ------------------------------------------------
         # define the problem and solve it.
