@@ -235,13 +235,13 @@ class ResultData:
                        }
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
-            return_dict['shadow_price'] = [self.shadow_price[t].to_dict() for t in range(len(self.shadow_price))]
+            return_dict['shadow_price'] = [abs(self.shadow_price[t]).to_dict() for t in range(len(self.shadow_price))]
         
         elif self.market == "community":
             return_dict['Tnm'] = self.Tnm.to_dict(orient="list")
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient="list")
+            return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")
         else:
             return_dict['Tnm'] = self.Tnm
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient="list")
+            return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")
 
         return return_dict

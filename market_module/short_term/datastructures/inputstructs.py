@@ -296,6 +296,12 @@ class AgentData(BaseModel):
         if not all(sublist_length_correct):
             raise ValueError("Each sublist in cost sould be of length nr_of_agents=" + str(len(values["agent_name"])))
         return v
+    @validator("cost")
+    def cost_nonnegative(cls, v):
+        lowest_cost = min(min(v))
+        if lowest_cost < 0:
+            raise ValueError("The cost bids must be nonnegative")
+        return v
     @validator("util")
     def util_nrofh_lists(cls, v, values):
         if len(v) != values["settings"].nr_of_h:
@@ -306,6 +312,12 @@ class AgentData(BaseModel):
         sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
         if not all(sublist_length_correct):
             raise ValueError("Each sublist in util sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("util")
+    def util_nonnegative(cls, v):
+        lowest_util = min(min(v))
+        if lowest_util < 0:
+            raise ValueError("The utility bids must be nonnegative")
         return v
     @validator("is_in_community")
     def community_parameters_given(cls, v, values):
