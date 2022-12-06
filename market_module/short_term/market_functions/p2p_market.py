@@ -28,7 +28,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
     h_on_last = settings.nr_of_h - (nr_of_iter - 1)*h_per_iter 
 
     ## store variables here
-    Pn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
+    #Pn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     shadow_price_t = []
@@ -71,7 +71,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
             (nr_of_timesteps, agent_data.nr_of_agents), value=util_new[selected_timesteps, :])
 
         # variables
-        Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
+        #Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
         Gn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Gn")
         Ln = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Ln")
         # trades. list of matrix variables, one for each time step.
@@ -100,16 +100,20 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
 
         # constraints ----------------------------------
         # define relation between generation, load, and power injection
-        cb.add_constraint(Pn == Gn - Ln, str_="def_P")
+        # cb.add_constraint(Pn == Gn - Ln, str_="def_P")
         for t in range(nr_of_timesteps):
             # trade reciprocity
             for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                 # if not i == j:
-                if j >= i:
+                if j > i:
                     cb.add_constraint(Tnm[t][i, j] + Tnm[t][j, i] == 0,
                                     str_="reciprocity_t" + str(t) + str(i) + str(j))
+            # net zero trade with self
+            for i in range(agent_data.nr_of_agents):
+                cb.add_constraint(Tnm[t][i, i] == 0,
+                                    str_="reciprocity_t" + str(t) + str(i) + str(i))
             # total trades have to match power injection
-            cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
+            # cb.add_constraint(Pn[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
 
         # add extra constraint if offer type is energy Budget.
         if settings.offer_type == "energyBudget":
@@ -177,10 +181,11 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         
         # compute shadow price 
         shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
-                                     for t in settings.timestamps]
-        for t in range(nr_of_timesteps):
-            if settings.offer_type == 'block':
-                if settings.product_diff == 'noPref':
+                                    for t in range(nr_of_timesteps)]
+        
+        if settings.offer_type == 'block':
+            if settings.product_diff == 'noPref':
+                for t in range(nr_of_timesteps):
                     max_cost_disp = []
                     for agent in agent_data.agent_name:
                         if Gn[agent][t] > 0:
@@ -195,24 +200,27 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                                 agent_data.cost.T[t])
                         if j == i:
                             shadow_price[t].iloc[i, j] = 0
-                else:
+            else:
+                for t in range(nr_of_timesteps):
                     for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                         shadow_price[t].iloc[i,j] = agent_data.cost[agent_data.agent_name[i]][t]
                         if j == i:
                             shadow_price[t].iloc[i, j] = 0
-
-            else:
+        else:
+            for t in range(nr_of_timesteps):
                 for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                     # if not i == j:
-                    if j >= i:
+                    if j > i:
                         constr_name = "reciprocity_t" + str(t) + str(i) + str(j)
-                        shadow_price[t].iloc[i, j] = cb.get_constraint(str_=constr_name).dual_value
-                        shadow_price[t].iloc[j, i] = - shadow_price[t].iloc[i, j]
+                        shadow_price[t].iloc[i, j] = abs(cb.get_constraint(str_=constr_name).dual_value)
+                        shadow_price[t].iloc[j, i] = shadow_price[t].iloc[i, j]
+                    if i == j:
+                        shadow_price[t].iloc[i,j] = 0.0
 
         # store result in result object ---------------------------------------------------------
         variables = prob.variables()
         varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-        Pn_t.iloc[selected_timesteps] = list(variables[varnames.index("Pn")].value)
+        # Pn_t.iloc[selected_timesteps] = list(variables[varnames.index("Pn")].value)
         Ln_t.iloc[selected_timesteps] = list(variables[varnames.index("Ln")].value)
         Gn_t.iloc[selected_timesteps] = list(variables[varnames.index("Gn")].value)
         shadow_price_t += shadow_price
@@ -221,6 +229,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
 
     # done iterating
     # store result in result object
+    Pn_t = Gn_t - Ln_t
     result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
                         Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
                         agent_data=agent_data, settings=settings, Tnm_t=Tnm_t)

@@ -191,7 +191,7 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
         shadow_price_t.iloc[selected_timesteps] = np.resize(cb.get_constraint(str_="powerbalance").dual_value, (nr_of_timesteps, 1))
     
     
-    result = ResultData(prob_status=prob.status, day_nrs=day_nr, 
+    result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
                         Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
                         agent_data=agent_data, settings=settings)
 
