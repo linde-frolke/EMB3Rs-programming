@@ -19,6 +19,8 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
     :param network: an object of class Network, or None if the network data is not needed.
     :return: ResultData object.
     """
+    prob_stat = True
+    day_nr = []
 
     ## ITERATE PER DAY 
     h_per_iter = 24 
@@ -40,15 +42,15 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
     cost_new = agent_data.cost.to_numpy()
     util_new = agent_data.util.to_numpy()
 
-    for iter in iter_days:
-        print("running market for day " + str(iter + 1) + " of " + str(nr_of_iter))
+    for iter_ in iter_days:
+        print("running market for day " + str(iter_ + 1) + " of " + str(nr_of_iter))
         # set the number of timesteps in this iteration
-        if iter == (nr_of_iter - 1):
+        if iter_ == (nr_of_iter - 1):
             nr_of_timesteps = h_on_last
         else:
             nr_of_timesteps = h_per_iter
 
-        selected_timesteps = range(iter*h_per_iter, iter*h_per_iter + nr_of_timesteps)
+        selected_timesteps = range(iter_*h_per_iter, iter_*h_per_iter + nr_of_timesteps)
 
 
         # collect named constraints in cb
@@ -138,8 +140,11 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
             # Otherwise, problem.value is inf or -inf, respectively.
             print("Optimal value: %s" % prob.value)
         else:
-            # print("Problem is %s" % prob.status)
-            raise ValueError("Given your inputs, the problem is %s" % prob.status)
+            print("Problem is %s" % prob.status) 
+            prob_stat = False
+            day_nr += int(iter_) 
+            # raise RuntimeError("the problem on day " + str(iter_) + " is " + prob.status)
+            # raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
 
         # COMPUTE SHADOW PRICE -------------------------------------------------------------------
@@ -186,7 +191,8 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
         shadow_price_t.iloc[selected_timesteps] = np.resize(cb.get_constraint(str_="powerbalance").dual_value, (nr_of_timesteps, 1))
     
     
-    result = ResultData(prob_status=prob.status, Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, cb=cb, 
+    result = ResultData(prob_status=prob.status, day_nrs=day_nr, 
+                        Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
                         agent_data=agent_data, settings=settings)
 
     return result

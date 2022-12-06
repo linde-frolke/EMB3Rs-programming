@@ -84,7 +84,6 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
             objective = cp.Minimize(total_cost - total_util)
         else:
             # construct preference matrix
-            # TODO could move this to AgentData structure
             if settings.product_diff == "co2Emissions":
                 emissions_p = agent_data.co2_emission / \
                     sum(agent_data.co2_emission.T[0])  # percentage
