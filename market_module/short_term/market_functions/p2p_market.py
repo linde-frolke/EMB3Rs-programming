@@ -57,7 +57,6 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
             print("nr of timesteps is " + str(nr_of_timesteps))
 
         selected_timesteps = range(iter_*h_per_iter, iter_*h_per_iter + nr_of_timesteps)
-        print(len(selected_timesteps))
 
         # collect named constraints in cb
         cb = ConstraintBuilder()
@@ -119,9 +118,10 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                 # cannot buy more than my load
                 cb.add_constraint(cp.sum(Bnm[t], axis=1) == Ln[t, :], str_="B_ub_t" + str(t))
                 # trade reciprocity
-                for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                        cb.add_constraint(Snm[t][i, j] == Bnm[t][j, i],
-                                        str_="reciprocity_t" + str(t) + str(i) + str(j))
+                for m in range(agent_data.nr_of_agents):
+                    for n in range(agent_data.nr_of_agents):
+                        cb.add_constraint(Snm[t][m, n] == Bnm[t][n, m],
+                                        str_="reciprocity_t" + str(t) + str(m) + str(n))
         else:
             for t in range(nr_of_timesteps):
                 # trade reciprocity
@@ -230,6 +230,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                         if j == i:
                             shadow_price[t].iloc[i, j] = 0
             else:
+                print("do I go here?")
                 for t in range(nr_of_timesteps):
                     for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                         shadow_price[t].iloc[i,j] = agent_data.cost[agent_data.agent_name[i]][t]
@@ -237,14 +238,17 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                             shadow_price[t].iloc[i, j] = 0
         else:
             print("this is the one")
-            for t in range(nr_of_timesteps):
-                for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):                     
-                    if i == j:
-                        shadow_price[t].iloc[i,j] = 0.0
-                    else:
-                        constr_name = "reciprocity_t" + str(t) + str(i) + str(j)
-                        shadow_price[t].iloc[i, j] = abs(cb.get_constraint(str_=constr_name).dual_value)
-
+            for t_ in range(nr_of_timesteps):
+                for k in range(agent_data.nr_of_agents):
+                    for l in range(agent_data.nr_of_agents):
+                        if k == l:
+                            shadow_price[t_].iloc[k,l] = 0.0
+                        else:
+                            constr_name = "reciprocity_t" + str(t_) + str(k) + str(l)
+                            shadow_price[t_].iloc[k, l] = abs(cb.get_constraint(str_=constr_name).dual_value)
+                
+                print(len(np.unique(shadow_price[t_].values)))
+                print(shadow_price[t_])
         # store result in result object ---------------------------------------------------------
         variables = prob.variables()
         varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
@@ -259,10 +263,9 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
             for t in range(nr_of_timesteps):
                 indx = selected_timesteps[t]
                 perc_price_t.iloc[indx,:] = list(cb.get_constraint(str_="B_ub_t" + str(t)).dual_value)
-        print(shadow_price[1])
-        print(shadow_price[2])
-        for k in range(len(shadow_price)):
-            print(len(np.unique(shadow_price[k].values)))
+        
+        for k_ in range(len(shadow_price)):
+            print(len(np.unique(shadow_price[k_].values)))
 
         shadow_price_t += shadow_price
         if allow_arbitrage:
@@ -274,8 +277,8 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                 Tnm_t += [pd.DataFrame(Snm[t].value - Bnm[t].value, columns=agent_data.agent_name, 
                             index=agent_data.agent_name)]
 
-    for t in range(settings.nr_of_h):
-        print(len(np.unique(shadow_price_t[t].values)))
+    # for t in range(settings.nr_of_h):
+    #     print(len(np.unique(shadow_price_t[t].values)))
 
     # done iterating
     # store result in result object
