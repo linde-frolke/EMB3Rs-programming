@@ -118,10 +118,10 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                 # cannot buy more than my load
                 cb.add_constraint(cp.sum(Bnm[t], axis=1) == Ln[t, :], str_="B_ub_t" + str(t))
                 # trade reciprocity
-                for m in range(agent_data.nr_of_agents):
-                    for n in range(agent_data.nr_of_agents):
-                        cb.add_constraint(Snm[t][m, n] == Bnm[t][n, m],
-                                        str_="reciprocity_t" + str(t) + str(m) + str(n))
+                # for m in range(agent_data.nr_of_agents):
+                #     for n in range(agent_data.nr_of_agents):
+                cb.add_constraint(Snm[t] == Bnm[t].T,
+                                        str_="reciprocity_t" + str(t))
         else:
             for t in range(nr_of_timesteps):
                 # trade reciprocity
@@ -239,16 +239,10 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         else:
             print("this is the one")
             for t_ in range(nr_of_timesteps):
-                for k in range(agent_data.nr_of_agents):
-                    for l in range(agent_data.nr_of_agents):
-                        if k == l:
-                            shadow_price[t_].iloc[k,l] = 0.0
-                        else:
-                            constr_name = "reciprocity_t" + str(t_) + str(k) + str(l)
-                            shadow_price[t_].iloc[k, l] = abs(cb.get_constraint(str_=constr_name).dual_value)
+                shadow_price[t_].iloc[:,:] = abs(cb.get_constraint(str_="reciprocity_t" + str(t_)).dual_value)         
                 
                 print(len(np.unique(shadow_price[t_].values)))
-                print(shadow_price[t_])
+                #print(shadow_price[t_])
         # store result in result object ---------------------------------------------------------
         variables = prob.variables()
         varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
