@@ -56,7 +56,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         # collect named constraints in cb
         cb = ConstraintBuilder()
 
-        # prepare parameters
+        # parameters  -----------------------------------------------------------------------
         Gmin = cp.Parameter(
             (nr_of_timesteps, agent_data.nr_of_agents), value=gmin[selected_timesteps, :])
         Gmax = cp.Parameter(
@@ -70,8 +70,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         util = cp.Parameter(
             (nr_of_timesteps, agent_data.nr_of_agents), value=util_new[selected_timesteps, :])
 
-        # variables
-        # Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
+        # variables ------------------------------------------------------------------------
         Gn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Gn")
         Ln = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Ln")
         # sells and buys (trades). list of matrix variables, one for each time step.
@@ -81,7 +80,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                 name="Bnm_" + str(t)) for t in range(nr_of_timesteps)]
                     
 
-        # variable limits -----------------------------
+        # variable limits ------------------------------------------------------------------
         #  Equality and inequality constraints are element-wise, whether they involve scalars, vectors, or matrices.
         cb.add_constraint(Gmin <= Gn, str_="G_lb")
         cb.add_constraint(Gn <= Gmax, str_="G_ub")
@@ -205,10 +204,9 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         for t in range(nr_of_timesteps):
             Snm_t += [pd.DataFrame(Snm[t].value, columns=agent_data.agent_name, index=agent_data.agent_name)]
             Bnm_t += [pd.DataFrame(Bnm[t].value, columns=agent_data.agent_name, index=agent_data.agent_name)]
-            Tnm_t += [Snm_t[t] - Bnm_t[t]]
+            Tnm_t += [Snm_t[t] - Bnm_t[t]] 
 
-    # done iterating
-    # make result object
+    # done iterating, make result object
     Pn_t = Gn_t - Ln_t
     result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
                         Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
