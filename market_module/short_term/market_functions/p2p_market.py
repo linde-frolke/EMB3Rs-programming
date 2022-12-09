@@ -20,9 +20,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
     """
     prob_stat = True
     day_nr = []
-    allow_arbitrage = False
-    penalty = False
-
+    
     ## ITERATE PER DAY 
     h_per_iter = 24 
     nr_of_iter = ceil(settings.nr_of_h / h_per_iter)
@@ -30,11 +28,11 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
     h_on_last = settings.nr_of_h - (nr_of_iter - 1)*h_per_iter 
 
     ## store variables here
-    #Pn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
-    perc_price_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     shadow_price_t = []
+    Snm_t = []
+    Bnm_t = []
     Tnm_t = []
 
     # convert gmin gmax etc
@@ -50,11 +48,8 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         # set the number of timesteps in this iteration
         if iter_ == (nr_of_iter - 1):
             nr_of_timesteps = h_on_last
-            print("last iteration")
-            print("nr of timesteps is " + str(nr_of_timesteps))
         else:
             nr_of_timesteps = h_per_iter
-            print("nr of timesteps is " + str(nr_of_timesteps))
 
         selected_timesteps = range(iter_*h_per_iter, iter_*h_per_iter + nr_of_timesteps)
 
@@ -79,25 +74,11 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         # Pn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Pn")
         Gn = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Gn")
         Ln = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="Ln")
-        # trades. list of matrix variables, one for each time step.
-        
-        if allow_arbitrage == False:
-            Snm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
+        # sells and buys (trades). list of matrix variables, one for each time step.
+        Snm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
                 name="Snm_" + str(t)) for t in range(nr_of_timesteps)]
-            Bnm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
+        Bnm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
                 name="Bnm_" + str(t)) for t in range(nr_of_timesteps)]
-        else:
-            Tnm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
-                        name="Tnm_" + str(t)) for t in range(nr_of_timesteps)]
-            if penalty:
-                Snm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
-                    name="Snm_" + str(t)) for t in range(nr_of_timesteps)]
-                Bnm = [cp.Variable((agent_data.nr_of_agents, agent_data.nr_of_agents),
-                    name="Bnm_" + str(t)) for t in range(nr_of_timesteps)]
-                for t in range(nr_of_timesteps):
-                    cb.add_constraint(0 <= Bnm[t], str_="B_lb_t" + str(t))
-                    cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
-                    cb.add_constraint(Tnm[t] == Snm[t] - Bnm[t], str_="def_trade_t" + str(t))
                     
 
         # variable limits -----------------------------
@@ -108,38 +89,17 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         cb.add_constraint(Ln <= Lmax, str_="L_ub")
 
         # limits on trades
-        if allow_arbitrage == False:
-            for t in range(nr_of_timesteps):
-                cb.add_constraint(0 <= Bnm[t], str_="B_lb_t" + str(t))
-                cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
-                # 
-                # cannot sell more than I generate
-                cb.add_constraint(cp.sum(Snm[t], axis=1) == Gn[t, :], str_="S_ub_t" + str(t))
-                # cannot buy more than my load
-                cb.add_constraint(cp.sum(Bnm[t], axis=1) == Ln[t, :], str_="B_ub_t" + str(t))
-                # trade reciprocity
-                # for m in range(agent_data.nr_of_agents):
-                #     for n in range(agent_data.nr_of_agents):
-                cb.add_constraint(Snm[t] == Bnm[t].T,
-                                        str_="reciprocity_t" + str(t))
-        else:
-            for t in range(nr_of_timesteps):
-                # trade reciprocity
-                for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                    # if not i == j:
-                    # if j > i:
-                    cb.add_constraint(Tnm[t][i, j] + Tnm[t][j, i] == 0,
-                                        str_="reciprocity_t" + str(t) + str(i) + str(j))
-                # net zero trade with self
-                # for i in range(agent_data.nr_of_agents):
-                #     cb.add_constraint(Tnm[t][i, i] == 0,
-                #                         str_="reciprocity_t" + str(t) + str(i) + str(i))
-                # 
-                # total trades have to match power injection
-                cb.add_constraint(Gn[t, :] - Ln[t, :] == cp.sum(Tnm[t], axis=1), str_="p2p_balance_t" + str(t))
+        for t in range(nr_of_timesteps):
+            # buys and sells are positive
+            cb.add_constraint(0 <= Bnm[t], str_="B_lb_t" + str(t))
+            cb.add_constraint(0 <= Snm[t], str_="S_lb_t" + str(t))
+            # cannot sell more than I generate
+            cb.add_constraint(cp.sum(Snm[t], axis=1) == Gn[t, :], str_="S_ub_t" + str(t))
+            # cannot buy more than my load
+            cb.add_constraint(cp.sum(Bnm[t], axis=1) == Ln[t, :], str_="B_ub_t" + str(t))
+            # trade reciprocity
+            cb.add_constraint(Snm[t] == Bnm[t].T, str_="reciprocity_t" + str(t))
 
-        # constraints ----------------------------------
-        
         # add extra constraint if offer type is energy Budget.
         if settings.offer_type == "energyBudget":
             # add energy budget.
@@ -165,11 +125,7 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
         total_util = cp.sum(cp.multiply(util, Ln))
         # make different objfun depending on preference settings
         if settings.product_diff == "noPref":
-            if penalty:
-                pen = [cp.sum(Snm[t])/10**6 for t in range(nr_of_timesteps)]
-                objective = cp.Minimize(total_cost - total_util + sum(pen))
-            else:
-                objective = cp.Minimize(total_cost - total_util)
+            objective = cp.Minimize(total_cost - total_util)
         else:
             # construct preference matrix
             if settings.product_diff == "co2Emissions":
@@ -203,10 +159,9 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
             # Otherwise, problem.value is inf or -inf, respectively.
             print("Optimal value: %s" % prob.value)
         else:
-            print("Problem status is %s" % prob.status)
             prob_stat = False
             day_nr += int(iter_)
-            # raise RuntimeError("the problem on day " + str(iter_) + " is " + prob.status)
+            raise Warning("the problem on day " + str(iter_) + " is " + prob.status)
         
         # compute shadow price 
         shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
@@ -230,55 +185,33 @@ def make_p2p_market(agent_data: AgentData, settings: MarketSettings, network: Ne
                         if j == i:
                             shadow_price[t].iloc[i, j] = 0
             else:
-                print("do I go here?")
                 for t in range(nr_of_timesteps):
                     for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
                         shadow_price[t].iloc[i,j] = agent_data.cost[agent_data.agent_name[i]][t]
                         if j == i:
                             shadow_price[t].iloc[i, j] = 0
         else:
-            print("this is the one")
             for t_ in range(nr_of_timesteps):
-                shadow_price[t_].iloc[:,:] = abs(cb.get_constraint(str_="reciprocity_t" + str(t_)).dual_value)         
+                shadow_price[t_].iloc[:,:] = abs(cb.get_constraint(str_="reciprocity_t" + str(t_)).dual_value)
+                # shadow price with self is zero
+                for i in range(agent_data.nr_of_agents):
+                    shadow_price[t_].iloc[i,i] = 0
                 
-                print(len(np.unique(shadow_price[t_].values)))
-                #print(shadow_price[t_])
-        # store result in result object ---------------------------------------------------------
-        variables = prob.variables()
-        varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-        # Pn_t.iloc[selected_timesteps] = list(variables[varnames.index("Pn")].value)
-        Ln_t.iloc[selected_timesteps] = list(variables[varnames.index("Ln")].value)
-        Gn_t.iloc[selected_timesteps] = list(variables[varnames.index("Gn")].value)
-        if allow_arbitrage:
-            for t in range(nr_of_timesteps):
-                indx = selected_timesteps[t]
-                perc_price_t.iloc[indx,:] = list(cb.get_constraint(str_="p2p_balance_t" + str(t)).dual_value)
-        else:
-            for t in range(nr_of_timesteps):
-                indx = selected_timesteps[t]
-                perc_price_t.iloc[indx,:] = list(cb.get_constraint(str_="B_ub_t" + str(t)).dual_value)
-        
-        for k_ in range(len(shadow_price)):
-            print(len(np.unique(shadow_price[k_].values)))
-
+        # store result in full-lenght objects ---------------------------------------------------------
+        Ln_t.iloc[selected_timesteps] = list(Ln.value)
+        Gn_t.iloc[selected_timesteps] = list(Gn.value)
         shadow_price_t += shadow_price
-        if allow_arbitrage:
-            for t in range(nr_of_timesteps):
-                Tnm_t += [pd.DataFrame(Tnm[t].value, columns=agent_data.agent_name, 
-                                index=agent_data.agent_name)]
-        else: 
-            for t in range(nr_of_timesteps):
-                Tnm_t += [pd.DataFrame(Snm[t].value - Bnm[t].value, columns=agent_data.agent_name, 
-                            index=agent_data.agent_name)]
 
-    # for t in range(settings.nr_of_h):
-    #     print(len(np.unique(shadow_price_t[t].values)))
+        for t in range(nr_of_timesteps):
+            Snm_t += [pd.DataFrame(Snm[t].value, columns=agent_data.agent_name, index=agent_data.agent_name)]
+            Bnm_t += [pd.DataFrame(Bnm[t].value, columns=agent_data.agent_name, index=agent_data.agent_name)]
+            Tnm_t += [Snm_t[t] - Bnm_t[t]]
 
     # done iterating
-    # store result in result object
+    # make result object
     Pn_t = Gn_t - Ln_t
     result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
                         Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
-                        agent_data=agent_data, settings=settings, Tnm_t=Tnm_t, ppt=perc_price_t)
+                        agent_data=agent_data, settings=settings, Bnm_t=Bnm_t, Snm_t=Snm_t, Tnm_t=Tnm_t)
 
     return result

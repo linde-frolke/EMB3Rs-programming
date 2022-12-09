@@ -17,7 +17,7 @@ class ResultData:
     def __init__(self, prob_status, day_nrs,
                  Pn_t, Ln_t, Gn_t, shadow_price_t,
                  agent_data: AgentData, settings: MarketSettings,
-                 Tnm_t=None, ppt=None):
+                 Tnm_t=None, Snm_t=None, Bnm_t=None):
         """
         Object to store relevant outputs from a solved market problem.
         Initialization only extracts necessary values from the optimization
@@ -42,11 +42,12 @@ class ResultData:
             self.Pn = Pn_t
             self.Ln = Ln_t
             self.Gn = Gn_t
-            self.ppt = ppt
 
             if settings.market_design == "p2p":
                 # extract trade variable - a square dataframe for each time index
                 self.Tnm = Tnm_t
+                self.Bnm = Bnm_t
+                self.Snm = Snm_t
             elif settings.market_design == "community":
                 raise NotImplementedError("need to reimplement community")
                 # trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
@@ -120,10 +121,13 @@ class ResultData:
         if settings.market_design == "p2p":
             for t in range(0, settings.nr_of_h):
                 for agent in agent_data.agent_name:
-                    aux = []
-                    for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2])
-                    self.settlement[agent][t] = sum(aux)
+                    self.settlement.loc[t, agent] = sum([self.shadow_price[t].loc[agent, agent2] * self.Snm[t].loc[agent, agent2] -
+                                                         self.shadow_price[t].loc[agent2, agent] * self.Bnm[t].loc[agent, agent2]
+                                                        for agent2 in agent_data.agent_name])
+                    # aux = []
+                    # for agent2 in agent_data.agent_name:
+                    #     aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2])
+                    # self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
             if settings.network_type is None:
@@ -192,7 +196,6 @@ class ResultData:
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
             return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list") for t in range(len(self.shadow_price))]
-            return_dict["ppt"] = self.ppt.to_dict(orient="list")
         
         elif self.market == "community":
             return_dict['Tnm'] = self.Tnm.to_dict(orient="list")
