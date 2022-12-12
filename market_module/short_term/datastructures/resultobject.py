@@ -184,6 +184,7 @@ class ResultData:
         file.close()
 
     def convert_to_dicts(self):
+        print("converting result to dictionaries")
         return_dict = {'Gn': self.Gn.to_dict(orient="list"),
                        'Ln': self.Ln.to_dict(orient="list"),
                        'Pn': self.Pn.to_dict(orient="list"),

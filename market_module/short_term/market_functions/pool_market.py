@@ -32,7 +32,10 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
     Pn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
-    shadow_price_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=['uniform price'])
+    if settings.network_type == "direction":
+        shadow_price_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
+    else:
+        shadow_price_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=['uniform price'])
 
     # convert gmin gmax etc
     gmin = agent_data.gmin.to_numpy()
@@ -165,15 +168,14 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
             if settings.network_type == "direction":  # in this case we have nodal prices
                 nodal_prices = np.zeros(
                     (nr_of_timesteps, network.nr_of_n))
-                for t in settings.timestamps:
+                for t in range(nr_of_timesteps):
                     for n in range(network.nr_of_n):
                         nodal_prices[t, n] = cb.get_constraint(str_="def_nodal_P" + str(t) + "_" +
                                                                     str(network.N[n])).dual_value
                 # shadow_price = np.array((nr_of_timesteps, agent_data.nr_of_agents))
                 mapping = [network.N.index(x) for x in network.loc_a]
                 shadow_price = nodal_prices[:, mapping]
-                shadow_price = pd.DataFrame(
-                    shadow_price, columns=agent_data.agent_name)
+                shadow_price = pd.DataFrame(shadow_price, columns=agent_data.agent_name)
             if settings.network_type == "size":  # in this case we have nodal prices
                 raise NotImplementedError("this is to be implemented")
         # if no special case of pool market, the output is simple:
@@ -183,12 +185,10 @@ def make_pool_market(agent_data: AgentData, settings: MarketSettings, network=No
 
 
         # store result in result object ---------------------------------------------------------
-        variables = prob.variables()
-        varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-        Pn_t.iloc[selected_timesteps] = list(variables[varnames.index("Pn")].value)
-        Ln_t.iloc[selected_timesteps] = list(variables[varnames.index("Ln")].value)
-        Gn_t.iloc[selected_timesteps] = list(variables[varnames.index("Gn")].value)
-        shadow_price_t.iloc[selected_timesteps] = np.resize(cb.get_constraint(str_="powerbalance").dual_value, (nr_of_timesteps, 1))
+        Pn_t.iloc[selected_timesteps] = list(Pn.value)
+        Ln_t.iloc[selected_timesteps] = list(Ln.value)
+        Gn_t.iloc[selected_timesteps] = list(Gn.value)
+        shadow_price_t.iloc[selected_timesteps] = list(shadow_price.values)
     
     
     result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
