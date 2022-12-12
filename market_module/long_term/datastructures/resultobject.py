@@ -12,7 +12,8 @@ import itertools
 class ResultData:
     def __init__(self, prob: cp.problems.problem.Problem,
                  cb: ConstraintBuilder,
-                 agent_data: AgentData, settings: MarketSettings, Pn_t, Ln_t, Gn_t, shadow_price_t, Tnm_t=None):
+                 agent_data: AgentData, settings: MarketSettings, Pn_t, Ln_t, Gn_t, shadow_price_t, Tnm_t=None, 
+                 En=None, Bn=None):
         """
         Object to store relevant outputs from a solved market problem.
         Initialization only extracts necessary values from the optimization
@@ -42,6 +43,8 @@ class ResultData:
             self.Pn = Pn_t
             self.Ln = Ln_t
             self.Gn = Gn_t
+            self.En = En
+            self.Bn = Bn
 
             if settings.market_design == "decentralized":
                 # extract trade variable - a square dataframe for each time index
@@ -215,9 +218,13 @@ class ResultData:
         if self.market == 'centralized':
             return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
+            return_dict["En"] = self.En.to_dict(orient="list")
+            return_dict["Bn"] = self.Bn.to_dict(orient="list")
         else:
             return_dict['shadow_price'] = [abs(self.shadow_price[t]).to_dict(orient="list")
                                            for t in range(len(self.shadow_price))]
             return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
+            return_dict["En"] = "none"
+            return_dict["Bn"] = "none"
 
         return return_dict

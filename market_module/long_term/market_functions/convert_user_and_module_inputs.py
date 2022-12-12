@@ -4,12 +4,13 @@ function that converts TEO and CF inputs to the "input_dict" we were expecting
 # import json
 # from datetime import datetime
 
+from multiprocessing.sharedctypes import Value
 import numpy as np
 import pandas as pd
 # import xlrd
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
-
+from datetime import timedelta
 
 
 def convert_user_and_module_inputs(input_data):
@@ -40,6 +41,10 @@ def convert_user_and_module_inputs(input_data):
 
     nr_of_hours = diff
 
+    # 
+    # TODO put error if end_date or start_date is not in TEO YEAR.
+    # if not xxx
+    #     raise
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
@@ -188,13 +193,51 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
+
     #Checking if we have solver info
     if not 'solver' in input_data['user']:
         Solver = "GUROBI"
     else:
         Solver = input_data['user']['solver']
         
-        
+    ## add storage inputs ---------------------------------------
+    storage_data_TEO = teo_output["AccumulatedNewStorageCapacity"]
+
+    # create a list stating for each timestep of the period what year it is.
+    dates = []
+    d = start_date
+    while d < end_date:
+        dates.append(d)
+        d += timedelta(hours=1)
+    year_ = [x.year for x in dates]
+
+
+    # extract the needed storage data
+    storage_df = pd.DataFrame(storage_data_TEO)
+    storage_df.YEAR = storage_df["YEAR"].astype(int)
+
+    # check that all needed data is given by TEO, given by start date
+    for year in set(year_):
+        if not year in set(storage_df.YEAR):
+            raise ValueError("The TEO data for storage capacity does not cover the selected simulation time for the Market Module. \n" +
+                             "Check whether your selected start_datetime, horizon basis, and recurrence are such that all dates to be " +
+                             "simulated by the Market Module are included in TEO output. ")
+
+    # nr and names
+    nr_of_storage = len(storage_data_TEO)
+    storage_names = list(set(storage_df.STORAGE))
+
+    # capacity per year 
+    storage_capacity_per_timestep = {}
+    if nr_of_storage > 0:
+        print("nr_of_storage = " + str(nr_of_storage))
+        for storage_name in storage_names:
+            print(storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_[0])].to_numpy())
+            capacity_per_time = [storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_nr)].to_numpy().item() for year_nr in year_]
+            storage_capacity_per_timestep[storage_name] = capacity_per_time
+    
+    stor_capacity_list = np.array([storage_capacity_per_timestep[stor] for stor in storage_names]).T.tolist()
+
     # construct input_dict
     input_dict = {
         'md': user_input['user']['md'],
@@ -214,5 +257,7 @@ def convert_user_and_module_inputs(input_data):
         'nodes': None,
         'edges': None,
         'solver': Solver
+        'storage_name': storage_names, 
+        'storage_capacity': stor_capacity_list
     }
     return input_dict
