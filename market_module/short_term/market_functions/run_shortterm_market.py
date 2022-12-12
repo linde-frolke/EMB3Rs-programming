@@ -117,7 +117,8 @@ def run_shortterm_market(input_dict):
     else:
         gis_data = pd.DataFrame(data=input_dict['gis_data'])
         # convert string to tuple
-        gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
+        if not type(gis_data.loc[0,"from_to"]) is tuple:
+            gis_data["from_to"] = [literal_eval(x) for x in gis_data["from_to"]]
 
     try: 
         network = Network(agent_data=agent_data, gis_data=gis_data, settings=settings, 
