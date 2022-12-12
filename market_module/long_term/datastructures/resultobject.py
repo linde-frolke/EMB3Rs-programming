@@ -216,12 +216,12 @@ class ResultData:
                        'QoE': self.QoE.to_dict()['QoE']
                        }
         if self.market == 'centralized':
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient='list')['uniform price']
+            return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
             return_dict["En"] = self.En.to_dict(orient="list")
             return_dict["Bn"] = self.Bn.to_dict(orient="list")
         else:
-            return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list")
+            return_dict['shadow_price'] = [abs(self.shadow_price[t]).to_dict(orient="list")
                                            for t in range(len(self.shadow_price))]
             return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
             return_dict["En"] = "none"

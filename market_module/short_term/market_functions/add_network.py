@@ -4,7 +4,7 @@ import numpy as np
 from ...short_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
 
 
-def add_network_directions(constraint_builder, settings, network_data, Pn_var):
+def add_network_directions(constraint_builder, settings, network_data, Pn_var, nr_of_h):
     """
     :param constraint_builder A constraintBuilder object.
     :param settings     Object of type MarketSettings.
@@ -13,13 +13,14 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
 
     :return: the constraintBuilder with added power flow direction constraints.
     """
+    timestamps = range(nr_of_h)
     if settings.network_type == "direction":
         # define network flows
-        Ppipe = cp.Variable((settings.nr_of_h, network_data.nr_of_p))
+        Ppipe = cp.Variable((nr_of_h, network_data.nr_of_p))
 
         # define total nodal power injections
-        Pnode = cp.Variable((settings.nr_of_h, network_data.nr_of_n))
-        for t in settings.timestamps:
+        Pnode = cp.Variable((nr_of_h, network_data.nr_of_n))
+        for t in timestamps:
             for n in range(network_data.nr_of_n):
                 # if there are some agents located at this node
                 if network_data.N[n] in network_data.loc_a:
@@ -33,13 +34,13 @@ def add_network_directions(constraint_builder, settings, network_data, Pn_var):
                     constraint_builder.add_constraint(Pnode[t, n] == 0,
                                                   str_="def_nodal_P" + str(t) + "_" + str(network_data.N[n]))
         # add flow continuity constraint relating nodal and pipeline power flows
-        for t in settings.timestamps:
+        for t in timestamps:
             constraint_builder.add_constraint(
                 network_data.A @ Ppipe[t, :] == Pnode[t, :], str_="flow_continuity")
         # adapt constraintBuilder by adding pipeline flow restrictions
         constraint_builder.add_constraint(
             Ppipe >= 0, str_="unidirectional_pipeline_flow")
     elif settings.network_type == "size":
-        raise NotImplemented("need to implement this")
+        raise NotImplemented("This option is not implemented yet, but could be made as an extension")
 
     return constraint_builder

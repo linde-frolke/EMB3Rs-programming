@@ -50,7 +50,7 @@ class MarketSettings(BaseModel):
 
     @validator("nr_of_h")
     def nr_of_hours_check(cls, v):
-        max_time_steps = 48  # max 48 hours.
+        max_time_steps = 24*366  # max 1 year   
         if not ((type(v) == int) and (1 <= v <= max_time_steps)):
             raise ValueError("nr_of_hours should be an integer between 1 and " + str(max_time_steps))
         return v
@@ -296,6 +296,12 @@ class AgentData(BaseModel):
         if not all(sublist_length_correct):
             raise ValueError("Each sublist in cost sould be of length nr_of_agents=" + str(len(values["agent_name"])))
         return v
+    @validator("cost")
+    def cost_nonnegative(cls, v):
+        lowest_cost = min(min(v))
+        if lowest_cost < 0:
+            raise ValueError("The cost bids must be nonnegative")
+        return v
     @validator("util")
     def util_nrofh_lists(cls, v, values):
         if len(v) != values["settings"].nr_of_h:
@@ -306,6 +312,12 @@ class AgentData(BaseModel):
         sublist_length_correct = [len(i) == len(values["agent_name"]) for i in v]
         if not all(sublist_length_correct):
             raise ValueError("Each sublist in util sould be of length nr_of_agents=" + str(len(values["agent_name"])))
+        return v
+    @validator("util")
+    def util_nonnegative(cls, v):
+        lowest_util = min(min(v))
+        if lowest_util < 0:
+            raise ValueError("The utility bids must be nonnegative")
         return v
     @validator("is_in_community")
     def community_parameters_given(cls, v, values):

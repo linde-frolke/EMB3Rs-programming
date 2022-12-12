@@ -32,6 +32,7 @@ class MarketSettings(BaseModel):
     day_range: Any
     data_size: Any
     diff: Any
+    solver: str
 
 
     def __init__(self, **data) -> None:
@@ -71,6 +72,7 @@ class MarketSettings(BaseModel):
             self.diff = end_date - start_date  # difference
             self.diff = int(self.diff.total_seconds()/3600/24) #difference in days
 
+    
     @validator("product_diff")
     def product_diff_valid(cls, v):
         options_product_diff = ["noPref", "co2Emissions", "networkDistance"]
@@ -121,6 +123,12 @@ class MarketSettings(BaseModel):
         if v not in options_data_profile:
             raise ValueError('data_profile should be one of ' + str(options_data_profile))
         return v
+    
+    @validator("solver")
+    def solver_implemented(cls, v):
+        if v not in ["SCIP", "GUROBI", "HIGHS", "COPT"]:
+            raise ValueError("solver should be SCIP, GUROBI, HIGHS or COPT")
+        return v
 
 
 class AgentData(BaseModel):
@@ -159,7 +167,6 @@ class AgentData(BaseModel):
         super().__init__(**data)
 
 
-
         # #Just to avoid changing centralized_market and resultobject
         # self.day_range=self.settings.day_range
         # self.data_size=self.settings.data_size
@@ -167,6 +174,7 @@ class AgentData(BaseModel):
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.name)
         self.nr_of_stor = len(self.storage_name)
+
         self.agent_name = self.name
         # add co2 emission info if needed
         if self.settings.product_diff == "co2Emissions":

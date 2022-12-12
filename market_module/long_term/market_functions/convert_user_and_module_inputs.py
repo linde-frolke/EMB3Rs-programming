@@ -86,6 +86,9 @@ def convert_user_and_module_inputs(input_data):
 
     if len(util_sinks_t0) != len(all_stream_ids):
         raise Exception('Utility does not match the sinks size')
+    
+    if np.min(util_sinks) < 0:
+        raise Exception('Utility cannot be negative!')
 
     # get TEO data
     teo_output = input_data["teo-module"]
@@ -137,6 +140,9 @@ def convert_user_and_module_inputs(input_data):
 
     cost_sources = cost_sources.to_numpy()
 
+    if np.min(cost_sources) < 0:
+        raise Exception('Cost cannot be negative!')
+    
     #Getting CO2 Emissions
     co2_names=[] #Agents with co2 data
     for leng_nr in teo_output['AnnualTechnologyEmission']:
@@ -187,6 +193,13 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
+
+    #Checking if we have solver info
+    if not 'solver' in input_data['user']:
+        Solver = "GUROBI"
+    else:
+        Solver = input_data['user']['solver']
+        
     ## add storage inputs ---------------------------------------
     storage_data_TEO = teo_output["AccumulatedNewStorageCapacity"]
 
@@ -242,7 +255,8 @@ def convert_user_and_module_inputs(input_data):
         'co2_emissions': list(co2_emissions),  # allowed values are 'none' or list of size (nr_of_agents)
         'gis_data': gis_data,
         'nodes': None,
-        'edges': None, 
+        'edges': None,
+        'solver': Solver
         'storage_name': storage_names, 
         'storage_capacity': stor_capacity_list
     }

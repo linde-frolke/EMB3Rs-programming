@@ -84,7 +84,6 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
             objective = cp.Minimize(total_cost - total_util)
         else:
             # construct preference matrix
-            # TODO could move this to AgentData structure
             if settings.product_diff == "co2Emissions":
                 emissions_p = agent_data.co2_emission / \
                     sum(agent_data.co2_emission.T[0])  # percentage
@@ -102,8 +101,14 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
 
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        result_ = prob.solve(solver=cp.GUROBI) # TODO this output is not being used
-        print("problem status: %s" % prob.status)
+        if settings.solver == 'GUROBI':
+            result_ = prob.solve(solver=cp.GUROBI)
+        elif settings.solver == 'SCIP':
+            result_ = prob.solve(solver=cp.SCIP)
+        elif settings.solver == 'HIGHS':
+            result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+        elif settings.solver == 'COPT':
+            result_ = prob.solve(solver=cp.COPT)
 
         if prob.status not in ["infeasible", "unbounded"]:
             # Otherwise, problem.value is inf or -inf, respectively.

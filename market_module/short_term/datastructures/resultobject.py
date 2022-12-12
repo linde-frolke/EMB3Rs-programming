@@ -14,10 +14,10 @@ from ...short_term.plotting_processing_functions.bool_to_string import bool_to_s
 
 
 class ResultData:
-    def __init__(self, prob: cp.problems.problem.Problem,
-                 cb: ConstraintBuilder,
+    def __init__(self, prob_status, day_nrs,
+                 Pn_t, Ln_t, Gn_t, shadow_price_t,
                  agent_data: AgentData, settings: MarketSettings,
-                 network_data=None):
+                 Tnm_t=None, Snm_t=None, Bnm_t=None):
         """
         Object to store relevant outputs from a solved market problem.
         Initialization only extracts necessary values from the optimization
@@ -31,119 +31,45 @@ class ResultData:
         #
         self.market = settings.market_design
 
-        if prob.status in ["infeasible", "unbounded"]:
+        if prob_status == False:
             self.optimal = False
-            raise Warning(
-                "problem is not solved to an optimal solution. result object will not contain any info")
+            raise RuntimeError(
+                "problem is not solved to an optimal solution. days with nrs " + str(day_nrs) +
+                "were not solved to optimality")
         else:
             self.optimal = True
             # store values of the optimized variables -------------------------------------------------------
-            variables = prob.variables()
-            varnames = [prob.variables()[i].name()
-                        for i in range(len(prob.variables()))]
-            self.Pn = pd.DataFrame(variables[varnames.index(
-                "Pn")].value, columns=agent_data.agent_name)
-            self.Ln = pd.DataFrame(variables[varnames.index(
-                "Ln")].value, columns=agent_data.agent_name)
-            self.Gn = pd.DataFrame(variables[varnames.index(
-                "Gn")].value, columns=agent_data.agent_name)
+            self.Pn = Pn_t
+            self.Ln = Ln_t
+            self.Gn = Gn_t
+
             if settings.market_design == "p2p":
                 # extract trade variable - a square dataframe for each time index
-                self.Tnm = [pd.DataFrame(variables[varnames.index("Tnm_" + str(t))].value,
-                                         columns=agent_data.agent_name, index=agent_data.agent_name)
-                            for t in range(settings.nr_of_h)]
+                self.Tnm = Tnm_t
+                self.Bnm = Bnm_t
+                self.Snm = Snm_t
             elif settings.market_design == "community":
-                trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
-                                               variables[varnames.index("q_exp")].value])
-                self.Tnm = pd.DataFrame(
-                    trade_array, index=settings.timestamps, columns=["q_imp", "q_exp"])
+                raise NotImplementedError("need to reimplement community")
+                # trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
+                #                                variables[varnames.index("q_exp")].value])
+                # self.Tnm = pd.DataFrame(
+                #     trade_array, index=settings.timestamps, columns=["q_imp", "q_exp"])
             else:
                 self.Tnm = "none"
 
             # get values related to duals  ----------------------------------------
-            if settings.market_design == "pool":
-                if settings.offer_type == 'block':
-                    self.shadow_price = []
-                    for t in settings.timestamps:
-                        max_cost_disp = []
-                        for agent in agent_data.agent_name:
-                            if self.Gn[agent][t] > 0:
-                                max_cost_disp.append(agent_data.cost[agent][t])
-                        if len(max_cost_disp) > 0:
-                            self.shadow_price.append(max(max_cost_disp))
-                        else:  # if there is no generation
-                            self.shadow_price.append(min(agent_data.cost.T[t]))
-                    self.shadow_price = pd.DataFrame(
-                        self.shadow_price, columns=["uniform price"])
-                elif settings.network_type is not None:
-                    if settings.network_type == "direction":  # in this case we have nodal prices
-                        nodal_prices = np.zeros(
-                            (settings.nr_of_h, network_data.nr_of_n))
-                        for t in settings.timestamps:
-                            for n in range(network_data.nr_of_n):
-                                nodal_prices[t, n] = cb.get_constraint(str_="def_nodal_P" + str(t) + "_" +
-                                                                            str(network_data.N[n])).dual_value
-                        # shadow_price = np.array((settings.nr_of_h, agent_data.nr_of_agents))
-                        mapping = [network_data.N.index(x) for x in network_data.loc_a]
-                        shadow_price = nodal_prices[:, mapping]
-                        self.shadow_price = pd.DataFrame(
-                            shadow_price, columns=agent_data.agent_name)
-                    if settings.network_type == "size":  # in this case we have nodal prices
-                        raise NotImplementedError("this is to be implemented")
-                # if no special case of pool market, the output is simple:
-                else:
-                    self.shadow_price = cb.get_constraint(
-                        str_="powerbalance").dual_value
-                    self.shadow_price = pd.DataFrame(
-                        self.shadow_price, columns=["uniform price"])
-            # p2p market
-            elif settings.market_design == "p2p":
-                self.shadow_price = [pd.DataFrame(index=agent_data.agent_name, columns=agent_data.agent_name)
-                                     for t in settings.timestamps]
-                for t in settings.timestamps:
-                    if settings.offer_type == 'block':
-                        if settings.product_diff == 'noPref':
-                            max_cost_disp = []
-                            for agent in agent_data.agent_name:
-                                if self.Gn[agent][t] > 0:
-                                    max_cost_disp.append(
-                                        agent_data.cost[agent][t])
-                            for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                                if len(max_cost_disp) > 0:
-                                    self.shadow_price[t].iloc[i, j] = max(
-                                        max_cost_disp)
-                                elif len(max_cost_disp) == 0:  # if there is no generation
-                                    self.shadow_price[t].iloc[i, j] = min(
-                                        agent_data.cost.T[t])
-                                if j == i:
-                                    self.shadow_price[t].iloc[i, j] = 0
-                        else:
-                            for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                                self.shadow_price[t].iloc[i,
-                                                          j] = agent_data.cost[agent_data.agent_name[i]][t]
-                                if j == i:
-                                    self.shadow_price[t].iloc[i, j] = 0
-
-                    else:
-                        for i, j in itertools.product(range(agent_data.nr_of_agents), range(agent_data.nr_of_agents)):
-                            # if not i == j:
-                            if j >= i:
-                                constr_name = "reciprocity_t" + \
-                                    str(t) + str(i) + str(j)
-                                self.shadow_price[t].iloc[i, j] = cb.get_constraint(
-                                    str_=constr_name).dual_value
-                                self.shadow_price[t].iloc[j, i] = - \
-                                    self.shadow_price[t].iloc[i, j]
-
-            elif settings.market_design == "community":
-                price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
-                                              cb.get_constraint(
-                                                  str_="total_exp").dual_value,
-                                              cb.get_constraint(
-                                                  str_="total_imp").dual_value,
-                                              cb.get_constraint(str_="noncom_powerbalance").dual_value])
-                self.shadow_price = pd.DataFrame(price_array, index=settings.timestamps,
-                                                 columns=["community", "export", "import", "non-community"])
+            if settings.market_design == "community":
+                raise NotImplementedError("need to reimplement community shadow price")
+                # price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
+                #                               cb.get_constraint(
+                #                                   str_="total_exp").dual_value,
+                #                               cb.get_constraint(
+                #                                   str_="total_imp").dual_value,
+                #                               cb.get_constraint(str_="noncom_powerbalance").dual_value])
+                # self.shadow_price = pd.DataFrame(price_array, index=settings.timestamps,
+                #                                  columns=["community", "export", "import", "non-community"])
+            else:
+                self.shadow_price = shadow_price_t
 
             # initialize empty slots for uncomputed result quantities
             self.QoE = None
@@ -160,8 +86,7 @@ class ResultData:
             # raise Warning("QoE not implemented for pool")
         elif settings.market_design == "p2p":
             # QoE
-            self.QoE = pd.DataFrame(index=range(
-                settings.nr_of_h), columns=["QoE"])
+            self.QoE = pd.DataFrame(index=range(settings.nr_of_h), columns=["QoE"])
             for t in range(0, settings.nr_of_h):
                 lambda_j = []
                 for a1 in agent_data.agent_name:
@@ -179,33 +104,30 @@ class ResultData:
                         1 - (st.pstdev(lambda_j) / (max(lambda_j) - min(lambda_j))))
                 else:
                     pass
-            # self.qoe = np.average(self.QoE) # we only need it for each hour.
+            
         elif settings.market_design == "community":
             self.QoE = pd.DataFrame({"QoE" : np.nan * np.ones(settings.nr_of_h)}) ## TODO implement QoE for community
             # raise Warning("community shadow price and QoE not implemented yet \n")
 
         # hourly social welfare an array of length settings.nr_of_h, same for all markets
-        self.social_welfare_h = pd.DataFrame(index=range(
-            settings.nr_of_h), columns=["Social Welfare"])
+        self.social_welfare_h = pd.DataFrame(index=range(settings.nr_of_h), columns=["Social Welfare"])
         for t in range(0, settings.nr_of_h):
-            total_cost = np.sum(np.multiply(
-                agent_data.cost.T[t], self.Gn.T[t]))
-            total_util = np.sum(np.multiply(
-                agent_data.util.T[t], self.Ln.T[t]))
-            self.social_welfare_h["Social Welfare"][t] = (
-                total_cost - total_util)
+            total_cost = np.sum(np.multiply(agent_data.cost.T[t], self.Gn.T[t]))
+            total_util = np.sum(np.multiply(agent_data.util.T[t], self.Ln.T[t]))
+            self.social_welfare_h["Social Welfare"][t] = (total_cost - total_util)
 
         # Settlement has standard format:
-        self.settlement = pd.DataFrame(index=range(
-            settings.nr_of_h), columns=agent_data.agent_name)
+        self.settlement = pd.DataFrame(index=range(settings.nr_of_h), columns=agent_data.agent_name)
         if settings.market_design == "p2p":
             for t in range(0, settings.nr_of_h):
                 for agent in agent_data.agent_name:
-                    aux = []
-                    for agent2 in agent_data.agent_name:
-                        aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
-                                   )
-                    self.settlement[agent][t] = sum(aux)
+                    self.settlement.loc[t, agent] = sum([self.shadow_price[t].loc[agent, agent2] * self.Snm[t].loc[agent, agent2] -
+                                                         self.shadow_price[t].loc[agent2, agent] * self.Bnm[t].loc[agent, agent2]
+                                                        for agent2 in agent_data.agent_name])
+                    # aux = []
+                    # for agent2 in agent_data.agent_name:
+                    #     aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2])
+                    # self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
             if settings.network_type is None:
@@ -272,14 +194,14 @@ class ResultData:
                        #"agent_operational_cost" : self.agent_op_cost.to_dict(orient="list")
                        }
         if self.market == "p2p":
-            return_dict['Tnm'] = [self.Tnm[t].to_dict() for t in range(len(self.Tnm))]
-            return_dict['shadow_price'] = [self.shadow_price[t].to_dict() for t in range(len(self.shadow_price))]
+            return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
+            return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list") for t in range(len(self.shadow_price))]
         
         elif self.market == "community":
             return_dict['Tnm'] = self.Tnm.to_dict(orient="list")
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient="list")
+            return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")
         else:
             return_dict['Tnm'] = self.Tnm
-            return_dict['shadow_price'] = self.shadow_price.to_dict(orient="list")
+            return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")
 
         return return_dict

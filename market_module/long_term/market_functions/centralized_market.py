@@ -14,6 +14,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     :param settings:
     :return: ResultData object.
     """
+
     print("running centralized market")
     #simplifying simulation time
     t = settings.diff
@@ -22,8 +23,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     Pn_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.agent_name)
     Ln_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.agent_name)
     Gn_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.agent_name)
-    En_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.storage_name)
-    Bn_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.storage_name)
+    
     shadow_price_t = pd.DataFrame(0.0, index=np.arange(t), columns=['uniform price'])
 
 
@@ -73,12 +73,20 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             # common for all offer types ------------------------------------------------
             # define the problem and solve it.
             prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-            result_ = prob.solve(solver=cp.GUROBI)
+
+            if settings.solver == 'GUROBI':
+                result_ = prob.solve(solver=cp.GUROBI)
+            elif settings.solver == 'SCIP':
+                result_ = prob.solve(solver=cp.SCIP)
+            elif settings.solver == 'HIGHS':
+                result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+            elif settings.solver == 'COPT':
+                result_ = prob.solve(solver=cp.COPT)
 
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
                 # print("Problem is %s" % prob.status)
-                raise RuntimeError("Given your inputs, the problem is %s" % prob.status)
+                raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
             variables = prob.variables()
             varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
@@ -87,15 +95,17 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             Ln_t.iloc[n_iter] = list(variables[varnames.index("Ln")].value)
             Gn_t.iloc[n_iter] = list(variables[varnames.index("Gn")].value)
             shadow_price_t.iloc[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
-
-            # store result in result object
-            result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
-            # return it
-            return result
+           
+        result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
+        
+        # return result
+        return result
 
     # if storage is present, we run the market for each day separately
     else:
         print("running long term with storage")
+        En_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.storage_name)
+        Bn_t = pd.DataFrame(0.0, index=np.arange(t), columns=agent_data.storage_name)
         # We assume that the storage is empty at the start and end of the day
         E_0 = 0
 
@@ -199,3 +209,4 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
         
         # return result
         return result
+

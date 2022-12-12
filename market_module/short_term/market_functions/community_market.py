@@ -120,7 +120,8 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
         # add extra constraint if offer type is energy Budget.
         if settings.offer_type == "energyBudget":
             # add energy budget.
-            cb = add_energy_budget(cb, load_var=Ln, agent_data=agent_data)
+            tot_budget = np.sum(0.5 * (lmin[selected_timesteps, :] + lmax[selected_timesteps, :]), axis=0)
+            cb = add_energy_budget(cb, load_var=Ln, total_budget=tot_budget, agent_data=agent_data)
 
     # common for all offer types ------------------------------------------------
     # define the problem and solve it.

@@ -16,7 +16,8 @@ def run_longterm_market(input_dict):
         settings = MarketSettings(product_diff=input_dict['prod_diff_option'], market_design=input_dict['md'],
                                   horizon_basis=input_dict['horizon_basis'],
                                   recurrence=input_dict['recurrence'], data_profile=input_dict['data_profile'],
-                                  ydr=input_dict['yearly_demand_rate'], start_datetime=input_dict['start_datetime'])
+                                  ydr=input_dict['yearly_demand_rate'], start_datetime=input_dict['start_datetime'],
+                                  solver=input_dict['solver'])
     except ModuleValidationException as msg:
         raise print(msg)
 
