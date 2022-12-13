@@ -197,8 +197,6 @@ class AgentData(BaseModel):
 
             self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
             self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
-            if len(self.storage_name) > 0:
-                raise NotImplementedError("The daily simulation is not available in case storage is included. Please select hourly simulation instead.")
                  
         else:
             self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
@@ -256,7 +254,7 @@ class AgentData(BaseModel):
         return v
     @validator("storage_name") #checking list dimensions
     def storage_name_valid(cls, v):
-        if isinstance(v[0], list) == True:
+        if not np.array(v).ndim == 1:
             raise ValueError('Storage IDs should be one dimensional list')
         return v
     def no_storage_in_decentralized(cls, v, values):
@@ -265,11 +263,16 @@ class AgentData(BaseModel):
             "it is not implemented in the decentralized market (yet). \n" +
             "Please select the centralized market design instead. ")
         return v
+    def no_storage_in_dailysimulation(cls, v, values):
+        if (len(v) > 0) & (values["settings"].data_profile == 'daily'):
+            raise NotImplementedError("The daily simulation is not available in case storage is included. Please select hourly simulation instead.")
+        return v
     @validator("storage_capacity")
     def storage_capacity_for_all_storages(cls, v, values):
-        nr_of_stor_dimension = np.array(v).shape[1]
-        if not nr_of_stor_dimension == len(values["storage_name"]):
-            raise ValueError("The 'storage_capacity' input should be given for all storages in 'storage_name', and no others.")
+        if np.array(v).ndim == 2:
+            nr_of_stor_dimension = np.array(v).shape[1]
+            if not nr_of_stor_dimension == len(values["storage_name"]):
+                raise ValueError("The 'storage_capacity' input should be given for all storages in 'storage_name', and no others.")
         return v
     def storage_capacity_for_all_timesteps(cls, v, values):
         time_dimension = np.array(v).shape[0]

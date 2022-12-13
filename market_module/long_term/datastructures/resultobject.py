@@ -37,9 +37,7 @@ class ResultData:
         else:
             self.optimal = True
             # store values of the optimized variables -------------------------------------------------------
-            variables = prob.variables()
-            varnames = [prob.variables()[i].name()
-                        for i in range(len(prob.variables()))]
+            self.storage_present = (agent_data.nr_of_stor > 0)
             self.Pn = Pn_t
             self.Ln = Ln_t
             self.Gn = Gn_t
@@ -202,24 +200,24 @@ class ResultData:
         return_dict = {'Gn': self.Gn.to_dict(orient='list'),
                        'Ln': self.Ln.to_dict(orient='list'),
                        'Pn': self.Pn.to_dict(orient='list'),
-                       #'market': self.market,
-                       #'name': self.name,
                        'optimal': bool_to_string(self.optimal),
-                       # 'plot_market_clearing': ,
                        'settlement': self.settlement.to_dict(orient='list'),
                        'agent_operational_cost': self.agent_operational_cost.to_dict(orient='list'),
                        'social_welfare_h': self.social_welfare_h.values.T.tolist()[0],
                        'SPM': self.SPM.transpose().to_dict()['SPM'],
                        'ADG': self.ADG.transpose().to_dict()['ADG'],
                        'expensive_prod': self.expensive_prod,
-                       #'QoE': list(self.QoE)
                        'QoE': self.QoE.to_dict()['QoE']
                        }
         if self.market == 'centralized':
             return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient='list')['uniform price']
             return_dict['Tnm'] = "none"
-            return_dict["En"] = self.En.to_dict(orient="list")
-            return_dict["Bn"] = self.Bn.to_dict(orient="list")
+            if self.storage_present:
+                return_dict["En"] = self.En.to_dict(orient="list")
+                return_dict["Bn"] = self.Bn.to_dict(orient="list")
+            else:
+                return_dict["En"] = "none"
+                return_dict["Bn"] = "none"    
         else:
             return_dict['shadow_price'] = [abs(self.shadow_price[t]).to_dict(orient="list")
                                            for t in range(len(self.shadow_price))]

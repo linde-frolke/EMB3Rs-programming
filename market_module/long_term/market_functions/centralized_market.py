@@ -34,6 +34,7 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     if not storage_present:
         print("running long term without storage")
         for n_iter in range(0, t):
+            print("running iteration " + str(n_iter) + " of " + str(t))
             # collect named constraints in cb
             cb = ConstraintBuilder()
             # prepare parameters
@@ -88,12 +89,9 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
                 # print("Problem is %s" % prob.status)
                 raise ValueError("Given your inputs, the problem is %s" % prob.status)
 
-            variables = prob.variables()
-            varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-
-            Pn_t.iloc[n_iter] = list(variables[varnames.index("Pn")].value)
-            Ln_t.iloc[n_iter] = list(variables[varnames.index("Ln")].value)
-            Gn_t.iloc[n_iter] = list(variables[varnames.index("Gn")].value)
+            Pn_t.iloc[n_iter] = list(Pn.value)
+            Ln_t.iloc[n_iter] = list(Ln.value)
+            Gn_t.iloc[n_iter] = list(Gn.value)
             shadow_price_t.iloc[n_iter] = cb.get_constraint(str_="powerbalance").dual_value
            
         result = ResultData(prob, cb, agent_data, settings, Pn_t, Ln_t, Gn_t, shadow_price_t)
@@ -183,22 +181,27 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             # common for all offer types ------------------------------------------------
             # define the problem and solve it.
             prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-            result_ = prob.solve(solver=cp.GUROBI)
+            # set solver
+            if settings.solver == 'GUROBI':
+                result_ = prob.solve(solver=cp.GUROBI)
+            elif settings.solver == 'SCIP':
+                result_ = prob.solve(solver=cp.SCIP)
+            elif settings.solver == 'HIGHS':
+                result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+            elif settings.solver == 'COPT':
+                result_ = prob.solve(solver=cp.COPT)
 
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
                 # print("Problem is %s" % prob.status)
                 raise RuntimeError("Given your inputs, the problem is %s" % prob.status)
 
-            variables = prob.variables()
-            varnames = [prob.variables()[i].name() for i in range(len(prob.variables()))]
-
             # save the outputs from this iteration
-            Pn_t.iloc[selected_timesteps, :] = variables[varnames.index("Pn")].value
-            Ln_t.iloc[selected_timesteps, :] = variables[varnames.index("Ln")].value
-            Gn_t.iloc[selected_timesteps, :] = variables[varnames.index("Gn")].value
-            En_t.iloc[selected_timesteps, :] = variables[varnames.index("En")].value
-            Bn_t.iloc[selected_timesteps, :] = variables[varnames.index("Bn")].value
+            Pn_t.iloc[selected_timesteps, :] = Pn.value
+            Ln_t.iloc[selected_timesteps, :] = Ln.value
+            Gn_t.iloc[selected_timesteps, :] = Gn.value
+            En_t.iloc[selected_timesteps, :] = En.value
+            Bn_t.iloc[selected_timesteps, :] = Bn.value
             
             shadow_price_t.iloc[selected_timesteps] = np.reshape(cb.get_constraint(str_="powerbalance").dual_value, 
                                                                     (h_per_iter, 1))
