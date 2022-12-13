@@ -139,14 +139,17 @@ class AgentData(BaseModel):
     If the input is varying in time, it is a dataframe with agent ID as column name, and time along the rows
     """
     settings: MarketSettings
-    name: list
-    gmax: list
-    lmax: list
-    cost: list
-    util: list
+    name: List
+    storage_name: List
+    storage_capacity: list
+    gmax: List
+    lmax: List
+    cost: List
+    util: List
     co2: Union[None, List] = None
     #to be filled in init
     nr_of_agents : Any
+    nr_of_stor : Any
     co2_emission : Any
     agent_name : Any
     lmin_zeros : Any
@@ -170,6 +173,8 @@ class AgentData(BaseModel):
 
         # set nr of agents, names, and types
         self.nr_of_agents = len(self.name)
+        self.nr_of_stor = len(self.storage_name)
+
         self.agent_name = self.name
         # add co2 emission info if needed
         if self.settings.product_diff == "co2Emissions":
@@ -192,12 +197,15 @@ class AgentData(BaseModel):
 
             self.cost = pd.DataFrame(self.cumulative_sum(np.array(self.cost), self.settings), columns=self.agent_name)
             self.util = pd.DataFrame(self.cumulative_sum(np.array(self.util), self.settings), columns=self.agent_name)
+                 
         else:
             self.gmax = pd.DataFrame(self.gmax, columns=self.agent_name)
             self.lmax = pd.DataFrame(self.lmax, columns=self.agent_name)
 
             self.cost = pd.DataFrame(self.cost, columns=self.agent_name)
             self.util = pd.DataFrame(self.util, columns=self.agent_name)
+
+            self.storage_capacity = pd.DataFrame(self.storage_capacity, columns=self.storage_name)
 
         # These are parameters now
         self.lmin_zeros = np.zeros((self.settings.diff, self.nr_of_agents))
@@ -244,7 +252,34 @@ class AgentData(BaseModel):
         if isinstance(v[0], list) == True:
             raise ValueError('Agent IDs should be one dimensional list')
         return v
-
+    @validator("storage_name") #checking list dimensions
+    def storage_name_valid(cls, v):
+        if not np.array(v).ndim == 1:
+            raise ValueError('Storage IDs should be one dimensional list')
+        return v
+    def no_storage_in_decentralized(cls, v, values):
+        if (len(v) > 0) & (values["settings"].market_design == "decentralized"):
+            raise NotImplementedError("Storage can only be included in the centralized market design, " +
+            "it is not implemented in the decentralized market (yet). \n" +
+            "Please select the centralized market design instead. ")
+        return v
+    def no_storage_in_dailysimulation(cls, v, values):
+        if (len(v) > 0) & (values["settings"].data_profile == 'daily'):
+            raise NotImplementedError("The daily simulation is not available in case storage is included. Please select hourly simulation instead.")
+        return v
+    @validator("storage_capacity")
+    def storage_capacity_for_all_storages(cls, v, values):
+        if np.array(v).ndim == 2:
+            nr_of_stor_dimension = np.array(v).shape[1]
+            if not nr_of_stor_dimension == len(values["storage_name"]):
+                raise ValueError("The 'storage_capacity' input should be given for all storages in 'storage_name', and no others.")
+        return v
+    def storage_capacity_for_all_timesteps(cls, v, values):
+        time_dimension = np.array(v).shape[0]
+        if not time_dimension == values["settings"].diff:
+            raise ValueError("The storage capacity must be given for each timestep in the selected time horizon. Probably start_datetime is selected " + 
+            "such that outputs from TEO do not cover the entire time period selected for the market module. ")
+        return v
     @validator('gmax')
     def gmax_valid(cls, v, values):
         if values['settings'].data_profile == 'hourly' and not (values['settings'].horizon_basis == 'years' and values['settings'].recurrence > 1):

@@ -4,12 +4,13 @@ function that converts TEO and CF inputs to the "input_dict" we were expecting
 # import json
 # from datetime import datetime
 
+from multiprocessing.sharedctypes import Value
 import numpy as np
 import pandas as pd
 # import xlrd
 from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
-
+from datetime import timedelta
 
 
 def convert_user_and_module_inputs(input_data):
@@ -39,7 +40,12 @@ def convert_user_and_module_inputs(input_data):
         diff = int(diff.total_seconds()/3600) #difference in hours
 
     nr_of_hours = diff
+    print("nr of hours is " + str(nr_of_hours))
 
+    # 
+    # TODO put error if end_date or start_date is not in TEO YEAR.
+    # if not xxx
+    #     raise
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
@@ -112,27 +118,19 @@ def convert_user_and_module_inputs(input_data):
     #Building gmax_sources
     gmax_sources = pd.DataFrame(dummy)
     gmax_sources.set_index('TIMESLICE', inplace=True)
-
+    
     for source in source_names:
-        new_df = ProductionByTechnologyAnnual[(ProductionByTechnologyAnnual['TECHNOLOGY'] == source)]
-        new_df['TIMESLICE'] = new_df['TIMESLICE'].apply(int)
-        new_df = new_df[['TIMESLICE',"VALUE"]]
+        gmax_sources[source] = ProductionByTechnologyAnnual[ProductionByTechnologyAnnual['TECHNOLOGY'] == source].sort_values(
+                                                    by=['TIMESLICE']).filter(items=["VALUE"]).values[:nr_of_hours]
 
-        new_df.set_index('TIMESLICE',inplace=True)
-        new_df.sort_values(by=['TIMESLICE'], ascending=True, inplace=True)
-        new_df.rename(columns={'VALUE': source}, inplace=True)
-
-        gmax_sources = pd.concat([gmax_sources, new_df], axis=1)
-
-    gmax_sources = gmax_sources.fillna(0)
-    gmax_sources = gmax_sources[0:nr_of_hours].to_numpy()
+    gmax_sources.fillna(0, inplace=True)
 
     # Building cost_sources
     cost_sources = pd.DataFrame(dummy)
     cost_sources.set_index('TIMESLICE', inplace=True)
     for source in source_names:
         cost_sources[source] = VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
-
+    
     cost_sources = cost_sources.to_numpy()
 
     if np.min(cost_sources) < 0:
@@ -188,13 +186,61 @@ def convert_user_and_module_inputs(input_data):
     util = np.concatenate((util_sources, util_sinks), axis=1).tolist()
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
+
     #Checking if we have solver info
     if not 'solver' in input_data['user']:
         Solver = "GUROBI"
     else:
         Solver = input_data['user']['solver']
         
-        
+    ## add storage inputs ---------------------------------------
+    storage_data_TEO = teo_output["AccumulatedNewStorageCapacity"]
+
+    # create a list stating for each timestep of the period what year it is.
+    dates = []
+    d = start_date
+    while d < end_date:
+        dates.append(d)
+        d += timedelta(hours=1)
+    year_ = [x.year for x in dates]
+
+
+    # extract the needed storage data
+    nr_of_storage = len(storage_data_TEO)
+    print("nr_of_storage = " + str(nr_of_storage))
+    storage_df = pd.DataFrame(storage_data_TEO)
+    if nr_of_storage > 0:
+        storage_df.YEAR = storage_df["YEAR"].astype(int)
+
+        # check that all needed data is given by TEO, given by start date
+        for year in set(year_):
+            if not year in set(storage_df.YEAR):
+                raise ValueError("The TEO data for storage capacity does not cover the selected simulation time for the Market Module. \n" +
+                                "Check whether your selected start_datetime, horizon basis, and recurrence are such that all dates to be " +
+                                "simulated by the Market Module are included in TEO output. ")
+
+        # nr and names
+        storage_names = list(set(storage_df.STORAGE))
+
+        # capacity per year 
+        storage_capacity_per_timestep = {}
+        for storage_name in storage_names:
+            print(storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_[0])].to_numpy())
+            capacity_per_time = [storage_df.VALUE[(storage_df.STORAGE == storage_name) & (storage_df.YEAR == year_nr)].to_numpy().item() for year_nr in year_]
+            storage_capacity_per_timestep[storage_name] = capacity_per_time
+    
+        stor_capacity_arr = np.array([storage_capacity_per_timestep[stor] for stor in storage_names]).T 
+        if stor_capacity_arr.ndim == 1:
+            stor_capacity_list = [stor_capacity_arr.tolist()]
+        elif stor_capacity_arr.ndim == 2:
+            stor_capacity_list = stor_capacity_arr.tolist()
+        else:
+            raise ValueError("stor_capacity_arr has wrong dimension, ndim = " + str(stor_capacity_arr.ndim) + " but should be 1 or 2")
+
+    else:
+        stor_capacity_list = []
+        storage_names = []
+
     # construct input_dict
     input_dict = {
         'md': user_input['user']['md'],
@@ -213,6 +259,8 @@ def convert_user_and_module_inputs(input_data):
         'gis_data': gis_data,
         'nodes': None,
         'edges': None,
-        'solver': Solver
+        'solver': Solver,
+        'storage_name': storage_names, 
+        'storage_capacity': stor_capacity_list
     }
     return input_dict
