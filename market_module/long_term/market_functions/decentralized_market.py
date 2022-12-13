@@ -1,7 +1,13 @@
 import cvxpy as cp
 import numpy as np
 import pandas as pd
-from pyscipopt.scip import Model
+try:
+    from copt_cvxpy import *
+    COPT_INSTALLED = True
+except ModuleNotFoundError:
+    COPT_INSTALLED = False
+    print("COPT not installed in this environment")
+
 import itertools
 from ...long_term.datastructures.resultobject import ResultData
 from ...long_term.datastructures.inputstructs import AgentData, MarketSettings, Network
@@ -108,7 +114,9 @@ def make_decentralized_market(agent_data: AgentData, settings: MarketSettings, n
         elif settings.solver == 'HIGHS':
             result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
         elif settings.solver == 'COPT':
-            result_ = prob.solve(solver=cp.COPT)
+            if not COPT_INSTALLED:
+                raise Exception("Solver COPT is not installed for usage")
+            result_ = prob.solve(solver=COPT())
 
         if prob.status not in ["infeasible", "unbounded"]:
             # Otherwise, problem.value is inf or -inf, respectively.
