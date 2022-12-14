@@ -60,6 +60,11 @@ class MarketSettings(BaseModel):
         if v not in options_offer_type:
             raise ValueError("offer_type should be one of " + str(options_offer_type))
         return v
+    def no_block_with_community(cls, v, values):
+        if (v == "block" and values["market_design"] == "community"):
+            raise ValueError("Block bids cannot be combined with community market. \n " + 
+                            "Choose a different market design or set bid format to 'simple' or 'energyBudget'.")
+        return v
     @validator("product_diff")
     def prof_diff_valid(cls, v):
         options_product_diff = ["noPref", "co2Emissions", "networkDistance", "losses"]
@@ -97,8 +102,9 @@ class MarketSettings(BaseModel):
             options_network_type = ["direction"]
             if v not in options_network_type:
                 raise ValueError("network_type should be None or one of " + str(options_network_type))
-            if not values["offer_type"] == "simple":
-                raise ValueError("If you want network-awareness, offer_type must be 'simple'")
+            if values["offer_type"] == "block":
+                raise ValueError("If you want network-awareness, offer_type cannot be 'block'. \n" + 
+                "Please choose 'simple' or 'energyBudget' instead. ")
             if not values["market_design"] == "pool":
                 raise ValueError("network-awareness is only implemented for pool, not for p2p and community markets")
         return v

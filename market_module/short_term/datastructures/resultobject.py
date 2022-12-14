@@ -58,18 +58,7 @@ class ResultData:
                 self.Tnm = "none"
 
             # get values related to duals  ----------------------------------------
-            if settings.market_design == "community":
-                raise NotImplementedError("need to reimplement community shadow price")
-                # price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
-                #                               cb.get_constraint(
-                #                                   str_="total_exp").dual_value,
-                #                               cb.get_constraint(
-                #                                   str_="total_imp").dual_value,
-                #                               cb.get_constraint(str_="noncom_powerbalance").dual_value])
-                # self.shadow_price = pd.DataFrame(price_array, index=settings.timestamps,
-                #                                  columns=["community", "export", "import", "non-community"])
-            else:
-                self.shadow_price = shadow_price_t
+            self.shadow_price = shadow_price_t
 
             # initialize empty slots for uncomputed result quantities
             self.QoE = None
