@@ -202,7 +202,7 @@ def convert_user_and_module_inputs(input_data):
     while d < end_date:
         dates.append(d)
         d += timedelta(hours=1)
-    year_ = [x.year for x in dates]
+    year_ = [x.year for x in dates] # list of the year that each timestep is in
 
 
     # extract the needed storage data

@@ -51,6 +51,9 @@ output["optimal"]
 
 ## check if works with 1 storage only 
 input_data_1stor = input_data.copy()
+test = pd.DataFrame(input_data_1stor["teo-module"]["AccumulatedNewStorageCapacity"])
+test
+test[test.TECHNOLOGY == "dhn"]
 input_data_1stor["teo-module"]["AccumulatedNewStorageCapacity"] = [input_data_1stor["teo-module"]["AccumulatedNewStorageCapacity"][0]]
 input_dict_1stor = convert_user_and_module_inputs(input_data_1stor)
 output_1stor = run_longterm_market(input_dict=input_dict_1stor)

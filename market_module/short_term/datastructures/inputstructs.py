@@ -119,6 +119,15 @@ class MarketSettings(BaseModel):
         if values["market_design"] == "community" and v not in options_objective:
             raise ValueError("community objective should be one of" + str(options_objective))
         return v
+    @validator("gamma_exp")
+    def gamma_exp_validity_check(cls, v, values):
+        if values["market_design"] == "community":
+            if v is None:
+                raise ValueError("gamma_exp is mandatory input if the community market design is selected")
+            else:
+                if v < 0:
+                    raise ValueError("gamma_exp must be positive")
+        return v
     @validator("gamma_imp")
     def gamma_imp_validity_check(cls, v, values):
         if values["market_design"] == "community":
@@ -130,15 +139,6 @@ class MarketSettings(BaseModel):
                 else:
                     if abs(v) < abs(values["gamma_exp"]):
                         raise ValueError("In absolute value, gamma_imp should be greater than gamma_exp")
-        return v
-    @validator("gamma_exp")
-    def gamma_exp_validity_check(cls, v, values):
-        if values["market_design"] == "community":
-            if v is None:
-                raise ValueError("gamma_exp is mandatory input if the community market design is selected")
-            else:
-                if v > 0:
-                    raise ValueError("gamma_exp must be negative")
         return v
     @validator("community_objective")
     def g_peak_validity_check(cls, v, values):

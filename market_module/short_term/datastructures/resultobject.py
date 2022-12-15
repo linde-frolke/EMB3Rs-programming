@@ -17,7 +17,8 @@ class ResultData:
     def __init__(self, prob_status, day_nrs,
                  Pn_t, Ln_t, Gn_t, shadow_price_t,
                  agent_data: AgentData, settings: MarketSettings,
-                 Tnm_t=None, Snm_t=None, Bnm_t=None):
+                 Tnm_t=None, Snm_t=None, Bnm_t=None, 
+                 q_comm_t=None, q_exp_t=None, q_imp_t=None):
         """
         Object to store relevant outputs from a solved market problem.
         Initialization only extracts necessary values from the optimization
@@ -49,11 +50,11 @@ class ResultData:
                 self.Bnm = Bnm_t
                 self.Snm = Snm_t
             elif settings.market_design == "community":
-                raise NotImplementedError("need to reimplement community")
-                # trade_array = np.column_stack([variables[varnames.index("q_imp")].value,
-                #                                variables[varnames.index("q_exp")].value])
-                # self.Tnm = pd.DataFrame(
-                #     trade_array, index=settings.timestamps, columns=["q_imp", "q_exp"])
+                self.Tnm = Tnm_t
+                self.qimp = q_imp_t
+                self.qexp = q_exp_t
+                self.qcomm = q_comm_t
+                
             else:
                 self.Tnm = "none"
 
@@ -113,10 +114,6 @@ class ResultData:
                     self.settlement.loc[t, agent] = sum([self.shadow_price[t].loc[agent, agent2] * self.Snm[t].loc[agent, agent2] -
                                                          self.shadow_price[t].loc[agent2, agent] * self.Bnm[t].loc[agent, agent2]
                                                         for agent2 in agent_data.agent_name])
-                    # aux = []
-                    # for agent2 in agent_data.agent_name:
-                    #     aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2])
-                    # self.settlement[agent][t] = sum(aux)
 
         elif settings.market_design == "pool":
             if settings.network_type is None:
@@ -132,6 +129,18 @@ class ResultData:
             elif settings.network_type == "size":
                 raise NotImplementedError(
                     "network-aware size is not implemented yet")
+        elif settings.market_design == "community":
+            for agent in range(agent_data.nr_of_agents):
+                if agent_data.is_in_community[agent]:
+                    self.settlement.iloc[:,agent] = (self.shadow_price["community"].values * self.qcomm.iloc[:,agent].values + 
+                            self.shadow_price["export"].values * self.qexp.iloc[:,agent].values -
+                            self.shadow_price["import"].values * self.qimp.iloc[:,agent].values  
+                        )
+                else:
+                    self.settlement.iloc[:,agent] = self.shadow_price["non-community"].values * self.Pn.iloc[:,agent].values
+            if (self.settlement.sum(axis=1) > 0).any():
+                raise Warning("There is a mistake in the computation of the setttlement. At any time, the sum of settlement over all agents must be nonpositive. ")
+
 
     # a function working on the result object, to create plots
     def plot_market_clearing(self, period: int, settings: MarketSettings, agent_data: AgentData, outfile: str):
@@ -185,11 +194,15 @@ class ResultData:
                        }
         if self.market == "p2p":
             return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
-            return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list") for t in range(len(self.shadow_price))]
+            return_dict['shadow_price'] = [self.shadow_price[t].to_dict(orient="list") 
+                                            for t in range(len(self.shadow_price))]
         
         elif self.market == "community":
             return_dict['Tnm'] = self.Tnm.to_dict(orient="list")
             return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")
+            return_dict['q_imp'] = self.qimp.to_dict(orient="list")
+            return_dict['q_exp'] = self.qexp.to_dict(orient="list")
+            return_dict['q_comm'] = self.qcomm.to_dict(orient="list")
         else:
             return_dict['Tnm'] = self.Tnm
             return_dict['shadow_price'] = abs(self.shadow_price).to_dict(orient="list")

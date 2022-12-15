@@ -32,6 +32,10 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
     Gn_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     shadow_price_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), 
                                     columns=["community", "export", "import", "non-community"])
+    Tnm_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=["q_imp", "q_exp"])
+    q_imp_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
+    q_exp_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
+    q_comm_t = pd.DataFrame(0.0, index=np.arange(settings.nr_of_h), columns=agent_data.agent_name)
     
     # convert gmin gmax etc
     gmin = agent_data.gmin.to_numpy()
@@ -68,7 +72,7 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
             (nr_of_timesteps, agent_data.nr_of_agents), value=util_new[selected_timesteps, :])
 
         # params particular to community
-        gamma_exp = cp.Parameter(value=settings.gamma_exp, nonpos=True)
+        gamma_exp = cp.Parameter(value=settings.gamma_exp, nonneg=True)
         gamma_imp = cp.Parameter(value=settings.gamma_imp, nonneg=True)
 
         # variables
@@ -83,20 +87,18 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
             q_peak = cp.Variable(name="q_peak")
 
         # Community import variable
-        alpha = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents),
-                            name="alpha", nonneg=True)  
+        alpha = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="alpha", nonneg=True)  
         # Agents outside the community cannot import
         cb.add_constraint(alpha[:, agent_data.notC] == 0, str_="set_alpha_zero")  
         # Export variable
-        beta = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents),
-                        name="beta", nonneg=True)  
+        beta = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="beta", nonneg=True)  
         # Agents outside the community cannot export
         cb.add_constraint(beta[:, agent_data.notC] == 0, str_="set_beta_zero") 
 
         # sale to / buy from community (negative if bought)
         s_comm = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="s_comm")
         # set s_comm to zero for agents not in the community
-        cb.add_constraint(s_comm[:, agent_data.notC] == 0, str_="set_beta_zero")  
+        cb.add_constraint(s_comm[:, agent_data.notC] == 0, str_="set_scomm_zero")  
 
         # variable limits ----------------------------------
         #  Equality and inequality constraints are elementwise, whether they involve scalars, vectors, or matrices.
@@ -137,8 +139,7 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
             punished_peak = settings.gamma_peak * q_peak
             objective = cp.Minimize(total_cost - total_util + punished_peak)
         elif settings.community_objective == "autonomy":
-            punished_imp_exp = gamma_imp * \
-                cp.sum(q_imp) + gamma_exp * cp.sum(q_exp)
+            punished_imp_exp = gamma_imp * cp.sum(q_imp) + gamma_exp * cp.sum(q_exp)
             objective = cp.Minimize(total_cost - total_util + punished_imp_exp)
 
         # add extra constraint if offer type is energy Budget.
@@ -165,10 +166,8 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
 
         # compute shadow price
         price_array = np.column_stack([cb.get_constraint(str_="internal_trades").dual_value,
-                                                cb.get_constraint(
-                                                    str_="total_exp").dual_value,
-                                                cb.get_constraint(
-                                                    str_="total_imp").dual_value,
+                                                cb.get_constraint(str_="total_exp").dual_value,
+                                                cb.get_constraint(str_="total_imp").dual_value,
                                                 cb.get_constraint(str_="noncom_powerbalance").dual_value])
         shadow_price = pd.DataFrame(price_array, columns=["community", "export", "import", "non-community"])
 
@@ -177,10 +176,17 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
         Ln_t.iloc[selected_timesteps] = list(Ln.value)
         Gn_t.iloc[selected_timesteps] = list(Gn.value)
         shadow_price_t.iloc[selected_timesteps] = list(shadow_price.values)
+        
+        trade_array = np.column_stack([q_imp.value, q_exp.value])
+        Tnm_t.iloc[selected_timesteps] = list(trade_array)#, index=settings.timestamps, columns=["q_imp", "q_exp"])
+        q_comm_t.iloc[selected_timesteps] = list(s_comm.value)
+        q_imp_t.iloc[selected_timesteps] = list(alpha.value)
+        q_exp_t.iloc[selected_timesteps] = list(beta.value)
 
     # store result in result object
     result = ResultData(prob_status=prob_stat, day_nrs=day_nr, 
                         Pn_t=Pn_t, Ln_t=Ln_t, Gn_t=Gn_t, shadow_price_t=shadow_price_t, 
-                        agent_data=agent_data, settings=settings)
+                        agent_data=agent_data, settings=settings, Tnm_t=Tnm_t, 
+                        q_comm_t=q_comm_t, q_exp_t=q_exp_t, q_imp_t=q_imp_t)
 
     return result
