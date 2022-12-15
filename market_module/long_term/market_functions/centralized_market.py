@@ -1,10 +1,18 @@
 import cvxpy as cp
 import numpy as np
 import pandas as pd
+try:
+    from copt_cvxpy import *
+    COPT_INSTALLED = True
+except ModuleNotFoundError:
+    COPT_INSTALLED = False
+    print("COPT not installed in this environment")
+
+from math import ceil
 from ...long_term.datastructures.resultobject import ResultData
 from ...long_term.datastructures.inputstructs import AgentData, MarketSettings
 from ...long_term.constraintbuilder.ConstraintBuilder import ConstraintBuilder
-from math import ceil
+
 
 def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
     """
@@ -82,7 +90,9 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             elif settings.solver == 'HIGHS':
                 result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
             elif settings.solver == 'COPT':
-                result_ = prob.solve(solver=cp.COPT)
+                if not COPT_INSTALLED:
+                    raise Exception("Solver COPT is not installed for usage")
+                result_ = prob.solve(solver=COPT())
 
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
@@ -189,7 +199,9 @@ def make_centralized_market(agent_data: AgentData, settings: MarketSettings):
             elif settings.solver == 'HIGHS':
                 result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
             elif settings.solver == 'COPT':
-                result_ = prob.solve(solver=cp.COPT)
+                if not COPT_INSTALLED:
+                    raise Exception("Solver COPT is not installed for usage")
+                result_ = prob.solve(solver=COPT())
 
             # throw an error if the problem is not solved.
             if prob.status in ["infeasible", "unbounded"]:
