@@ -121,18 +121,18 @@ class MarketSettings(BaseModel):
         return v
     @validator("gamma_exp")
     def gamma_exp_validity_check(cls, v, values):
-        if values["market_design"] == "community":
+        if values["market_design"] == "community" and values["community_objective"] == "autonomy":
             if v is None:
-                raise ValueError("gamma_exp is mandatory input if the community market design is selected")
+                raise ValueError("gamma_exp is mandatory input if the autonomy objective for community market is selected")
             else:
                 if v < 0:
                     raise ValueError("gamma_exp must be positive")
         return v
     @validator("gamma_imp")
     def gamma_imp_validity_check(cls, v, values):
-        if values["market_design"] == "community":
+        if values["market_design"] == "community" and values["community_objective"] == "autonomy":
             if v is None:
-                raise ValueError("gamma_imp is mandatory input if the community market design is selected")
+                raise ValueError("gamma_imp is mandatory input if the autonomy objective for community market is selected")
             else:
                 if v < 0:
                     raise ValueError("gamma_imp must be positive")

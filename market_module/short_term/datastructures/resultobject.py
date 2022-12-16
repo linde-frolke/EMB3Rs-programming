@@ -138,7 +138,7 @@ class ResultData:
                         )
                 else:
                     self.settlement.iloc[:,agent] = self.shadow_price["non-community"].values * self.Pn.iloc[:,agent].values
-            if (self.settlement.sum(axis=1) > 0).any():
+            if (self.settlement.sum(axis=1) > 10**-7).any():
                 raise Warning("There is a mistake in the computation of the setttlement. At any time, the sum of settlement over all agents must be nonpositive. ")
 
 

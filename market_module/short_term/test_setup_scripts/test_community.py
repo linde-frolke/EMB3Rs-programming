@@ -20,17 +20,11 @@ input_dict = {#'sim_name': 'test_community_autonomy',
                   'agent_ids': ["prosumer_1",
                                 "prosumer_2", "consumer_1", "producer_1"],
                   'agent_types': ["prosumer", "prosumer", "consumer", "producer"],
-                  'objective': 'autonomy',  # objective for community
-                  'community_settings': {'g_peak': 'none', 'g_exp': 1, 'g_imp': 2},
-                #   'gmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+                  'objective': 'peakShaving',  # objective for community
+                  'community_settings': {'g_peak':5, 'g_exp': 1, 'g_imp': 2},
                   'gmax': [[1, 2, 0, 5], [3, 4, 0, 4], [1, 5, 0, 3], [0, 0, 0, 0], [1, 1, 0, 1],
                            [2, 3, 0, 1], [4, 2, 0, 5], [3, 4, 0, 4], [1, 5, 0, 3],
                            [0, 0, 0, 0], [1, 1, 0, 1], [2, 3, 0, 1]],
-                #   'lmin': [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0],
-                #            [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
                   'lmax': [[2, 2, 1, 0], [2, 1, 0, 0], [1, 2, 1, 0], [3, 0, 2, 0], [1, 1, 4, 0],
                            [2, 3, 3, 0], [4, 2, 1, 0], [3, 4, 2, 0], [1, 5, 3, 0], [0, 0, 5, 0],
                            [1, 1, 3, 0], [2, 3, 1, 0]],
@@ -59,7 +53,7 @@ result_dict = run_shortterm_market(input_dict=input_dict)
 
 pd.DataFrame(result_dict["settlement"])
 pd.DataFrame(result_dict["settlement"]).sum(axis=1)
-pd.DataFrame(result_dict["Pn"])
+pd.DataFrame(result_dict["Pn"]).iloc[:,[2,3]].sum(axis=1)
 pd.DataFrame(result_dict["Tnm"])
 pd.DataFrame(result_dict["shadow_price"])
 

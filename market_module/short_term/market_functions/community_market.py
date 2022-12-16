@@ -84,7 +84,7 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
         q_imp = cp.Variable(nr_of_timesteps, name="q_imp")
         q_exp = cp.Variable(nr_of_timesteps, name="q_exp")
         if settings.community_objective == "peakShaving":
-            q_peak = cp.Variable(name="q_peak")
+            q_peak = cp.Variable(name="q_peak", nonneg=True)
 
         # Community import variable
         alpha = cp.Variable((nr_of_timesteps, agent_data.nr_of_agents), name="alpha", nonneg=True)  
