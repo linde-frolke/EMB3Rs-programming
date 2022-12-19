@@ -1,0 +1,54 @@
+MIT License
+
+Copyright (c) 2019-2023 Linde Frölke, A. Sérgio Faria, Tiago Soares, Tiago Sousa
+
+Market Module: This module allows users to simulate current and future trends for the HC markets, allowing them to choose the best market framework aligned with the users economic, environmental and social interests. The outputs of the market analysis enable users (e.g., industries, supermarkets and data centers) to estimate potential costs and revenues for different market participants from trading excess heat and cold.
+
+This software is authored by:
+Linde Frölke, A. Sérgio Faria, Tiago Soares, Tiago Sousa
+
+This program makes use and is distributed with the following libraries:
+* colorama (https://pypi.org/project/colorama/)
+* cvxpy (https://www.cvxpy.org/)
+* matplotlib (https://pypi.org/project/matplotlib/)
+* numpy (https://numpy.org/)
+* pandas (https://pandas.pydata.org/)
+* pyscipopt (https://github.com/scipopt/PySCIPOpt/blob/master/LICENSE)
+* scipy (https://scipy.org/)
+
+You can reach INESC TEC Technology Licensing Office (TLO) at info.sal@inesctec.pt, 
+Centre for Power and Energy Systems
+Campus da Faculdade de Engenharia da Universidade do Porto
+Rua Dr. Roberto Frias
+4200-465 Porto
+Portugal
+
+Technical University of Denmark 
+Wind and Energy Systems
+Anker Engelunds Vej 101
+2800 Kongens Lyngby
+Denmark
+
+If you use Market Module in a work that leads to a scientific publication, we would appreciate it if you would kindly cite Market Module in your manuscript. 
+ 
+Faria, António Sérgio; Soares, Tiago; Cunha, José; Mourão, Zenaida. Liberalized market designs for district heating networks under the EMB3Rs platform. Sustainable Energy Grids and Networks. Vol. 29, IS. 3, (2021). DOI: 10.1016/j.segan.2021.100588.
+
+Licensed under the terms of MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
