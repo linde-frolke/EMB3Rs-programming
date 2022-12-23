@@ -35,6 +35,7 @@ class MarketSettings(BaseModel):
     solver: str
 
 
+
     def __init__(self, **data) -> None:
         """
         create MarketSettings object if all inputs are correct
@@ -71,6 +72,7 @@ class MarketSettings(BaseModel):
         if self.data_profile == 'daily':
             self.diff = end_date - start_date  # difference
             self.diff = int(self.diff.total_seconds()/3600/24) #difference in days
+            
 
     
     @validator("product_diff")
@@ -158,6 +160,8 @@ class AgentData(BaseModel):
     lmin : Any
     day_range: Any
     data_size: Any
+    fbp_time: Any = None
+    fbp_agent: Any = None
 
     def __init__(self, **data) -> None:
         """
@@ -246,6 +250,12 @@ class AgentData(BaseModel):
             if len(aux_list) >= self.settings.diff:
                 break
         return aux_list[0:self.settings.diff]
+    
+    @validator("fbp_time")
+    def fbp_valid(cls, v, values):
+        if v != 'None' and  v >= values['settings'].diff:
+            raise ValueError("Find the best price must be within the simulation range.")
+        return v
 
     @validator("name") #checking list dimensions
     def name_valid(cls, v):

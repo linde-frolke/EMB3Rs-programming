@@ -49,7 +49,6 @@ class ResultData:
                 self.Tnm = Tnm_t
             else:
                 self.Tnm = None
-            #print(self.Tnm[0])
 
             # get values related to duals  ----------------------------------------
             if settings.market_design == "centralized":
@@ -72,6 +71,8 @@ class ResultData:
             self.SPM = None
             # compute outputs
             self.compute_output_quantities(settings, agent_data)
+            if agent_data.fbp_agent != 'None':
+                self.best_price = self.find_best_price(agent_data.fbp_time, agent_data.fbp_agent, agent_data, settings)
 
     # a function to make all relevant output variables
     def compute_output_quantities(self, settings, agent_data):
@@ -224,5 +225,9 @@ class ResultData:
             return_dict['Tnm'] = [self.Tnm[t].to_dict(orient="list") for t in range(len(self.Tnm))]
             return_dict["En"] = "none"
             return_dict["Bn"] = "none"
-
+        try:
+            return_dict['best_price'] = self.best_price
+        except:
+            pass
+            
         return return_dict

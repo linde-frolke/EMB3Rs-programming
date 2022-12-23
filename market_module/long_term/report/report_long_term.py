@@ -5,7 +5,7 @@ import os
 import warnings
 warnings.filterwarnings("ignore")
 
-def report_long_term(longterm_results, data_profile=None):
+def report_long_term(longterm_results, data_profile=None, fbp_time=None, fbp_agent=None):
     ## convert outputs to html to put in report
     if data_profile == 'hourly':
         df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x],filter="sum") for x in
@@ -19,6 +19,9 @@ def report_long_term(longterm_results, data_profile=None):
         df_social_w = output_to_html_list(longterm_results['social_welfare_h'], filter='mean')
         df_shadow_price = output_to_html_list(longterm_results['shadow_price'], filter='mean')
 
+        if longterm_results['user']['fbp_time'] != 'None':
+            best_price = [longterm_results['best_price']]
+
     else:
         df_Gn, df_Ln, df_Pn, df_set, df_ag_op_cost = [output_to_html(longterm_results[x]) for x in
                                                       ["Gn", "Ln", "Pn", "settlement", "agent_operational_cost"]]
@@ -29,6 +32,9 @@ def report_long_term(longterm_results, data_profile=None):
         # df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
         df_social_w = output_to_html_list(longterm_results['social_welfare_h'])
         df_shadow_price = output_to_html_list(longterm_results['shadow_price'])
+        
+        if longterm_results['user']['fbp_time'] != 'None':
+            best_price = [longterm_results['best_price']]
 
 
 
@@ -40,10 +46,19 @@ def report_long_term(longterm_results, data_profile=None):
         autoescape=False
     )
 
-    template = env.get_template('index.longtermtemplate.html')
-    template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set, df_ag_op_cost=df_ag_op_cost,
-                                       df_spm=df_spm, df_adg=df_adg, df_social_w=df_social_w,
-                                       df_shadow_price=df_shadow_price)
+    if fbp_time != 'None':
+        template = env.get_template('index.longtermtemplate_fbp.html')
+        template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set, df_ag_op_cost=df_ag_op_cost,
+                                           df_spm=df_spm, df_adg=df_adg, df_social_w=df_social_w,
+                                           df_shadow_price=df_shadow_price, best_price=best_price, fbp_agent=fbp_agent,
+                                           fbp_time=fbp_time)
+    else:
+        template = env.get_template('index.longtermtemplate.html')
+        template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set,
+                                           df_ag_op_cost=df_ag_op_cost,
+                                           df_spm=df_spm, df_adg=df_adg, df_social_w=df_social_w,
+                                           df_shadow_price=df_shadow_price)
+        
 
 
     return template_content
