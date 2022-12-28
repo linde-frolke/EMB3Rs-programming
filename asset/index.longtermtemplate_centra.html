@@ -245,34 +245,7 @@
         </div>
       </div>
 
-      <! Best price -->
-      <div class="card">
-      <div class="card-header" id="headingTwelve">
-        <h2 class="mb-0">
-          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">
-            Best Price [&euro;/kWh]
-          </button>
-        </h2>
-      </div>
 
-      <div id="collapseTwelve" class="collapse" aria-labelledby="headingTwelve" data-parent="#accordionExample">
-        <div class="card-body">
-
-             <html>
-            <div>     This feature finds the price that an agent should submit in the market to ensure the highest possible revenue. <p></p></div>
-            </html>
-            {% with best_price=best_price %}
-            {% with fbp_agent=fbp_agent %}
-            {% with fbp_time=fbp_time %}
-            <html>
-            <div>     The best price for {{fbp_agent}} in period {{fbp_time}} was {{best_price}}.</div>
-            </html>
-            {% endwith %}
-            {% endwith %}
-            {% endwith %}
-        </div>
-      </div>
-    </div>
 
 
 
