@@ -232,7 +232,7 @@
             </button>
           </h2>
         </div>
-        <div id="collapseEleven" class="collapse" aria-labelledby="headingTen" data-parent="#accordionExample">
+        <div id="collapseEleven" class="collapse" aria-labelledby="headingEleven" data-parent="#accordionExample">
           <div class="card-body">
                               Represents the market clearing price. Presents one value per time step, if the centralized market design is chosen. Outputs one value per transaction and per time step, if the decentralized market design is the selected one.
             <p></p>
@@ -244,39 +244,8 @@
           </div>
         </div>
       </div>
-      </div>
-    </div>
 
-            <! QoE -->
-      <div class="card">
-        <div class="card-header" id="headingThirteen">
-          <h2 class="mb-0">
-            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThirteen" aria-expanded="false" aria-controls="collapseThirteen">
-              Quality of Experience
-            </button>
-          </h2>
-        </div>
-        <div id="collapseThirteen" class="collapse" aria-labelledby="headingThirteen" data-parent="#accordionExample">
-          <div class="card-body">
-                              Quality of Experience (QoE) is a measure that evaluates the fairness of market outcomes.
-            This is based on agent satisfaction according to the perceived price of energy <img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;" title="https://latex.codecogs.com/svg.image?\sigma _n^t " /> per time t.
-            Firstly, <img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;" title="https://latex.codecogs.com/svg.image?\sigma _n^t " /> is calculated for each agent based on:
-            <p></p>
-            <center><img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;=&space;\sum&space;_{m\in\Omega&space;_n}&space;\lambda&space;_{n,m}^tP_{n,m}^t" title="https://latex.codecogs.com/svg.image?\sigma _n^t = \sum _{m\in\Omega _n} \lambda _{n,m}^tP_{n,m}^t" />
-            <p></p>
-              Then, the QoE indicator is computed as:
-              <p></p>
-              <center><img src="https://latex.codecogs.com/svg.image?QoE&space;=&space;1-&space;\frac{\sigma&space;^t}{\sigma_{max}^t}" title="https://latex.codecogs.com/svg.image?QoE = 1- \frac{\sigma ^t}{\sigma_{max}^t}" />
-              <p></p>where  <img src="https://latex.codecogs.com/svg.image?\sigma&space;^t" title="https://latex.codecogs.com/svg.image?\sigma ^t" /> is the standard deviation
-              of perceived prices and <img src="https://latex.codecogs.com/svg.image?{\sigma_{max}^t}&space;=&space;\phi&space;_{max}^t-\phi&space;_{min}^t" title="https://latex.codecogs.com/svg.image?{\sigma_{max}^t} = \phi _{max}^t-\phi _{min}^t" /> represents the maximum price deviation.
-                        <div class="table-responsive">
-              <table class="table">
-                {{df_qoe}}
-               </table>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
 
 

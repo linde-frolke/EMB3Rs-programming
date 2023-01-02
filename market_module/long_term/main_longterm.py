@@ -6,6 +6,7 @@ from .market_functions.convert_user_and_module_inputs import convert_user_and_mo
 def main_longterm(in_var):
     mm_input_converted = convert_user_and_module_inputs(in_var)
     longterm_results = run_longterm_market(mm_input_converted)
-    report = report_long_term(longterm_results, in_var['user']['data_profile'])
+    report = report_long_term(longterm_results, in_var['user']['data_profile'], in_var['user']['fbp_time'],
+                              in_var['user']['fbp_agent'], in_var['user']['md'])
 
     return {"results": longterm_results, "report": report}

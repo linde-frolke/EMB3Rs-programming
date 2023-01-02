@@ -26,7 +26,8 @@ def run_longterm_market(input_dict):
                             gmax=input_dict['gmax'],
                            lmax=input_dict['lmax'],
                            cost=input_dict['cost'], util=input_dict['util'], co2=input_dict['co2_emissions'], 
-                           storage_name= input_dict["storage_name"], storage_capacity= input_dict["storage_capacity"]
+                           storage_name= input_dict["storage_name"], storage_capacity= input_dict["storage_capacity"],
+                           fbp_time=input_dict['fbp_time'], fbp_agent=input_dict['fbp_agent']
                            )
 
     # construct and solve market -----------------------------

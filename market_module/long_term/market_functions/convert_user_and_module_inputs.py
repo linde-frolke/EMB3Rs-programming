@@ -207,6 +207,7 @@ def convert_user_and_module_inputs(input_data):
 
     # extract the needed storage data
     nr_of_storage = len(storage_data_TEO)
+    print(nr_of_storage)
     print("nr_of_storage = " + str(nr_of_storage))
     storage_df = pd.DataFrame(storage_data_TEO)
     if nr_of_storage > 0:
@@ -261,6 +262,8 @@ def convert_user_and_module_inputs(input_data):
         'edges': None,
         'solver': Solver,
         'storage_name': storage_names, 
-        'storage_capacity': stor_capacity_list
+        'storage_capacity': stor_capacity_list,
+        'fbp_time': user_input['user']['fbp_time'],
+        'fbp_agent': user_input['user']['fbp_agent']
     }
     return input_dict
