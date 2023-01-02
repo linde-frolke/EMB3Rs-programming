@@ -253,8 +253,9 @@ class AgentData(BaseModel):
     
     @validator("fbp_time")
     def fbp_valid(cls, v, values):
-        if v != 'None' and  v >= values['settings'].diff:
-            raise ValueError("Find the best price must be within the simulation range.")
+        if v is not None:
+            if v >= values['settings'].diff:
+                raise ValueError("Find the best price must be within the simulation range.")
         return v
 
     @validator("name") #checking list dimensions

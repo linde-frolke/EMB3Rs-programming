@@ -26,8 +26,29 @@ from market_module.long_term.market_functions.convert_user_and_module_inputs imp
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
 input_data["user"]["start_datetime"] = "2023-01-01"
-#input_data["recurrence"] = 1
-#input_data["horizon_basis"] = "months"
+input_data["recurrence"] = 1
+input_data["horizon_basis"] = "months"
+
+agent_names = pd.DataFrame(input_data["teo-module"]["VariableOMCost"]).TECHNOLOGY.unique()
+VariableOMCost = pd.DataFrame(input_data["teo-module"]["VariableOMCost"])
+source_names = []
+for word in agent_names:
+    if 'sink' not in word:
+        source_names.append(word)
+#Removing dhn from source_names
+if 'dhn' in source_names:
+    source_names.remove('dhn')
+    nr_of_sources = len(source_names)
+
+dummy = {'TIMESLICE': range(1, 8700+1)}
+# Building cost_sources
+cost_sources = pd.DataFrame(dummy)
+cost_sources.set_index('TIMESLICE', inplace=True)
+for source in source_names:
+    cost_sources[source] = VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
+
+cost_sources #  = cost_sources #.to_numpy()
+VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
 # check whether the correct inputs are created
 input_dict = convert_user_and_module_inputs(input_data)
 
@@ -41,6 +62,9 @@ len(input_dict["gmax"])
 output = run_longterm_market(input_dict=input_dict)
 output.keys()
 
+pd.DataFrame(output["settlement"])
+
+pd.DataFrame(output["shadow_price"])
 pd.DataFrame(output["Bn"]).iloc[1,:].sum() #).iloc([0,:])
 (pd.DataFrame(output["Pn"]).iloc[1,:]).sum()
 pd.DataFrame(output["En"]).iloc[:100,0].plot() #.rolling(window=6).sum().plot()

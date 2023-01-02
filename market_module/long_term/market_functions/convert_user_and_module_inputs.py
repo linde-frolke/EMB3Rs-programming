@@ -242,6 +242,20 @@ def convert_user_and_module_inputs(input_data):
         stor_capacity_list = []
         storage_names = []
 
+    if not 'fbp_time' in user_input['user']:
+        fbp_time = None
+    else:
+        fbp_time = user_input['user']["fbp_time"]
+        if fbp_time == "None":
+            fbp_time = None
+
+    if not 'fbp_agent' in user_input['user']:
+        fbp_agent = None
+    else:
+        fbp_agent = user_input['user']["fbp_agent"]
+        if fbp_agent == "None":
+            fbp_agent = None
+        
     # construct input_dict
     input_dict = {
         'md': user_input['user']['md'],
@@ -263,7 +277,7 @@ def convert_user_and_module_inputs(input_data):
         'solver': Solver,
         'storage_name': storage_names, 
         'storage_capacity': stor_capacity_list,
-        'fbp_time': user_input['user']['fbp_time'],
-        'fbp_agent': user_input['user']['fbp_agent']
+        'fbp_time': fbp_time,
+        'fbp_agent': fbp_agent
     }
     return input_dict

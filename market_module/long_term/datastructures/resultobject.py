@@ -71,7 +71,7 @@ class ResultData:
             self.SPM = None
             # compute outputs
             self.compute_output_quantities(settings, agent_data)
-            if agent_data.fbp_agent != 'None':
+            if agent_data.fbp_agent is not None:
                 self.best_price = self.find_best_price(agent_data.fbp_time, agent_data.fbp_agent, agent_data, settings)
 
     # a function to make all relevant output variables
@@ -131,12 +131,20 @@ class ResultData:
                         aux.append(self.shadow_price[t].loc[agent, agent2] * self.Tnm[t].loc[agent, agent2]
                                    )
                     self.settlement[agent][t] = sum(aux)
-
         elif settings.market_design == "centralized":
             for t in range(0, settings.diff):
                 for agent in agent_data.agent_name:
                     self.settlement[agent][t] = self.shadow_price['uniform price'][t] * (self.Gn[agent][t] -
                                                                                          self.Ln[agent][t])
+
+            if self.En is not None:
+                storage_settlement = pd.DataFrame(index=range(settings.diff), columns=agent_data.storage_name)
+                for t in range(0, settings.diff):
+                    for stor in agent_data.storage_name:
+                        storage_settlement[stor][t] = self.shadow_price['uniform price'][t] * - self.Bn[stor][t]
+                
+                self.settlement = pd.concat([self.settlement, storage_settlement], axis=1)
+
 
         # agent_operational_cost
         self.agent_operational_cost = pd.DataFrame(index=range(
