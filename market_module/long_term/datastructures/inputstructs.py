@@ -255,7 +255,7 @@ class AgentData(BaseModel):
     def fbp_valid(cls, v, values):
         if v is not None:
             if v >= values['settings'].diff:
-                raise ValueError("Find the best price must be within the simulation range.")
+                raise ValueError("Find the best price: the selected time must be within the simulation range.")
         return v
 
     @validator("name") #checking list dimensions
@@ -268,14 +268,16 @@ class AgentData(BaseModel):
         if not np.array(v).ndim == 1:
             raise ValueError('Storage IDs should be one dimensional list')
         return v
+    @validator("storage_name")
     def no_storage_in_decentralized(cls, v, values):
         if (len(v) > 0) & (values["settings"].market_design == "decentralized"):
             raise NotImplementedError("Storage can only be included in the centralized market design, " +
             "it is not implemented in the decentralized market (yet). \n" +
             "Please select the centralized market design instead. ")
         return v
+    @validator("storage_name")
     def no_storage_in_dailysimulation(cls, v, values):
-        if (len(v) > 0) & (values["settings"].data_profile == 'daily'):
+        if (len(v) > 0) and (values["settings"].data_profile == 'daily'):
             raise NotImplementedError("The daily simulation is not available in case storage is included. Please select hourly simulation instead.")
         return v
     @validator("storage_capacity")
@@ -285,6 +287,7 @@ class AgentData(BaseModel):
             if not nr_of_stor_dimension == len(values["storage_name"]):
                 raise ValueError("The 'storage_capacity' input should be given for all storages in 'storage_name', and no others.")
         return v
+    @validator("storage_capacity")
     def storage_capacity_for_all_timesteps(cls, v, values):
         time_dimension = np.array(v).shape[0]
         if not time_dimension == values["settings"].diff:
