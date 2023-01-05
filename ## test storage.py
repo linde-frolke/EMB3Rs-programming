@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 f1 = open("/home/linde/Documents/2019PhD/EMB3Rs/module_integration/UoW-withstorage-market-module-long-term-input.json")
 input_data = json.load(f1)
 
+min([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))])
+max([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))])
+parse("01-01-" + str(2023))
 # input_data.keys()
 # input_data["user"].keys()
 # input_data["teo-module"]["ex_capacities"]
@@ -28,7 +31,7 @@ from market_module.long_term.market_functions.run_longterm_market import run_lon
 input_data["user"]["start_datetime"] = "2023-01-01"
 input_data["user"]["recurrence"] 
 input_data["user"]["horizon_basis"] = "months"
-input_data["user"]["data_profile"] = "daily"
+# input_data["user"]["data_profile"] = "daily"
 # agent_names = pd.DataFrame(input_data["teo-module"]["VariableOMCost"]).TECHNOLOGY.unique()
 # VariableOMCost = pd.DataFrame(input_data["teo-module"]["VariableOMCost"])
 # source_names = []
