@@ -2,6 +2,13 @@ import cvxpy as cp
 import numpy as np
 from math import ceil
 import pandas as pd
+try:
+    from copt_cvxpy import *
+    COPT_INSTALLED = True
+except ModuleNotFoundError:
+    COPT_INSTALLED = False
+    print("COPT not installed in this environment")
+
 
 from ...short_term.datastructures.resultobject import ResultData
 from ...short_term.datastructures.inputstructs import AgentData, MarketSettings
@@ -151,7 +158,17 @@ def make_community_market(agent_data: AgentData, settings: MarketSettings):
         # common for all offer types ------------------------------------------------
         # define the problem and solve it.
         prob = cp.Problem(objective, constraints=cb.get_constraint_list())
-        result_ = prob.solve(solver=cp.GUROBI)
+        if settings.solver == 'GUROBI':
+            result_ = prob.solve(solver=cp.GUROBI)
+        elif settings.solver == 'SCIP':
+            result_ = prob.solve(solver=cp.SCIP)
+        elif settings.solver == 'HIGHS':
+            result_ = prob.solve(solver=cp.SCIPY, scipy_options={"method": "highs"})
+        elif settings.solver == 'COPT':
+            if not COPT_INSTALLED:
+                raise Exception("Solver COPT is not installed for usage")
+            result_ = prob.solve(solver=COPT())
+        
         print("problem status: %s" % prob.status)
 
         # throw an error if the problem is not solved.

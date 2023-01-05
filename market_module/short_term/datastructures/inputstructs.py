@@ -32,6 +32,7 @@ class MarketSettings(BaseModel):
     community_objective : Union[None, str] # constr(regex=r'(autonomy|peakShaving)$')]
     gamma_exp : Union[None, float]
     gamma_imp : Union[None, float]
+    solver: str
 
     def __init__(self, **data) -> None:
         """
@@ -149,6 +150,11 @@ class MarketSettings(BaseModel):
             else:
                 if values["gamma_peak"]  < 0:
                     raise ValueError("g_peak must be positive")
+        return v
+    @validator("solver")
+    def solver_implemented(cls, v):
+        if v not in ["SCIP", "GUROBI", "HIGHS", "COPT"]:
+            raise ValueError("solver should be SCIP, GUROBI, HIGHS or COPT")
         return v
     
         

@@ -26,35 +26,35 @@ from market_module.long_term.market_functions.convert_user_and_module_inputs imp
 from market_module.long_term.market_functions.run_longterm_market import run_longterm_market
 
 input_data["user"]["start_datetime"] = "2023-01-01"
-input_data["recurrence"] = 1
-input_data["horizon_basis"] = "months"
+input_data["user"]["recurrence"] 
+input_data["user"]["horizon_basis"] = "months"
+input_data["user"]["data_profile"] = "daily"
+# agent_names = pd.DataFrame(input_data["teo-module"]["VariableOMCost"]).TECHNOLOGY.unique()
+# VariableOMCost = pd.DataFrame(input_data["teo-module"]["VariableOMCost"])
+# source_names = []
+# for word in agent_names:
+#     if 'sink' not in word:
+#         source_names.append(word)
+# #Removing dhn from source_names
+# if 'dhn' in source_names:
+#     source_names.remove('dhn')
+#     nr_of_sources = len(source_names)
 
-agent_names = pd.DataFrame(input_data["teo-module"]["VariableOMCost"]).TECHNOLOGY.unique()
-VariableOMCost = pd.DataFrame(input_data["teo-module"]["VariableOMCost"])
-source_names = []
-for word in agent_names:
-    if 'sink' not in word:
-        source_names.append(word)
-#Removing dhn from source_names
-if 'dhn' in source_names:
-    source_names.remove('dhn')
-    nr_of_sources = len(source_names)
+# dummy = {'TIMESLICE': range(1, 8700+1)}
+# # Building cost_sources
+# cost_sources = pd.DataFrame(dummy)
+# cost_sources.set_index('TIMESLICE', inplace=True)
+# for source in source_names:
+#     cost_sources[source] = VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
 
-dummy = {'TIMESLICE': range(1, 8700+1)}
-# Building cost_sources
-cost_sources = pd.DataFrame(dummy)
-cost_sources.set_index('TIMESLICE', inplace=True)
-for source in source_names:
-    cost_sources[source] = VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
-
-cost_sources #  = cost_sources #.to_numpy()
-VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
+# cost_sources #  = cost_sources #.to_numpy()
+# VariableOMCost.loc[(VariableOMCost['TECHNOLOGY'] == source)]["VALUE"].values[0]
 # check whether the correct inputs are created
 input_dict = convert_user_and_module_inputs(input_data)
 
 len(input_dict["gmax"])
 # input_dict["storage_capacity"]
-# input_dict["storage_name"]
+input_dict["storage_name"]
 
 # (np.array(input_dict["storage_capacity"]).shape)
 

@@ -128,6 +128,12 @@ def convert_user_and_module_inputs(input_data):
     co2_em = co2_em_sources.tolist() + co2_em_sinks.tolist()
     is_chp = is_chp_sources + is_chp_sinks
 
+    #Checking if we have solver info
+    if not 'solver' in input_data['user']:
+        Solver = "GUROBI"
+    else:
+        Solver = input_data['user']['solver']
+
     # construct input_dict
     input_dict = {
                     'md': user_input['md'],  # other options are  'p2p' or 'community'
@@ -151,7 +157,8 @@ def convert_user_and_module_inputs(input_data):
                     'chp_pars': user_input["chp_pars"],
                     'gis_data': gis_output["res_sources_sinks"],
                     'nodes' : nodes,
-                    'edges' : edges
+                    'edges' : edges,
+                    'solver': Solver
                     }
 
     return input_dict
