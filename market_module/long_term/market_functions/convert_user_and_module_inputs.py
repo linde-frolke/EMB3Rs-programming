@@ -14,27 +14,26 @@ from datetime import timedelta
 
 
 def convert_user_and_module_inputs(input_data):
-    # user_inputs
-    user_input = input_data ### separate dictionary inside
+    # input_data includes information from "user", "teo-module", "cf-module", and "gis-module"
 
     # Date related
-    datetime_date = user_input['user']['start_datetime']
-    start_date = parse(datetime_date)
+    start_yr = min([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))])
+    start_date = parse("01-01-" + str(start_yr))
     start_date_str = start_date.strftime('%d-%m-%Y')
 
-    if user_input['user']['horizon_basis'] == 'weeks':
-        end_date = start_date + relativedelta(weeks=user_input['user']["recurrence"])
-    if user_input['user']['horizon_basis'] == 'months':
-        end_date = start_date + relativedelta(months=user_input['user']["recurrence"])
-    if user_input['user']['horizon_basis'] == 'years':
+    if input_data['user']['horizon_basis'] == 'weeks':
+        end_date = start_date + relativedelta(weeks=input_data['user']["recurrence"])
+    if input_data['user']['horizon_basis'] == 'months':
+        end_date = start_date + relativedelta(months=input_data['user']["recurrence"])
+    if input_data['user']['horizon_basis'] == 'years':
         #always sending just one year of hourly data
         end_date = start_date + relativedelta(years=1)
 
-    if user_input['user']['data_profile'] == 'hourly':
+    if input_data['user']['data_profile'] == 'hourly':
         diff = end_date - start_date  # difference
         diff = int(diff.total_seconds()/3600) #difference in hours
 
-    if user_input['user']['data_profile'] == 'daily':
+    if input_data['user']['data_profile'] == 'daily':
         diff = end_date - start_date  # difference
         # always sending just one year of hourly data
         diff = int(diff.total_seconds()/3600) #difference in hours
@@ -42,14 +41,14 @@ def convert_user_and_module_inputs(input_data):
     nr_of_hours = diff
     print("nr of hours is " + str(nr_of_hours))
 
-    # 
-    # TODO put error if end_date or start_date is not in TEO YEAR.
-    # if not xxx
-    #     raise
+    # throw error if end_date or start_date is not in TEO YEAR.
+    last_teo_yr = max([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))])
+    if end_date.year > last_teo_yr: 
+        raise ValueError("There is not enough data from TEO for the selected horizon basis and recurrence in the Market Module simulation. \n" +
+                         "Please set a lower recurrence or a smaller horizon basis in the Market Module so that your simulation is covered by input data from TEO.")
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
-    #all_sources_info = input_data["cf-module"]["all_sources_info"]
 
 
     # convert CF inputs -----------------------------------------------------------------------------
@@ -75,7 +74,7 @@ def convert_user_and_module_inputs(input_data):
                 lmax_sinks[t,count] = all_sinks_info[sink]['streams'][stream]['hourly_stream_capacity'][t]
                 count+=1
 
-    utility_list = user_input['user']['util']
+    utility_list = input_data['user']['util']
     util_sinks_t0 = np.zeros(len(all_stream_ids))
     for stream in range(0, len(all_stream_ids)):
         # get the nr of the sink that this stream is a part of
@@ -134,7 +133,7 @@ def convert_user_and_module_inputs(input_data):
     cost_sources = cost_sources.to_numpy()
 
     if np.min(cost_sources) < 0:
-        raise Exception('Cost cannot be negative!')
+        raise Exception('It is not possible to provide negative marginal cost coefficients to the market module. ')
     
     #Getting CO2 Emissions
     co2_names=[] #Agents with co2 data
@@ -187,7 +186,7 @@ def convert_user_and_module_inputs(input_data):
     co2_emissions = np.concatenate((np.array(emissions_sources), emissions_sinks))
 
 
-    #Checking if we have solver info
+    # Checking if we have solver info. If not, set "GUROBI" as default.
     if not 'solver' in input_data['user']:
         Solver = "GUROBI"
     else:
@@ -242,28 +241,28 @@ def convert_user_and_module_inputs(input_data):
         stor_capacity_list = []
         storage_names = []
 
-    if not 'fbp_time' in user_input['user']:
+    if not 'fbp_time' in input_data['user']:
         fbp_time = None
     else:
-        fbp_time = user_input['user']["fbp_time"]
+        fbp_time = input_data['user']["fbp_time"]
         if fbp_time == "None":
             fbp_time = None
 
-    if not 'fbp_agent' in user_input['user']:
+    if not 'fbp_agent' in input_data['user']:
         fbp_agent = None
     else:
-        fbp_agent = user_input['user']["fbp_agent"]
+        fbp_agent = input_data['user']["fbp_agent"]
         if fbp_agent == "None":
             fbp_agent = None
         
     # construct input_dict
     input_dict = {
-        'md': user_input['user']['md'],
-        'horizon_basis': user_input['user']["horizon_basis"],
-        'data_profile': user_input['user']["data_profile"],
-        'recurrence': user_input['user']["recurrence"],
-        'yearly_demand_rate': user_input['user']["yearly_demand_rate"],
-        'prod_diff_option': user_input['user']["prod_diff_option"],
+        'md': input_data['user']['md'],
+        'horizon_basis': input_data['user']["horizon_basis"],
+        'data_profile': input_data['user']["data_profile"],
+        'recurrence': input_data['user']["recurrence"],
+        'yearly_demand_rate': input_data['user']["yearly_demand_rate"],
+        'prod_diff_option': input_data['user']["prod_diff_option"],
         'agent_ids': agent_ids,
         'gmax': gmax,
         'lmax': lmax,
