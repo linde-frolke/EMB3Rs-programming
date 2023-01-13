@@ -254,7 +254,48 @@ def convert_user_and_module_inputs(input_data):
         fbp_agent = input_data['user']["fbp_agent"]
         if fbp_agent == "None":
             fbp_agent = None
-        
+            
+    dict_acronyms = {'mhex': ' Multiple Heat Exchanger',
+               'orc': ' Organic Rankline Cycle',
+               'hp': ' Heat Pump',
+               'ngwhrb': ' Natural Gas Heat Recovery Boiler',
+               'shex': ' Single Heat Exchanger',
+               'ac': ' Absorption Chiller'}
+            
+    #Changing agent_ids to common IDs
+    for id in agent_ids:
+        if 'sou' in id:
+            for cf_id in range(0,len(input_data["cf-module"]["all_sources_info"])):
+                if int(id.split('sou')[1].split('str')[0]) == input_data["cf-module"]["all_sources_info"][cf_id]['source_id']:
+                    for abb in dict_acronyms.keys():
+                        if abb in id:
+                            agent_ids[agent_ids.index(id)] = input_data["cf-module"]["all_sources_info"][cf_id]['name'] + dict_acronyms[abb]
+
+    #Does not update agent_ids, so a new cycle is required
+    for id in agent_ids:
+        if 'sou' in id:
+            for cf_id in range(0, len(input_data["cf-module"]["all_sources_info"])):
+                if int(id.split('sou')[1].split('str')[0]) == input_data["cf-module"]["all_sources_info"][cf_id][
+                    'source_id']:
+                    agent_ids[agent_ids.index(id)] = input_data["cf-module"]["all_sources_info"][cf_id]['name']
+
+    #Sinks
+    for sink in range(0, len(all_sinks_info)):
+        for stream in range(0, len(all_sinks_info[sink]['streams'])):
+            for conv_tec in range(0, len(all_sinks_info[sink]['streams'][stream]['conversion_technologies'])):
+                for agent in agent_ids:
+                    if all_sinks_info[sink]['streams'][stream]['conversion_technologies'][conv_tec]['output_fuel'] == agent:
+                        agent_ids[agent_ids.index(agent)] = all_sinks_info[sink]['streams'][stream]['conversion_technologies'][conv_tec]['teo_equipment_name']
+                        
+            
+    for id in agent_ids:
+        if 'sink' in id:
+            for cf_id in range(0, len(all_sinks_info)):
+                if int(id.split('sink')[1].split('str')[0]) == input_data["cf-module"]["all_sinks_info"]["sinks"][cf_id]['sink_id']:
+                    for abb in dict_acronyms.keys():
+                        if abb in id:
+                            agent_ids[agent_ids.index(id)] = input_data["cf-module"]["all_sinks_info"]['sinks'][cf_id]['name'] + dict_acronyms[abb]
+          
     # construct input_dict
     input_dict = {
         'md': input_data['user']['md'],
