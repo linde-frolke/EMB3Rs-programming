@@ -255,12 +255,42 @@ def convert_user_and_module_inputs(input_data):
         if fbp_agent == "None":
             fbp_agent = None
             
-    dict_acronyms = {'mhex': ' Multiple Heat Exchanger',
-               'orc': ' Organic Rankline Cycle',
-               'hp': ' Heat Pump',
-               'ngwhrb': ' Natural Gas Heat Recovery Boiler',
-               'shex': ' Single Heat Exchanger',
-               'ac': ' Absorption Chiller'}
+    dict_acronyms = {"gridspecificngboiler" : " Grid Specific Natural Gas Boiler",
+    "gridspecificoilboiler" : " Grid Specific Oil Boiler",
+    "gridspecificbioboiler" : " Grid Specific Biomass Boiler",
+    "gridspecifichp" : " Grid Specific Heat Pump",
+    "gridspecificsthp" : " Grid Specific solar thermal with Heat Pump",
+    "dhn" : " District Heating Network",
+    "she" : " Single Heat Exchanger",
+    "mhe" : " Multiple Heat Exchanger",
+    "elwhrb" : " Electric Heat Recovery Boiler",
+    "ngwhrb" : " Natural Gas Heat Recovery Boiler",
+    "oilwhrb" : " Oil Heat Recovery Boiler",
+    "biowhrb" : " Biomass Heat Recovery Boiler",
+    "chpng" : " Natural Gas CHP",
+    "chpoil" : " Oil CHP",
+    "chpbio" : " Biomass CHP",
+    "boosthp" : " Booster Heat Pump",
+    "sthp" : " Solar thermal Heat Pump",
+    "stngboiler" : " Solar thermal with Natural gas boiler",
+    "stoilboiler" : " Solar thermal with oil boiler",
+    "stbioboiler" : " Solar thermal with biomass boiler",
+    "stelboiler" : " Solar thermal with el boiler",
+    "ac" : " Absorption Chiller",
+    "acec" : " Absorption Chiller with Electric Chiller",
+    "acngboiler":  " Absorption Chiller with Natural gas boiler",
+    "acoilboiler" : " Absorption Chiller with oil boiler",
+    "acbioboiler" : " Absorption Chiller with biomass boiler",
+    "acelectricboiler" : " Absorption Chiller with electric boiler"  ,
+    "acecngboiler" : " Absorption Chiller and Electric Chiller with Natural gas boiler",
+    "acecoilboiler" : " Absorption Chiller and Electric Chiller with oil boiler",
+    "acecbioboiler" : " Absorption Chiller and Electric Chiller with biomass boiler",
+    "acecelectricboiler" : " Absorption Chiller and Electric Chiller with electric boiler",
+    "acechp" : " Absorption Chiller and Electric Chiller with heat pump",
+    "achp" : " Absorption Chiller with heat pump",
+    "orc" : " Organic Rankine Cycle",
+    "exgrid" : " Existing Grid Technologies",
+    "hp" : " Heat Pump"}
             
     #Changing agent_ids to common IDs
     for id in agent_ids:
@@ -295,7 +325,12 @@ def convert_user_and_module_inputs(input_data):
                     for abb in dict_acronyms.keys():
                         if abb in id:
                             agent_ids[agent_ids.index(id)] = input_data["cf-module"]["all_sinks_info"]['sinks'][cf_id]['name'] + dict_acronyms[abb]
-          
+    
+    #CHanging grids and dhn names
+    for agent in agent_ids:
+        if agent in dict_acronyms.keys():
+            agent_ids[agent_ids.index(agent)] = dict_acronyms[agent]
+                            
     # construct input_dict
     input_dict = {
         'md': input_data['user']['md'],

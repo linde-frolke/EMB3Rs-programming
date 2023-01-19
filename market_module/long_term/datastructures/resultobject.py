@@ -168,7 +168,7 @@ class ResultData:
             aux = []
             for t in range(0, settings.diff):
                 if agent_data.gmax[agent][t] == 0:
-                    aux.append(1)  # if source production is zero
+                    aux.append(0)  # if source production is zero
                 else:
                     aux.append(self.Gn[agent][t] / agent_data.gmax[agent][t])
             self.ADG[agent]['ADG'] = np.average(aux) * 100

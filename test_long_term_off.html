@@ -60,7 +60,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -283,7 +283,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -512,7 +512,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -753,7 +753,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -978,7 +978,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -1205,7 +1205,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -1257,7 +1257,7 @@
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>gridspecificngboiler</th>
+      <th>Grid Specific Natural Gas Boiler</th>
       <th>Stonemill Multiple Heat Exchanger</th>
       <th>Polymers Natural Gas Heat Recovery Boiler</th>
       <th>BioIn Multiple Heat Exchanger</th>
@@ -1271,13 +1271,13 @@
   <tbody>
     <tr>
       <th>0</th>
-      <td>33.33</td>
+      <td>0.0</td>
       <td>22.62</td>
-      <td>16.67</td>
+      <td>0.0</td>
       <td>7.14</td>
       <td>89.88</td>
       <td>74.4</td>
-      <td>60.65</td>
+      <td>43.99</td>
       <td>26.62</td>
       <td>61.84</td>
     </tr>
@@ -1360,7 +1360,7 @@
             </button>
           </h2>
         </div>
-        <div id="collapseEleven" class="collapse" aria-labelledby="headingTen" data-parent="#accordionExample">
+        <div id="collapseEleven" class="collapse" aria-labelledby="headingEleven" data-parent="#accordionExample">
           <div class="card-body">
                               Represents the market clearing price. Presents one value per time step, if the centralized market design is chosen. Outputs one value per transaction and per time step, if the decentralized market design is the selected one.
             <p></p>
@@ -1409,720 +1409,8 @@
           </div>
         </div>
       </div>
-      </div>
-    </div>
 
-            <! QoE -->
-      <div class="card">
-        <div class="card-header" id="headingThirteen">
-          <h2 class="mb-0">
-            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThirteen" aria-expanded="false" aria-controls="collapseThirteen">
-              Quality of Experience
-            </button>
-          </h2>
-        </div>
-        <div id="collapseThirteen" class="collapse" aria-labelledby="headingThirteen" data-parent="#accordionExample">
-          <div class="card-body">
-                              Quality of Experience (QoE) is a measure that evaluates the fairness of market outcomes.
-            This is based on agent satisfaction according to the perceived price of energy <img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;" title="https://latex.codecogs.com/svg.image?\sigma _n^t " /> per time t.
-            Firstly, <img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;" title="https://latex.codecogs.com/svg.image?\sigma _n^t " /> is calculated for each agent based on:
-            <p></p>
-            <center><img src="https://latex.codecogs.com/svg.image?\sigma&space;_n^t&space;=&space;\sum&space;_{m\in\Omega&space;_n}&space;\lambda&space;_{n,m}^tP_{n,m}^t" title="https://latex.codecogs.com/svg.image?\sigma _n^t = \sum _{m\in\Omega _n} \lambda _{n,m}^tP_{n,m}^t" />
-            <p></p>
-              Then, the QoE indicator is computed as:
-              <p></p>
-              <center><img src="https://latex.codecogs.com/svg.image?QoE&space;=&space;1-&space;\frac{\sigma&space;^t}{\sigma_{max}^t}" title="https://latex.codecogs.com/svg.image?QoE = 1- \frac{\sigma ^t}{\sigma_{max}^t}" />
-              <p></p>where  <img src="https://latex.codecogs.com/svg.image?\sigma&space;^t" title="https://latex.codecogs.com/svg.image?\sigma ^t" /> is the standard deviation
-              of perceived prices and <img src="https://latex.codecogs.com/svg.image?{\sigma_{max}^t}&space;=&space;\phi&space;_{max}^t-\phi&space;_{min}^t" title="https://latex.codecogs.com/svg.image?{\sigma_{max}^t} = \phi _{max}^t-\phi _{min}^t" /> represents the maximum price deviation.
-                        <div class="table-responsive">
-              <table class="table">
-                <table border="1" class="dataframe table">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>30</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>31</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>32</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>33</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>34</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>36</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>37</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>38</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>39</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>40</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>41</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>42</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>43</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>44</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>46</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>47</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>48</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>49</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>50</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>51</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>52</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>53</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>54</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>55</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>56</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>57</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>58</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>59</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>60</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>61</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>62</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>63</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>64</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>65</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>66</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>67</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>68</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>69</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>70</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>71</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>72</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>73</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>74</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>75</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>76</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>77</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>78</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>79</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>80</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>81</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>82</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>83</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>84</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>85</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>86</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>87</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>88</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>89</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>90</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>91</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>92</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>93</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>94</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>95</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>96</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>97</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>98</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>99</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>100</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>101</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>102</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>103</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>104</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>105</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>106</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>107</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>108</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>109</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>110</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>111</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>112</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>113</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>114</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>115</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>116</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>117</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>118</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>119</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>120</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>125</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>126</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>127</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>128</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>129</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>130</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>131</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>132</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>133</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>134</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>135</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>136</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>137</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>138</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>139</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>140</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>141</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>142</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>143</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>144</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>145</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>146</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>147</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>148</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>149</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>150</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>151</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>152</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>153</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>154</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>155</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>156</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>157</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>158</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>159</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>160</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>161</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>162</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>163</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>164</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>165</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>166</th>
-      <td>Not Defined</td>
-    </tr>
-    <tr>
-      <th>167</th>
-      <td>Not Defined</td>
-    </tr>
-  </tbody>
-</table>
-               </table>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
 
 
