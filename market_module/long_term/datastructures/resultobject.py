@@ -138,12 +138,19 @@ class ResultData:
                                                                                          self.Ln[agent][t])
 
             if self.En is not None:
+                # add storage settlement to the settlement output
                 storage_settlement = pd.DataFrame(index=range(settings.diff), columns=agent_data.storage_name)
                 for t in range(0, settings.diff):
                     for stor in agent_data.storage_name:
                         storage_settlement[stor][t] = self.shadow_price['uniform price'][t] * - self.Bn[stor][t]
                 
                 self.settlement = pd.concat([self.settlement, storage_settlement], axis=1)
+
+                # add storage net despatch to Pn output (using that Pn = -Bn for the storage)
+                storage_Pn = pd.DataFrame(index=range(settings.diff), columns=agent_data.storage_name)
+                storage_Pn = - self.Bn.iloc[:,:]
+                self.Pn = pd.concat([self.Pn, storage_Pn], axis=1)
+
 
 
         # agent_operational_cost

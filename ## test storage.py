@@ -65,6 +65,8 @@ input_dict["storage_name"]
 output = run_longterm_market(input_dict=input_dict)
 output.keys()
 
+pd.DataFrame(output["Bn"])
+pd.DataFrame(output["Pn"])
 pd.DataFrame(output["settlement"])
 
 pd.DataFrame(output["shadow_price"])
