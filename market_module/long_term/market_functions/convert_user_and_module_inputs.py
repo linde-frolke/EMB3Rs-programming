@@ -42,9 +42,13 @@ def convert_user_and_module_inputs(input_data):
     print("nr of hours is " + str(nr_of_hours))
 
     # throw error if end_date or start_date is not in TEO YEAR.
-    last_teo_yr = max([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))])
-    if end_date.year > last_teo_yr: 
+    teo_years = [int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))]
+    nr_of_yrs_teo = len(teo_years)
+    last_teo_yr = max(teo_years)
+    
+    if (end_date - relativedelta(hours=1)).year > last_teo_yr: 
         raise ValueError("There is not enough data from TEO for the selected horizon basis and recurrence in the Market Module simulation. \n" +
+                         "You have " + str(nr_of_yrs_teo) + " years of data available from TEO. \n" + 
                          "Please set a lower recurrence or a smaller horizon basis in the Market Module so that your simulation is covered by input data from TEO.")
 
     # get CF data
@@ -255,42 +259,43 @@ def convert_user_and_module_inputs(input_data):
         if fbp_agent == "None":
             fbp_agent = None
             
-    dict_acronyms = {"gridspecificngboiler" : " Grid Specific Natural Gas Boiler",
-    "gridspecificoilboiler" : " Grid Specific Oil Boiler",
-    "gridspecificbioboiler" : " Grid Specific Biomass Boiler",
-    "gridspecifichp" : " Grid Specific Heat Pump",
-    "gridspecificsthp" : " Grid Specific solar thermal with Heat Pump",
-    "dhn" : " District Heating Network",
-    "she" : " Single Heat Exchanger",
-    "mhe" : " Multiple Heat Exchanger",
-    "elwhrb" : " Electric Heat Recovery Boiler",
-    "ngwhrb" : " Natural Gas Heat Recovery Boiler",
-    "oilwhrb" : " Oil Heat Recovery Boiler",
-    "biowhrb" : " Biomass Heat Recovery Boiler",
-    "chpng" : " Natural Gas CHP",
-    "chpoil" : " Oil CHP",
-    "chpbio" : " Biomass CHP",
-    "boosthp" : " Booster Heat Pump",
-    "sthp" : " Solar thermal Heat Pump",
-    "stngboiler" : " Solar thermal with Natural gas boiler",
-    "stoilboiler" : " Solar thermal with oil boiler",
-    "stbioboiler" : " Solar thermal with biomass boiler",
-    "stelboiler" : " Solar thermal with el boiler",
-    "ac" : " Absorption Chiller",
-    "acec" : " Absorption Chiller with Electric Chiller",
-    "acngboiler":  " Absorption Chiller with Natural gas boiler",
-    "acoilboiler" : " Absorption Chiller with oil boiler",
-    "acbioboiler" : " Absorption Chiller with biomass boiler",
-    "acelectricboiler" : " Absorption Chiller with electric boiler"  ,
-    "acecngboiler" : " Absorption Chiller and Electric Chiller with Natural gas boiler",
-    "acecoilboiler" : " Absorption Chiller and Electric Chiller with oil boiler",
-    "acecbioboiler" : " Absorption Chiller and Electric Chiller with biomass boiler",
-    "acecelectricboiler" : " Absorption Chiller and Electric Chiller with electric boiler",
-    "acechp" : " Absorption Chiller and Electric Chiller with heat pump",
-    "achp" : " Absorption Chiller with heat pump",
-    "orc" : " Organic Rankine Cycle",
-    "exgrid" : " Existing Grid Technologies",
-    "hp" : " Heat Pump"}
+    dict_acronyms = {
+        "gridspecificngboiler" : " Grid Specific Natural Gas Boiler",
+        "gridspecificoilboiler" : " Grid Specific Oil Boiler",
+        "gridspecificbioboiler" : " Grid Specific Biomass Boiler",
+        "gridspecifichp" : " Grid Specific Heat Pump",
+        "gridspecificsthp" : " Grid Specific solar thermal with Heat Pump",
+        "dhn" : " District Heating Network",
+        "she" : " Single Heat Exchanger",
+        "mhe" : " Multiple Heat Exchanger",
+        "elwhrb" : " Electric Heat Recovery Boiler",
+        "ngwhrb" : " Natural Gas Heat Recovery Boiler",
+        "oilwhrb" : " Oil Heat Recovery Boiler",
+        "biowhrb" : " Biomass Heat Recovery Boiler",
+        "chpng" : " Natural Gas CHP",
+        "chpoil" : " Oil CHP",
+        "chpbio" : " Biomass CHP",
+        "boosthp" : " Booster Heat Pump",
+        "sthp" : " Solar thermal Heat Pump",
+        "stngboiler" : " Solar thermal with Natural gas boiler",
+        "stoilboiler" : " Solar thermal with oil boiler",
+        "stbioboiler" : " Solar thermal with biomass boiler",
+        "stelboiler" : " Solar thermal with el boiler",
+        "ac" : " Absorption Chiller",
+        "acec" : " Absorption Chiller with Electric Chiller",
+        "acngboiler":  " Absorption Chiller with Natural gas boiler",
+        "acoilboiler" : " Absorption Chiller with oil boiler",
+        "acbioboiler" : " Absorption Chiller with biomass boiler",
+        "acelectricboiler" : " Absorption Chiller with electric boiler"  ,
+        "acecngboiler" : " Absorption Chiller and Electric Chiller with Natural gas boiler",
+        "acecoilboiler" : " Absorption Chiller and Electric Chiller with oil boiler",
+        "acecbioboiler" : " Absorption Chiller and Electric Chiller with biomass boiler",
+        "acecelectricboiler" : " Absorption Chiller and Electric Chiller with electric boiler",
+        "acechp" : " Absorption Chiller and Electric Chiller with heat pump",
+        "achp" : " Absorption Chiller with heat pump",
+        "orc" : " Organic Rankine Cycle",
+        "exgrid" : " Existing Grid Technologies",
+        "hp" : " Heat Pump"}
             
     #Changing agent_ids to common IDs
     for id in agent_ids:
