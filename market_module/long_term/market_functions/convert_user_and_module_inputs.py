@@ -27,7 +27,7 @@ def convert_user_and_module_inputs(input_data):
         end_date = start_date + relativedelta(months=input_data['user']["recurrence"])
     if input_data['user']['horizon_basis'] == 'years':
         #always sending just one year of hourly data
-        end_date = start_date + relativedelta(years=1)
+        end_date = start_date + relativedelta(years=input_data['user']["recurrence"])
 
     if input_data['user']['data_profile'] == 'hourly':
         diff = end_date - start_date  # difference
@@ -42,14 +42,14 @@ def convert_user_and_module_inputs(input_data):
     print("nr of hours is " + str(nr_of_hours))
 
     # throw error if end_date or start_date is not in TEO YEAR.
-    teo_years = [int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))]
+    teo_years =list(set([int(input_data["teo-module"]["AccumulatedNewCapacity"][i]["YEAR"]) for i in range(len(input_data["teo-module"]["AccumulatedNewCapacity"]))]))
     nr_of_yrs_teo = len(teo_years)
     last_teo_yr = max(teo_years)
-    
+
     if (end_date - relativedelta(hours=1)).year > last_teo_yr: 
         raise ValueError("There is not enough data from TEO for the selected horizon basis and recurrence in the Market Module simulation. \n" +
                          "You have " + str(nr_of_yrs_teo) + " years of data available from TEO. \n" + 
-                         "Please set a lower recurrence or a smaller horizon basis in the Market Module so that your simulation is covered by input data from TEO.")
+                         "Please select a lower recurrence or a smaller horizon basis in the Market Module so that your simulation is covered by input data from TEO.")
 
     # get CF data
     all_sinks_info = input_data["cf-module"]["all_sinks_info"]["sinks"]
