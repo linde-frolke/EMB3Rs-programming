@@ -39,7 +39,7 @@ def output_to_html_list(list, filter="none"):
     elif filter == "sum":
         df = get_sum(df)
 
-    html = df.round(decimals=2).to_html(
+    html = df.round(decimals=8).to_html(
         classes=['table'],
         )
     return html

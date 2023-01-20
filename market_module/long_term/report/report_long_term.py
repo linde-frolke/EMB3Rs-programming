@@ -18,6 +18,10 @@ def report_long_term(longterm_results, data_profile=None, fbp_time=None, fbp_age
         df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
         df_social_w = output_to_html_list(longterm_results['social_welfare_h'], filter='mean')
         df_shadow_price = output_to_html_list(longterm_results['shadow_price'], filter='mean')
+        try: #would throw an error in centralized
+            df_Tnm = output_to_html_list(longterm_results['Tnm'])
+        except:
+            pass
 
         if fbp_time != 'None':
             best_price = [longterm_results['best_price']]
@@ -32,6 +36,10 @@ def report_long_term(longterm_results, data_profile=None, fbp_time=None, fbp_age
         df_qoe = output_to_html_no_index_transpose(longterm_results["QoE"])
         df_social_w = output_to_html_list(longterm_results['social_welfare_h'])
         df_shadow_price = output_to_html_list(longterm_results['shadow_price'])
+        try: #would throw an error in centralized
+            df_Tnm = output_to_html_list(longterm_results['Tnm'])
+        except:
+            pass
         
         if fbp_time != 'None':
             best_price = [longterm_results['best_price']]
@@ -50,7 +58,7 @@ def report_long_term(longterm_results, data_profile=None, fbp_time=None, fbp_age
         template_content = template.render(df_Gn=df_Gn, df_Ln=df_Ln, df_Pn=df_Pn, df_set=df_set,
                                            df_ag_op_cost=df_ag_op_cost,
                                            df_spm=df_spm, df_adg=df_adg, df_qoe=df_qoe, df_social_w=df_social_w,
-                                           df_shadow_price=df_shadow_price)
+                                           df_shadow_price=df_shadow_price, df_Tnm=df_Tnm)
     elif md == 'centralized' and (fbp_time != 'None'):
         # If best price is selected
         template = env.get_template('index.longtermtemplate_fbp.html')
