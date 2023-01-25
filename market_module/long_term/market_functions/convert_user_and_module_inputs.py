@@ -139,23 +139,27 @@ def convert_user_and_module_inputs(input_data):
     if np.min(cost_sources) < 0:
         raise Exception('It is not possible to provide negative marginal cost coefficients to the market module. ')
     
-    #Getting CO2 Emissions
-    co2_names=[] #Agents with co2 data
+    # Getting Annual CO2 Emissions
+    co2_names = [] #Agents with co2 data
     for leng_nr in teo_output['AnnualTechnologyEmission']:
         co2_names.append(leng_nr['TECHNOLOGY'])
-    #
-    emissions_sources=[]
+    # get total annual production of each source
+    tot_production_year = pd.DataFrame(teo_output["ProductionByTechnologyMM"]).groupby("TECHNOLOGY").sum()
+    tot_production_year = tot_production_year.reset_index(level=0)
+
+    emissions_sources = []
     for source in source_names:
+        # get total annual production for this specific source
+        annual_prod = tot_production_year.loc[tot_production_year['TECHNOLOGY'] == source].VALUE.to_list()[0]
         if source in co2_names:
             for tech in teo_output['AnnualTechnologyEmission']:
                 if tech['TECHNOLOGY'] == source:
-                    emissions_sources.append(tech['VALUE'])
+                    # divide annual CO2 emissions by total annual production to get emission intensity per unit generated
+                    emissions_sources.append(tech['VALUE'] / annual_prod)
         else:
             emissions_sources.append(0)
 
-
     # Get GIS data
-
     gis_output = input_data['gis-module']
     gis_data = {'from_to': [],
                 'losses_total': [],
