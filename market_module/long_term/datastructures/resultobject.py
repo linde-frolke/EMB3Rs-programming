@@ -151,14 +151,18 @@ class ResultData:
                 storage_Pn = - self.Bn.iloc[:,:]
                 self.Pn = pd.concat([self.Pn, storage_Pn], axis=1)
 
-
+                # storage_operational_cost (always zero)
+                storage_operational_cost = pd.DataFrame(0, index=range(settings.diff), columns=agent_data.storage_name)
+                
 
         # agent_operational_cost
         self.agent_operational_cost = pd.DataFrame(index=range(
             settings.diff), columns=agent_data.agent_name)
         for t in range(0, settings.diff):
             for agent in agent_data.agent_name:
-                    self.agent_operational_cost[agent][t]=agent_data.cost[agent][t]*self.Gn[agent][t]
+                    self.agent_operational_cost[agent][t] = agent_data.cost[agent][t] * self.Gn[agent][t]
+        if self.En is not None: # add storage operational cost (always zero, this is for use in BM)
+            self.agent_operational_cost = pd.concat([self.agent_operational_cost, storage_operational_cost], axis=1)
 
         # list with producers+prosumers
         prod_pros = []
