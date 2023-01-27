@@ -71,10 +71,7 @@ class ResultData:
     # a function to make all relevant output variables
     def compute_output_quantities(self, settings, agent_data):
         # get shadow price, Qoe, for different markets --------------------------------------------------
-        if settings.market_design == "pool":
-            self.QoE = pd.DataFrame({"QoE" : np.nan * np.ones(settings.nr_of_h)})
-            # raise Warning("QoE not implemented for pool")
-        elif settings.market_design == "p2p":
+        if settings.market_design == "p2p":
             # QoE
             self.QoE = pd.DataFrame(index=range(settings.nr_of_h), columns=["QoE"])
             for t in range(0, settings.nr_of_h):
@@ -95,9 +92,8 @@ class ResultData:
                 else:
                     pass
             
-        elif settings.market_design == "community":
-            self.QoE = pd.DataFrame({"QoE" : np.nan * np.ones(settings.nr_of_h)}) ## TODO implement QoE for community
-            # raise Warning("community shadow price and QoE not implemented yet \n")
+        else:
+            self.QoE = pd.DataFrame({"QoE" : "not applicable"}, index=[0])
 
         # hourly social welfare an array of length settings.nr_of_h, same for all markets
         self.social_welfare_h = pd.DataFrame(index=range(settings.nr_of_h), columns=["Social Welfare"])
