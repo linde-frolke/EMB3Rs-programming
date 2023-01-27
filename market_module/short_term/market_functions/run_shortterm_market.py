@@ -87,7 +87,7 @@ def run_shortterm_market(input_dict):
                                 el_price=input_dict['el_price'], community_objective=input_dict["objective"], 
                                 gamma_peak=input_dict["community_settings"]["g_peak"],
                                 gamma_imp=input_dict["community_settings"]["g_imp"], 
-                                gamma_exp=input_dict["community_settings"]["g_exp"])  
+                                gamma_exp=input_dict["community_settings"]["g_exp"], solver=input_dict['solver'])  
     except ModuleValidationException as msg:
         raise print(msg)
 
