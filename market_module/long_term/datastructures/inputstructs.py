@@ -289,10 +289,12 @@ class AgentData(BaseModel):
         return v
     @validator("storage_capacity")
     def storage_capacity_for_all_timesteps(cls, v, values):
-        time_dimension = np.array(v).shape[0]
-        if not time_dimension == values["settings"].diff:
-            raise ValueError("The storage capacity must be given for each timestep in the selected time horizon. Probably start_datetime is selected " + 
-            "such that outputs from TEO do not cover the entire time period selected for the market module. ")
+        # if there is storage in the simulation, the storage capacity must be given for each time step
+        if len(values["storage_name"]) > 0:
+            time_dimension = np.array(v).shape[0]
+            if not time_dimension == values["settings"].diff:
+                raise ValueError("The storage capacity must be given for each timestep in the selected time horizon. Probably start_datetime is selected " + 
+                "such that outputs from TEO do not cover the entire time period selected for the market module. ")
         return v
     @validator('gmax')
     def gmax_valid(cls, v, values):
